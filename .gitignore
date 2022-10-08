@@ -1,0 +1,10 @@
+.gradle
+build/
+other/
+.idea/
+*.iws
+*.iml
+*.ipr
+data/data
+data/screenshots
+data/icons

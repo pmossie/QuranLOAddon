@@ -2,7 +2,6 @@ package nl.mossoft.lo.comp;
 
 import com.sun.star.lang.XSingleComponentFactory;
 import com.sun.star.registry.XRegistryKey;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -10,22 +9,31 @@ import java.io.LineNumberReader;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 
+/**
+ * The type Registration handler.
+ */
 public class RegistrationHandler {
 
-  public static XSingleComponentFactory __getComponentFactory(String sImplementationName) {
-    XSingleComponentFactory xFactory = null;
+  /**
+   * __ get component factory x single component factory.
+   *
+   * @param implementationName the s implementation name
+   * @return the x single component factory
+   */
+  public static XSingleComponentFactory __getComponentFactory(String implementationName) {
+    XSingleComponentFactory factory = null;
 
     Class[] classes = findServicesImplementationClasses();
 
     int i = 0;
-    while (i < classes.length && xFactory == null) {
+    while (i < classes.length && factory == null) {
       Class<?> clazz = classes[i];
-      if (sImplementationName.equals(clazz.getCanonicalName())) {
+      if (implementationName.equals(clazz.getCanonicalName())) {
         try {
           Class<?>[] getTypes = new Class[]{String.class};
           Method getFactoryMethod = clazz.getMethod("__getComponentFactory", getTypes);
-          Object o = getFactoryMethod.invoke(null, sImplementationName);
-          xFactory = (XSingleComponentFactory) o;
+          Object o = getFactoryMethod.invoke(null, implementationName);
+          factory = (XSingleComponentFactory) o;
         } catch (Exception e) {
           System.err.println("Error happened");
           e.printStackTrace();
@@ -33,7 +41,7 @@ public class RegistrationHandler {
       }
       i++;
     }
-    return xFactory;
+    return factory;
   }
 
   private static Class<?>[] findServicesImplementationClasses() {
@@ -73,7 +81,13 @@ public class RegistrationHandler {
     return classes.toArray(new Class[classes.size()]);
   }
 
-  public static boolean __writeRegistryServiceInfo(XRegistryKey xRegistryKey) {
+  /**
+   * __ write registry service info boolean.
+   *
+   * @param registryKey the x registry key
+   * @return the boolean
+   */
+  public static boolean __writeRegistryServiceInfo(XRegistryKey registryKey) {
 
     Class<?>[] classes = findServicesImplementationClasses();
 
@@ -84,7 +98,7 @@ public class RegistrationHandler {
       try {
         Class<?>[] writeTypes = new Class[]{XRegistryKey.class};
         Method getFactoryMethod = clazz.getMethod("__writeRegistryServiceInfo", writeTypes);
-        Object o = getFactoryMethod.invoke(null, xRegistryKey);
+        Object o = getFactoryMethod.invoke(null, registryKey);
         success = success && ((Boolean) o).booleanValue();
       } catch (Exception e) {
         success = false;

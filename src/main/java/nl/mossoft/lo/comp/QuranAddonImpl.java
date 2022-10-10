@@ -8,7 +8,7 @@ import com.sun.star.uno.XComponentContext;
 import nl.mossoft.lo.dialog.InsertQuranTextDialog;
 
 /**
- * The type QuranAddon.
+ * The implementatie of type QuranAddon.
  */
 public class QuranAddonImpl
     extends WeakBase
@@ -30,7 +30,7 @@ public class QuranAddonImpl
    */
   public QuranAddonImpl(XComponentContext context) {
     this.componentContext = context;
-   }
+  }
 
   /**
    * Get a Component Factory.
@@ -80,8 +80,7 @@ public class QuranAddonImpl
   @Override
   public void trigger(final String command) {
     if (command.equals(COMMAND_INSERT_QURAN_TEXT)) {
-        InsertQuranTextDialog.loadAddonDialog(componentContext).show();
-    } else {
+      InsertQuranTextDialog.loadAddonDialog(componentContext).show();
     }
   }
 

@@ -1,3 +1,20 @@
+/*
+ * This file is part of QuranLO
+ *
+ * Copyright (C) 2020-2022 <mossie@mossoft.nl>
+ *
+ * QuranLO is free software: you can redistribute it and/or modify it under the terms of the GNU
+ * General Public License as published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+ * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with this program. If
+ * not, see <https://www.gnu.org/licenses/>.
+ */
+
 package nl.mossoft.lo.comp;
 
 import com.sun.star.lang.XSingleComponentFactory;
@@ -15,10 +32,10 @@ import java.util.ArrayList;
 public class RegistrationHandler {
 
   /**
-   * __ get component factory x single component factory.
+   * Get a component factory for a single component.
    *
-   * @param implementationName the s implementation name
-   * @return the x single component factory
+   * @param implementationName the implementation name of the component
+   * @return the single component factory
    */
   public static XSingleComponentFactory __getComponentFactory(String implementationName) {
     XSingleComponentFactory factory = null;
@@ -44,6 +61,11 @@ public class RegistrationHandler {
     return factory;
   }
 
+  /**
+   * It reads the file `RegistrationHandler.classes` and returns the classes to be implemented.
+   *
+   * @return An array of classes that implement the XRegistryKey interface.
+   */
   private static Class<?>[] findServicesImplementationClasses() {
 
     ArrayList<Class<?>> classes = new ArrayList<>();
@@ -82,10 +104,10 @@ public class RegistrationHandler {
   }
 
   /**
-   * __ write registry service info boolean.
+   * Registers the service and returns if its successful.
    *
-   * @param registryKey the x registry key
-   * @return the boolean
+   * @param registryKey the registration key
+   * @return true if successful
    */
   public static boolean __writeRegistryServiceInfo(XRegistryKey registryKey) {
 

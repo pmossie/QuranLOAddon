@@ -1,3 +1,20 @@
+/*
+ * This file is part of QuranLO
+ *
+ * Copyright (C) 2020-2022 <mossie@mossoft.nl>
+ *
+ * QuranLO is free software: you can redistribute it and/or modify it under the terms of the GNU
+ * General Public License as published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+ * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with this program. If
+ * not, see <https://www.gnu.org/licenses/>.
+ */
+
 package nl.mossoft.lo.comp;
 
 import com.sun.star.lang.XSingleComponentFactory;
@@ -8,7 +25,7 @@ import com.sun.star.uno.XComponentContext;
 import nl.mossoft.lo.dialog.InsertQuranTextDialog;
 
 /**
- * The implementatie of type QuranAddon.
+ * The implementatie of the type QuranAddon.
  */
 public class QuranAddonImpl
     extends WeakBase
@@ -33,10 +50,10 @@ public class QuranAddonImpl
   }
 
   /**
-   * Get a Component Factory.
+   * Get a Component Factory for the service to be implemented.
    *
-   * @param implementationName name of implementation
-   * @return Component Factory
+   * @param implementationName name of the service to be implemented
+   * @return Component Factory for the service
    */
   public static XSingleComponentFactory __getComponentFactory(final String implementationName) {
     XSingleComponentFactory singleComponentFactory = null;
@@ -48,9 +65,9 @@ public class QuranAddonImpl
   }
 
   /**
-   * Registers the implemented services.
+   * Registers the service to be implemented.
    *
-   * @param registryKey the registration key.
+   * @param registryKey the registration key
    * @return true if successful
    */
   public static boolean __writeRegistryServiceInfo(final XRegistryKey registryKey) {
@@ -83,5 +100,4 @@ public class QuranAddonImpl
       InsertQuranTextDialog.loadAddonDialog(componentContext).show();
     }
   }
-
 }

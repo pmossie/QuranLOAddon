@@ -3,7 +3,7 @@ plugins {
 }
 
 group = "nl.mossoft.lo"
-version = "3.0-SNAPSHOT"
+version = "3.0.0"
 
 repositories {
     mavenCentral()
@@ -18,9 +18,9 @@ tasks.withType<Jar> {
     manifest {
         attributes["RegistrationClassName"] = "nl.mossoft.lo.comp.RegistrationHandler"
     }
-   from(sourceSets["main"].allSource) {
-       exclude("**/*.java")
-       exclude("**/*.properties")
+    from(sourceSets["main"].allSource) {
+        exclude("**/*.java")
+        exclude("**/*.properties")
     }
 }
 
@@ -81,13 +81,23 @@ tasks.register<Copy>("copyRDBFileForDeploy") {
     into(layout.buildDirectory.dir("toArchive"))
 }
 
-tasks.register<Exec>("compileIDLfile"){
-    commandLine("/usr/lib/libreoffice/sdk/bin/idlc", "-Obuild/urd","-I/usr/lib/libreoffice/sdk/idl","idl/nl/mossoft/lo/QuranLOAddon/InsertQuranText.idl")
+tasks.register<Exec>("compileIDLfile") {
+    commandLine(
+        "/usr/lib/libreoffice/sdk/bin/idlc",
+        "-Obuild/urd",
+        "-I/usr/lib/libreoffice/sdk/idl",
+        "idl/nl/mossoft/lo/QuranLOAddon/InsertQuranText.idl"
+    )
 }
 
-tasks.register<Exec>("compileRDBfile"){
+tasks.register<Exec>("compileRDBfile") {
     dependsOn("compileIDLfile")
-    commandLine("/usr/lib/libreoffice/program/regmerge", "build/rdb/types.rdb", "/UCR", "build/urd/InsertQuranText.urd")
+    commandLine(
+        "/usr/lib/libreoffice/program/regmerge",
+        "build/rdb/types.rdb",
+        "/UCR",
+        "build/urd/InsertQuranText.urd"
+    )
 
     doFirst {
         mkdir("build/rdb")
@@ -114,5 +124,11 @@ tasks.register<Zip>("prepareDistributionPackage") {
 
 tasks.register<Exec>("InstallDistributionPackage") {
     dependsOn("prepareDistributionPackage")
-    commandLine("/usr/bin/unopkg", "add", "--force", "--suppress-license","build/dist/${project.name}-${version}.oxt")
+    commandLine(
+        "/usr/bin/unopkg",
+        "add",
+        "--force",
+        "--suppress-license",
+        "build/dist/${project.name}-${version}.oxt"
+    )
 }

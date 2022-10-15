@@ -1,3 +1,20 @@
+/*
+ * This file is part of QuranLO
+ *
+ * Copyright (C) 2020-2022 <mossie@mossoft.nl>
+ *
+ * QuranLO is free software: you can redistribute it and/or modify it under the terms of the GNU
+ * General Public License as published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+ * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with this program. If
+ * not, see <https://www.gnu.org/licenses/>.
+ */
+
 package nl.mossoft.lo.dialog;
 
 import static nl.mossoft.lo.utils.Localization.getLanguageFontType;
@@ -161,9 +178,9 @@ public class InsertQuranTextDialog {
   private double defaultLatinFontSize;
 
   /**
-   * Instantiates a new Insert quran text dialog.
+   * Instantiates a new Insert Quran Text dialog.
    *
-   * @param context the context
+   * @param context the component context
    */
   public InsertQuranTextDialog(final XComponentContext context) {
     try {
@@ -215,7 +232,7 @@ public class InsertQuranTextDialog {
   }
 
   /**
-   * Load addon dialog insert quran text dialog.
+   * Loads the Insert Quran Text dialog.
    *
    * @param context the context
    * @return the insert quran text dialog
@@ -278,6 +295,12 @@ public class InsertQuranTextDialog {
         .replace(" ", "_");
   }
 
+  /**
+   * Get the XPropertySet interface of the given object."
+   *
+   * @param object The object to get the property set from.
+   * @return The XPropertySet interface of the object.
+   */
   private static XPropertySet getPropertSet(Object object) {
     return UnoRuntime.queryInterface(XPropertySet.class, object);
   }
@@ -457,6 +480,9 @@ public class InsertQuranTextDialog {
     });
   }
 
+  /**
+   * Add Handler for the Latin FontListBox.
+   */
   private void addLatinFontListBoxHandler() {
     final XListBox listBox = getControl(XListBox.class, D028_LATIN_FONT_LISTBOX);
     listBox.addItemListener(new XItemListener() {
@@ -471,6 +497,9 @@ public class InsertQuranTextDialog {
     });
   }
 
+  /**
+   * Add Handler for the Latin font size field.
+   */
   private void addLatinFontSizeHandler() {
     final XNumericField sizeField = getControl(XNumericField.class, D030_LATIN_FONTSIZE_NUMFLD);
     final XTextComponent sizeTextComponent = getControl(XTextComponent.class,
@@ -506,6 +535,9 @@ public class InsertQuranTextDialog {
     });
   }
 
+  /**
+   * Add Handler for the Ok Button.
+   */
   private void addOkButtonHandler() {
     final XButton button = getControl(XButton.class, D034_OK_BUTTON);
     button.addActionListener(new XActionListener() {
@@ -522,7 +554,7 @@ public class InsertQuranTextDialog {
   }
 
   /**
-   * Handler for the Surah listbox.
+   * Handler for the Surah ListBox.
    */
   private void addSurahListBoxHandler() {
     XListBox listBox = getControl(XListBox.class, D003_SURAH_LISTBOX);
@@ -587,6 +619,9 @@ public class InsertQuranTextDialog {
     });
   }
 
+  /**
+   * Handler for the Translation Language Version ListBox.
+   */
   private void addTranslationLanguageVersionListBoxHandler() {
     XListBox listBox = getControl(XListBox.class, D017_TRANSLATION_LANGUAGE_VERSION_LISTBOX);
     listBox.addItemListener(new XItemListener() {
@@ -738,7 +773,7 @@ public class InsertQuranTextDialog {
   }
 
   /**
-   * End show.
+   * Stop show the dialog.
    */
   public void endShow() {
     this.dialog.endExecute();
@@ -1311,8 +1346,8 @@ public class InsertQuranTextDialog {
       paragraphCursorPropertySet.setPropertyValue(PROP_CHAR_HEIGHT, selectedLatinFontSize);
       paragraphCursorPropertySet.setPropertyValue(PROP_CHAR_HEIGHT_COMPLEX, selectedArabicFontSize);
 
-    } catch (com.sun.star.lang.IllegalArgumentException | UnknownPropertyException |
-             PropertyVetoException | WrappedTargetException e) {
+    } catch (com.sun.star.lang.IllegalArgumentException | UnknownPropertyException
+             | PropertyVetoException | WrappedTargetException e) {
       e.printStackTrace();
     }
   }
@@ -1435,7 +1470,7 @@ public class InsertQuranTextDialog {
 
       final XProgressBar progressBar = getControl(XProgressBar.class, D035_PROGRESS_BAR);
       if ((from == 1) && (surahNumber != 1 && surahNumber != 9)) {
-        writeBismillahSurahLineByLIne(text, paragraphCursor);
+        writeBismillahSurahLineByLine(text, paragraphCursor);
       }
 
       for (long l = from; l < to; l++) {
@@ -1477,8 +1512,8 @@ public class InsertQuranTextDialog {
               selectedLatinFontSize);
         }
       }
-    } catch (com.sun.star.lang.IllegalArgumentException | UnknownPropertyException |
-             PropertyVetoException | WrappedTargetException e) {
+    } catch (com.sun.star.lang.IllegalArgumentException | UnknownPropertyException
+             | PropertyVetoException | WrappedTargetException e) {
       e.printStackTrace();
     }
   }
@@ -1489,7 +1524,7 @@ public class InsertQuranTextDialog {
    * @param text            the text
    * @param paragraphCursor the paragraph
    */
-  private void writeBismillahSurahLineByLIne(final XText text,
+  private void writeBismillahSurahLineByLine(final XText text,
       final XParagraphCursor paragraphCursor) {
     try {
       if (selectedArabicInd) {

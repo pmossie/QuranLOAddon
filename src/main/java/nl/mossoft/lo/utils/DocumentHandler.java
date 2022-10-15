@@ -1,7 +1,7 @@
 /*
  * This file is part of QuranLO
  *
- * Copyright (C) 2020 <mossie@mossoft.nl>
+ * Copyright (C) 2020-2022 <mossie@mossoft.nl>
  *
  * QuranLO is free software: you can redistribute it and/or modify it under the terms of the GNU
  * General Public License as published by the Free Software Foundation, either version 3 of the
@@ -34,7 +34,7 @@ public class DocumentHandler {
 
   private DocumentHandler() { /* Empty */ }
 
-   /**
+  /**
    * Returns the current text document (if any).
    */
   public static XTextDocument getCurrentDocument(final XComponentContext context) {
@@ -61,7 +61,7 @@ public class DocumentHandler {
    */
   private static XDesktop getCurrentDesktop(final XComponentContext context) {
     final XMultiComponentFactory factory = UnoRuntime.queryInterface(XMultiComponentFactory.class,
-                                                                     context.getServiceManager());
+        context.getServiceManager());
     Object desktop = null;
     try {
       desktop = factory.createInstanceWithContext("com.sun.star.frame.Desktop", context);

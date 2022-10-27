@@ -71,7 +71,7 @@ tasks.register<Copy>("copyJarFileForDeploy") {
 
 tasks.register<Copy>("copyQuranDirForDeploy") {
     from(layout.projectDirectory.dir("data"))
-    exclude("**/QuranText.Dutch.IUR.xml")
+
     into(layout.buildDirectory.dir("toArchive/data"))
 }
 

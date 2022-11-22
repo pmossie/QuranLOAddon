@@ -40,7 +40,6 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import org.w3c.dom.Document;
-import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 /**
@@ -51,17 +50,22 @@ import org.xml.sax.SAXException;
 public class QuranReader {
 
   private static final String QURAN_RESOURCES = "data/quran/";
+
   private Document doc;
   private XPath xpath = null;
 
   /**
    * Creates a document reader for the Qur'an xml files.
+   * <p>
+   * The language, version determine which quran text file is selected. The font is used to
+   * transform, add missing characters to the string.
    *
-   * @param language the language of the Qur'an txt
+   * @param language the language of the Qur'an text
    * @param version  the version
    * @param context  the document context.
    */
-  public QuranReader(final String language, final String version, final XComponentContext context) {
+  public QuranReader(final String language, final String version,
+      final XComponentContext context) {
     try {
       final DocumentBuilderFactory df = DocumentBuilderFactory.newInstance();
       df.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
@@ -119,11 +123,6 @@ public class QuranReader {
     return f;
   }
 
-  public static String[] getQuranVersions(String language, boolean include) {
-
-    return null;
-  }
-
   /**
    * Provides the name of a surah based on its number.
    *
@@ -158,8 +157,8 @@ public class QuranReader {
    * @param surahno the number of the surah
    * @return the number
    */
-  public static long getSurahSize(final int surahno) {
-    final long[] surahSizes = new long[]{7, 286, 200, 176, 120, 165, 206, 75, 129, 109, 123, 111,
+  public static int getSurahSize(final int surahno) {
+    final int[] surahSizes = new int[]{7, 286, 200, 176, 120, 165, 206, 75, 129, 109, 123, 111,
         43, 52, 99, 128, 111, 110, 98,
         135, 112, 78, 118, 64, 77, 227, 93, 88, 69, 60, 34, 30, 73, 54, 45, 83, 182, 88, 75, 85,
         54, 53, 89, 59, 37, 35, 38, 29, 18, 45, 60, 49, 62, 55, 78, 96, 29, 22, 24, 13, 14, 11, 11,
@@ -188,42 +187,22 @@ public class QuranReader {
   }
 
   /**
-   * Read all the ayat of a surah from the xml source file.
-   *
-   * @param surano the surah
-   * @return list of ayat.
-   */
-  public List<String> getAllAyatOfSuraNo(final int surano) {
-    final List<String> list = new ArrayList<>();
-    try {
-      final XPathExpression expr1 = xpath.compile("/quran/surah[@no='" + surano + "']/ayat/@text");
-      final NodeList nodes = (NodeList) expr1.evaluate(doc, XPathConstants.NODESET);
-      for (int i = 0; i < nodes.getLength(); i++) {
-        list.add(nodes.item(i).getNodeValue());
-      }
-    } catch (final XPathExpressionException e) {
-      e.printStackTrace();
-    }
-    return list;
-  }
-
-  /**
    * Get an ayat from a surah.
    *
    * @param surano the surah
    * @param ayano  the ayah
    * @return ayah
    */
-  public String getAyahNoOfSuraNo(final int surano, final long ayano) {
-    String aya = null;
+  public String getAyahNoOfSuraNo(final int surano, final int ayano) {
     try {
       final XPathExpression expr = xpath.compile(
           "/quran/surah[@no='" + surano + "']/ayat[@no='" + ayano + "']/@text");
-      aya = (String) expr.evaluate(doc, XPathConstants.STRING);
+      return (String) expr.evaluate(doc, XPathConstants.STRING);
     } catch (final XPathExpressionException e) {
       e.printStackTrace();
+      return "Error retrieving aya";
     }
-    return aya;
+
   }
 
   /**
@@ -235,9 +214,9 @@ public class QuranReader {
    * @return list of ayaht
    */
   public List<String> getAyatFromToOfSuraNo(
-      final int surano, final long ayafrom, final long ayato) {
+      final int surano, final int ayafrom, final int ayato) {
     final List<String> list = new ArrayList<>();
-    for (long ayano = ayafrom; ayano <= ayato; ayano++) {
+    for (int ayano = ayafrom; ayano <= ayato; ayano++) {
       list.add(getAyahNoOfSuraNo(surano, ayano));
     }
     return list;
@@ -249,15 +228,13 @@ public class QuranReader {
    * @return Bismillah
    */
   public String getBismillah() {
-    String bismillah = null;
     try {
       final XPathExpression expr = xpath.compile("/quran/surah[@no='1']/ayat[@no='1']/@text");
-      bismillah = (String) expr.evaluate(doc, XPathConstants.STRING);
+      return (String) expr.evaluate(doc, XPathConstants.STRING);
     } catch (final XPathExpressionException e) {
       e.printStackTrace();
+      return "Error retrieving aya";
     }
-    return bismillah;
   }
-
 
 }

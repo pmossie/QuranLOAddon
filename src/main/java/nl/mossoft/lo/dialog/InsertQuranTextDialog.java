@@ -17,7 +17,11 @@
 
 package nl.mossoft.lo.dialog;
 
-import static nl.mossoft.lo.utils.Localization.getLanguageFontType;
+import static com.sun.star.style.ParagraphAdjust.LEFT;
+import static com.sun.star.style.ParagraphAdjust.RIGHT;
+import static com.sun.star.text.WritingMode2.LR_TB;
+import static com.sun.star.text.WritingMode2.RL_TB;
+import static nl.mossoft.lo.utils.Localization.isR2L;
 
 import com.sun.star.awt.ActionEvent;
 import com.sun.star.awt.FontWeight;
@@ -66,7 +70,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import nl.mossoft.lo.utils.DocumentHandler;
-import nl.mossoft.lo.utils.Localization;
+import nl.mossoft.lo.utils.FontAttrsList;
 import nl.mossoft.lo.utils.QuranReader;
 
 /**
@@ -74,7 +78,10 @@ import nl.mossoft.lo.utils.QuranReader;
  */
 public class InsertQuranTextDialog {
 
-  private static final String ARABIC = "Arabic";
+  /**
+   * The constant fontAttrsLists.
+   */
+  public static final FontAttrsList fontAttrsLists = FontAttrsList.getInstance();
 
   private static final String D000_INSERT_QURAN_TEXT_DIAOG = "D000_INSERT_QURAN_TEXT_DIAOG";
   private static final String D001_SURAH_GROUPBOX = "D001_SURAH_GROUPBOX";
@@ -140,10 +147,13 @@ public class InsertQuranTextDialog {
   private static final String PROP_VERTICAL_ALIGN = "VerticalAlign";
   private static final String PROP_WIDTH = "Width";
 
-  private static final String RESOURCE_BUNDLE = "nl.mossoft.lo.messages.DialogLabels";
+  private static final String ARABIC = "Arabic";
+  private static final String ARABIC_LEFT_PARENTHESIS = new String(Character.toChars(0xFD3E));
+  private static final String ARABIC_RIGHT_PARENTHESIS = new String(Character.toChars(0xFD3F));
+  private static final String LATIN_LEFT_PARENTHESIS = new String(Character.toChars(0x0028));
+  private static final String LATIN_RIGHT_PARENTHESIS = new String(Character.toChars(0x0029));
 
-  private static final String LEFT_PARENTHESIS = new String(Character.toChars(0xFD3E));
-  private static final String RIGHT_PARENTHESIS = new String(Character.toChars(0xFD3F));
+  private static final String RESOURCE_BUNDLE = "nl.mossoft.lo.messages.DialogLabels";
 
   private final XComponentContext componentContext;
   private final XControlContainer controlContainer;
@@ -168,8 +178,8 @@ public class InsertQuranTextDialog {
   private boolean selectedTranslationInd = false;
   private double selectedLatinFontSize;
   private boolean selectedAyatAllInd = true;
-  private long selectedAyatFrom = 1;
-  private long selectedAyatTo = 7;
+  private int selectedAyatFrom = 1;
+  private int selectedAyatTo = 7;
   private int selectedSurahNo = 1;
 
   private String defaultArabicFontName;
@@ -245,20 +255,18 @@ public class InsertQuranTextDialog {
    * Returns the string representation of a number based on language and font.
    *
    * @param n        number between 0-9
-   * @param language language
    * @param fontname fontname
    * @return number string
    */
-  public static String numToAyatNumber(long n, final String language, final String fontname) {
-    final int base = Localization.getFontNumberBase(fontname);
+  public static String numToAyatNumber(int n, final String fontname) {
+    final int base = fontAttrsLists.getFontNumberBase(fontname);
 
     final StringBuilder as = new StringBuilder();
     while (n > 0) {
-      as.append(Character.toChars(base + (int) (n % 10)));
+      as.append(Character.toChars(base + (n % 10)));
       n = n / 10;
     }
-    return as.reverse()
-        .toString();
+    return as.toString();
   }
 
   /**
@@ -272,18 +280,18 @@ public class InsertQuranTextDialog {
   }
 
   /**
-   * Transforms the listbox item description of a languguage listbox into a language.
+   * Transforms the listbox item description of a language listbox into a language.
    *
    * @param item the listbox item
    * @return the language
    */
-  private static String getItemLanguague(final String item) {
+  private static String getItemLanguage(final String item) {
     final String[] itemsSelected = item.split("[(]");
     return itemsSelected[0].trim();
   }
 
   /**
-   * Transforms the listbox item description of a languguage listbox into a text version.
+   * Transforms the listbox item description of a language listbox into a text version.
    *
    * @param item the listbox item
    * @return the version
@@ -313,6 +321,16 @@ public class InsertQuranTextDialog {
    */
   private static boolean short2Boolean(final short s) {
     return s != 0;
+  }
+
+
+  private String getAyahText(final int ayahno, String language, String languageVersion) {
+    final QuranReader qr = new QuranReader(language, languageVersion, this.componentContext);
+    if (isR2L(language)) {
+      return transFonter(qr.getAyahNoOfSuraNo(selectedSurahNo, ayahno), selectedArabicFontName);
+    } else {
+      return qr.getAyahNoOfSuraNo(selectedSurahNo, ayahno);
+    }
   }
 
   /**
@@ -399,7 +417,7 @@ public class InsertQuranTextDialog {
 
       @Override
       public void itemStateChanged(ItemEvent itemEvent) {
-        selectedArabicLanguage = getItemLanguague(listBox.getSelectedItem());
+        selectedArabicLanguage = getItemLanguage(listBox.getSelectedItem());
         selectedArabicLanguageVersion = getItemVersion(listBox.getSelectedItem());
       }
     });
@@ -452,7 +470,7 @@ public class InsertQuranTextDialog {
         } else if (Math.round(fromField.getValue()) <= 1) {
           fromField.setValue(1);
         }
-        selectedAyatFrom = Math.round(fromField.getValue());
+        selectedAyatFrom = (int) Math.round(fromField.getValue());
       }
     });
   }
@@ -475,7 +493,7 @@ public class InsertQuranTextDialog {
         } else if (Math.round(toField.getValue()) >= QuranReader.getSurahSize(selectedSurahNo)) {
           toField.setValue(QuranReader.getSurahSize(selectedSurahNo));
         }
-        selectedAyatTo = Math.round(toField.getValue());
+        selectedAyatTo = (int) Math.round(toField.getValue());
       }
     });
   }
@@ -543,7 +561,7 @@ public class InsertQuranTextDialog {
     button.addActionListener(new XActionListener() {
       @Override
       public void actionPerformed(ActionEvent actionEvent) {
-        writeSurah(selectedSurahNo);
+        writeSurah();
         endShow();
       }
 
@@ -570,11 +588,11 @@ public class InsertQuranTextDialog {
         final XNumericField numericFieldFrom = getControl(XNumericField.class,
             D008_AYAT_FROM_NUMFLD);
         numericFieldFrom.setValue(1);
-        selectedAyatFrom = Math.round(numericFieldFrom.getValue());
+        selectedAyatFrom = (int) Math.round(numericFieldFrom.getValue());
 
         final XNumericField numericFieldTo = getControl(XNumericField.class, D010_AYAT_TO_NUMFLD);
         numericFieldTo.setValue(QuranReader.getSurahSize(selectedSurahNo));
-        selectedAyatTo = Math.round(numericFieldTo.getValue());
+        selectedAyatTo = (int) Math.round(numericFieldTo.getValue());
       }
 
     });
@@ -631,7 +649,7 @@ public class InsertQuranTextDialog {
 
       @Override
       public void itemStateChanged(ItemEvent itemEvent) {
-        selectedTranslationLanguage = getItemLanguague(listBox.getSelectedItem());
+        selectedTranslationLanguage = getItemLanguage(listBox.getSelectedItem());
         selectedTranslationLanguageVersion = getItemVersion(listBox.getSelectedItem());
       }
     });
@@ -780,47 +798,21 @@ public class InsertQuranTextDialog {
   }
 
   /**
-   * Gets a ayat for the selected Surah.
-   *
-   * @param surahno  the surah number
-   * @param ayahno   the ayat number
-   * @param language the language to be used
-   * @param version  the text version to be used
-   * @param fontName the font used to write the text
-   * @return the ayat
-   */
-  private String getAyahLine(
-      final int surahno,
-      final long ayahno,
-      final String language,
-      final String version,
-      String fontName) {
-
-    final QuranReader qr = new QuranReader(language, version, this.componentContext);
-
-    String line = qr.getAyahNoOfSuraNo(surahno, ayahno);
-    if (selectedLineNumberInd) {
-      if (Localization.getLanguageWritingMode(language) == com.sun.star.text.WritingMode2.RL_TB) {
-        line = line + " " + RIGHT_PARENTHESIS + numToAyatNumber(ayahno,
-            language,
-            fontName) + LEFT_PARENTHESIS + " ";
-      } else {
-        line = "(" + numToAyatNumber(ayahno, language, fontName) + ") " + line;
-      }
-    }
-    return line;
-  }
-
-  /**
    * Gets the text Bismillah in the language from a text version.
    *
    * @param language the language to be used
    * @param version  the text version to be used
    * @return the text
    */
-  private String getBismillah(final String language, final String version) {
+  private String getBismillah(
+      final String language,
+      final String version) {
     final QuranReader qr = new QuranReader(language, version, this.componentContext);
-    return qr.getBismillah();
+    if (isR2L(language)) {
+      return transFonter(qr.getBismillah(), selectedArabicFontName);
+    } else {
+      return qr.getBismillah();
+    }
   }
 
   private <T> T getControl(final Class<T> type, final String id) {
@@ -984,7 +976,7 @@ public class InsertQuranTextDialog {
     if (listBox.getItemCount() > 0) {
       listBox.selectItemPos((short) 0, true);
 
-      selectedArabicLanguage = getItemLanguague(listBox.getSelectedItem());
+      selectedArabicLanguage = getItemLanguage(listBox.getSelectedItem());
       selectedArabicLanguageVersion = getItemVersion(listBox.getSelectedItem());
     }
   }
@@ -1013,7 +1005,7 @@ public class InsertQuranTextDialog {
     final XNumericField numericFieldFrom = getControl(XNumericField.class, D008_AYAT_FROM_NUMFLD);
 
     numericFieldFrom.setValue(1);
-    selectedAyatFrom = Math.round(numericFieldFrom.getValue());
+    selectedAyatFrom = (int) Math.round(numericFieldFrom.getValue());
   }
 
   /**
@@ -1023,10 +1015,11 @@ public class InsertQuranTextDialog {
     final XNumericField numericFieldTo = getControl(XNumericField.class, D010_AYAT_TO_NUMFLD);
 
     numericFieldTo.setValue(QuranReader.getSurahSize(selectedSurahNo));
-    selectedAyatTo = Math.round(numericFieldTo.getValue());
+    selectedAyatTo = (int) Math.round(numericFieldTo.getValue());
   }
 
   private void initializeInsertQuranDialog() {
+
     getLoDocumentDefaults();
 
     initializeSurahLstBx();
@@ -1124,7 +1117,7 @@ public class InsertQuranTextDialog {
     if (listBox.getItemCount() > 0) {
       listBox.selectItemPos((short) 0, true);
 
-      selectedTranslationLanguage = getItemLanguague(listBox.getSelectedItem());
+      selectedTranslationLanguage = getItemLanguage(listBox.getSelectedItem());
       selectedTranslationLanguageVersion = getItemVersion(listBox.getSelectedItem());
     }
   }
@@ -1271,129 +1264,37 @@ public class InsertQuranTextDialog {
     this.dialog.execute();
   }
 
-  private void writeParagraph(
-      final XText text,
-      final XParagraphCursor paragraphCursor,
-      final String paragraph,
-      final String language,
-      final String fontName,
-      final double fontSize)
-      throws
-      UnknownPropertyException,
-      PropertyVetoException,
-      WrappedTargetException {
-
-    paragraphCursor.gotoEndOfParagraph(false);
-    text.insertControlCharacter(paragraphCursor, ControlCharacter.PARAGRAPH_BREAK, false);
-
-    final XPropertySet paragraphCursorPropertySet = DocumentHandler.getPropertySet(paragraphCursor);
-
-    if (Localization.getLanguageWritingMode(language) == com.sun.star.text.WritingMode2.LR_TB) {
-      paragraphCursorPropertySet.setPropertyValue("ParaAdjust",
-          com.sun.star.style.ParagraphAdjust.LEFT);
-      paragraphCursorPropertySet.setPropertyValue("WritingMode",
-          com.sun.star.text.WritingMode2.LR_TB);
-      paragraphCursorPropertySet.setPropertyValue(PROP_CHAR_FONT_NAME, fontName);
-      paragraphCursorPropertySet.setPropertyValue(PROP_CHAR_HEIGHT, fontSize);
-    } else {
-      paragraphCursorPropertySet.setPropertyValue("ParaAdjust",
-          com.sun.star.style.ParagraphAdjust.RIGHT);
-      paragraphCursorPropertySet.setPropertyValue("WritingMode",
-          com.sun.star.text.WritingMode2.RL_TB);
-      paragraphCursorPropertySet.setPropertyValue(PROP_CHAR_FONT_NAME_COMPLEX, fontName);
-      paragraphCursorPropertySet.setPropertyValue(PROP_CHAR_HEIGHT_COMPLEX, fontSize);
-    }
-    text.insertString(paragraphCursor, paragraph, false);
-  }
-
   /**
    * Write surah.
-   *
-   * @param surahNumber the surah number
    */
-  public void writeSurah(final int surahNumber) {
-    final XTextDocument textDoc = DocumentHandler.getCurrentDocument(this.componentContext);
-    final XController controller = textDoc.getCurrentController();
-    final XTextViewCursorSupplier textViewCursorSupplier = DocumentHandler.getCursorSupplier(
-        controller);
-    final XTextViewCursor textViewCursor = textViewCursorSupplier.getViewCursor();
-    final XText text = textViewCursor.getText();
-    final XTextCursor textCursor = text.createTextCursorByRange(textViewCursor.getStart());
-    final XParagraphCursor paragraphCursor = UnoRuntime.queryInterface(XParagraphCursor.class,
-        textCursor);
-    final XPropertySet paragraphCursorPropertySet = DocumentHandler.getPropertySet(paragraphCursor);
-
+  public void writeSurah() {
     try {
+      final XTextDocument textDoc = DocumentHandler.getCurrentDocument(this.componentContext);
+      final XController controller = textDoc.getCurrentController();
+      final XTextViewCursorSupplier textViewCursorSupplier = DocumentHandler.getCursorSupplier(
+          controller);
+      final XTextViewCursor textViewCursor = textViewCursorSupplier.getViewCursor();
+      final XText text = textViewCursor.getText();
+      final XTextCursor textCursor = text.createTextCursorByRange(textViewCursor.getStart());
+      final XParagraphCursor paragraphCursor = UnoRuntime.queryInterface(XParagraphCursor.class,
+          textCursor);
+      final XPropertySet paragraphCursorPropertySet = DocumentHandler.getPropertySet(
+          paragraphCursor);
+
       paragraphCursorPropertySet.setPropertyValue(PROP_CHAR_FONT_NAME, selectedLatinFontName);
       paragraphCursorPropertySet.setPropertyValue(PROP_CHAR_FONT_NAME_COMPLEX,
           selectedArabicFontName);
       paragraphCursorPropertySet.setPropertyValue(PROP_CHAR_HEIGHT, selectedLatinFontSize);
       paragraphCursorPropertySet.setPropertyValue(PROP_CHAR_HEIGHT_COMPLEX, selectedArabicFontSize);
-
-      final long from = (selectedAyatAllInd) ? 1 : selectedAyatFrom;
-      final long to =
-          (selectedAyatAllInd) ? QuranReader.getSurahSize(surahNumber) + 1 : selectedAyatTo + 1;
 
       if (selectedLineByLineInd) {
-        writeSurahLineByLine(surahNumber, text, paragraphCursor, from, to);
+        writeSurahLineByLine(textCursor);
       } else {
-        writeSurahAsOneBlock(surahNumber, text, paragraphCursor, from, to);
+        writeSurahAsOneBlock(textCursor);
       }
-
-      paragraphCursorPropertySet.setPropertyValue(PROP_CHAR_FONT_NAME, selectedLatinFontName);
-      paragraphCursorPropertySet.setPropertyValue(PROP_CHAR_FONT_NAME_COMPLEX,
-          selectedArabicFontName);
-      paragraphCursorPropertySet.setPropertyValue(PROP_CHAR_HEIGHT, selectedLatinFontSize);
-      paragraphCursorPropertySet.setPropertyValue(PROP_CHAR_HEIGHT_COMPLEX, selectedArabicFontSize);
 
     } catch (com.sun.star.lang.IllegalArgumentException | UnknownPropertyException
              | PropertyVetoException | WrappedTargetException e) {
-      e.printStackTrace();
-    }
-  }
-
-
-  /**
-   * Write the Text block.
-   *
-   * @param surahNumber              the surah number
-   * @param text                     the text
-   * @param paragraphCursor          the paragraph
-   * @param from                     start ayat
-   * @param to                       last ayat
-   * @param language                 the language of the text
-   * @param fontName                 the font name
-   * @param fontSize                 the font size
-   * @param languageVersion          the text version for the language
-   * @param dlgWriteSurahProgressBar the progressBar
-   */
-  private void writeSurahTextBlock(
-      final int surahNumber,
-      final XText text,
-      final XParagraphCursor paragraphCursor,
-      final long from,
-      final long to,
-      final String language,
-      final String languageVersion,
-      final String fontName,
-      final double fontSize,
-      final XProgressBar dlgWriteSurahProgressBar) {
-    try {
-      final StringBuilder lb = new StringBuilder();
-      for (long l = from; l < to; l++) {
-        if ((l == 1) && (surahNumber != 1 && surahNumber != 9)) {
-          lb.append(getBismillah(language, languageVersion));
-          lb.append("\n");
-        }
-        dlgWriteSurahProgressBar.setValue((int) (100 * l / (to - from + 1)));
-        lb.append(getAyahLine(surahNumber, l, language, languageVersion, fontName));
-        lb.append(" ");
-      }
-      writeParagraph(text, paragraphCursor, lb + "\n", language, fontName, fontSize);
-    } catch (com.sun.star.lang.IllegalArgumentException
-             | UnknownPropertyException
-             | PropertyVetoException
-             | WrappedTargetException e) {
       e.printStackTrace();
     }
   }
@@ -1401,179 +1302,185 @@ public class InsertQuranTextDialog {
   /**
    * Write the selected Surah as one block.
    *
-   * @param surahNumber     the surah number
-   * @param text            the text
-   * @param paragraphCursor the paragraph
-   * @param from            start ayat
-   * @param to              last ayat
+   * @param textCursor the textCursor in the document
    */
-  private void writeSurahAsOneBlock(final int surahNumber,
-      final XText text,
-      final XParagraphCursor paragraphCursor,
-      final long from,
-      final long to) {
+  private void writeSurahAsOneBlock(final XTextCursor textCursor) {
+
     final XProgressBar progressBar = getControl(XProgressBar.class, D035_PROGRESS_BAR);
 
     if (selectedArabicInd) {
-      writeSurahTextBlock(surahNumber,
-          text,
-          paragraphCursor,
-          from,
-          to,
-          selectedArabicLanguage,
-          selectedArabicLanguageVersion,
-          selectedArabicFontName,
-          selectedArabicFontSize,
-          progressBar);
+      writeSurahAyatTextBlock(textCursor, progressBar, selectedArabicLanguage,
+          selectedArabicLanguageVersion);
     }
     if (selectedTranslationInd) {
-      writeSurahTextBlock(surahNumber,
-          text,
-          paragraphCursor,
-          from,
-          to,
-          selectedTranslationLanguage,
-          selectedTranslationLanguageVersion,
-          getTranslationFontName(selectedTranslationLanguage),
-          getTranslationFontSize(selectedTranslationLanguage),
-          progressBar);
+      writeSurahAyatTextBlock(textCursor, progressBar, selectedTranslationLanguage,
+          selectedTranslationLanguageVersion);
     }
     if (selectedTransliterationInd) {
-      writeSurahTextBlock(surahNumber,
-          text,
-          paragraphCursor,
-          from,
-          to,
-          selectedTransliterationLanguage,
-          selectedTransliterationLanguageVersion,
-          selectedLatinFontName,
-          selectedArabicFontSize,
-          progressBar);
+      writeSurahAyatTextBlock(textCursor, progressBar, selectedTransliterationLanguage,
+          selectedTranslationLanguageVersion);
     }
   }
 
   /**
    * Write the selected Surah Line By Line.
    *
-   * @param surahNumber     the surah number
-   * @param text            the text
-   * @param paragraphCursor the paragraph of the text
-   * @param from            start ayat
-   * @param to              last ayat
+   * @param textCursor the textCursor in the document
    */
-  private void writeSurahLineByLine(final int surahNumber,
-      final XText text,
-      final XParagraphCursor paragraphCursor,
-      final long from,
-      final long to) {
+  private void writeSurahLineByLine(final XTextCursor textCursor) {
+
+    final int from = (selectedAyatAllInd) ? 1 : selectedAyatFrom;
+    final int to =
+        (selectedAyatAllInd) ? QuranReader.getSurahSize(selectedSurahNo) + 1 : selectedAyatTo + 1;
+
+    final XProgressBar progressBar = getControl(XProgressBar.class, D035_PROGRESS_BAR);
     try {
-
-      final XProgressBar progressBar = getControl(XProgressBar.class, D035_PROGRESS_BAR);
-      if ((from == 1) && (surahNumber != 1 && surahNumber != 9)) {
-        writeBismillahSurahLineByLine(text, paragraphCursor);
-      }
-
-      for (long l = from; l < to; l++) {
-        progressBar.setValue((int) (100 * l / (to - from + 1)));
+      if ((from == 1) && (selectedSurahNo != 1 && selectedSurahNo != 9)) {
         if (selectedArabicInd) {
-          writeParagraph(text,
-              paragraphCursor,
-              getAyahLine(surahNumber,
-                  l,
-                  selectedArabicLanguage,
-                  selectedArabicLanguageVersion,
-                  selectedArabicFontName),
-              selectedArabicLanguage,
-              selectedArabicFontName,
-              selectedArabicFontSize);
+          writeSentence(textCursor,
+              getBismillah(selectedArabicLanguage, selectedArabicLanguageVersion),
+              selectedArabicLanguage);
+          writeParagraphBreak(textCursor);
         }
         if (selectedTranslationInd) {
-          writeParagraph(text,
-              paragraphCursor,
-              getAyahLine(surahNumber,
-                  l,
-                  selectedTranslationLanguage,
-                  selectedTranslationLanguageVersion,
-                  selectedLatinFontName),
-              selectedTranslationLanguage,
-              getTranslationFontName(selectedTranslationLanguage),
-              getTranslationFontSize(selectedTranslationLanguage));
+          writeSentence(textCursor,
+              getBismillah(selectedTranslationLanguage, selectedTranslationLanguageVersion),
+              selectedTranslationLanguage);
+          writeParagraphBreak(textCursor);
         }
         if (selectedTransliterationInd) {
-          writeParagraph(text,
-              paragraphCursor,
-              getAyahLine(surahNumber,
-                  l,
-                  selectedTransliterationLanguage,
-                  selectedTransliterationLanguageVersion,
-                  selectedLatinFontName),
-              selectedTransliterationLanguage,
-              selectedLatinFontName,
-              selectedLatinFontSize);
+          writeSentence(textCursor,
+              getBismillah(selectedTransliterationLanguage, selectedTransliterationLanguageVersion),
+              selectedTransliterationLanguage);
+          writeParagraphBreak(textCursor);
         }
       }
-    } catch (com.sun.star.lang.IllegalArgumentException | UnknownPropertyException
-             | PropertyVetoException | WrappedTargetException e) {
+      for (int ayahno = from; ayahno < to; ayahno++) {
+        if (selectedArabicInd) {
+          writeSurahAyatTextLine(textCursor, ayahno, selectedArabicLanguage,
+              selectedArabicLanguageVersion);
+          writeParagraphBreak(textCursor);
+        }
+        if (selectedTranslationInd) {
+          writeSurahAyatTextLine(textCursor, ayahno, selectedTranslationLanguage,
+              selectedTranslationLanguageVersion);
+          writeParagraphBreak(textCursor);
+        }
+        if (selectedTransliterationInd) {
+          writeSurahAyatTextLine(textCursor, ayahno, selectedTransliterationLanguage,
+              selectedTransliterationLanguageVersion);
+          writeParagraphBreak(textCursor);
+        }
+        progressBar.setValue((100 * ayahno / (to - from)));
+      }
+
+    } catch (com.sun.star.lang.IllegalArgumentException e) {
       e.printStackTrace();
     }
   }
 
-  /**
-   * Write Bismillah lines.
-   *
-   * @param text            the text
-   * @param paragraphCursor the paragraph
-   */
-  private void writeBismillahSurahLineByLine(final XText text,
-      final XParagraphCursor paragraphCursor) {
+  private String transFonter(String text, String fontName) {
+
+    return text.replace("\u0652", fontAttrsLists.getFontSukun(fontName))
+        .replace("\u06DF", fontAttrsLists.getFontSmallHighRoundedZero(fontName));
+  }
+
+  private String getAyahNumber(final int ayahno, final String language) {
+    StringBuilder str = new StringBuilder();
+    if (isR2L(language)) {
+      str.append(ARABIC_RIGHT_PARENTHESIS);
+      str.append(numToAyatNumber(ayahno, selectedArabicFontName));
+      str.append(ARABIC_LEFT_PARENTHESIS);
+    } else {
+      str.append(LATIN_LEFT_PARENTHESIS);
+      str.append(ayahno);
+      str.append(LATIN_RIGHT_PARENTHESIS);
+    }
+    return str.toString();
+  }
+
+  private void writeSurahAyatTextBlock(XTextCursor textCursor, XProgressBar progressBar,
+      String language, String languageVersion) {
+    final int from = (selectedAyatAllInd) ? 1 : selectedAyatFrom;
+    final int to =
+        (selectedAyatAllInd) ? QuranReader.getSurahSize(selectedSurahNo) + 1 : selectedAyatTo + 1;
+
+    int progessbarstart = progressBar.getValue();
+
     try {
-      if (selectedArabicInd) {
-        writeParagraph(text,
-            paragraphCursor,
-            getBismillah(selectedArabicLanguage, selectedArabicLanguageVersion),
-            selectedArabicLanguage,
-            selectedArabicFontName,
-            selectedArabicFontSize);
+      final StringBuilder sentence = new StringBuilder();
+      for (int ayahno = from; ayahno < to; ayahno++) {
+        if ((ayahno == 1) && (selectedSurahNo != 1 && selectedSurahNo != 9)) {
+          sentence.append(getBismillah(language, languageVersion));
+          sentence.append("\n");
+        }
+        if (isR2L(language)) {
+          sentence.append(getAyahText(ayahno, language, languageVersion));
+          sentence.append(" ");
+          sentence.append(getAyahNumber(ayahno, language));
+          sentence.append(" ");
+        } else {
+          sentence.append(getAyahNumber(ayahno, language));
+          sentence.append(" ");
+          sentence.append(getAyahText(ayahno, language, languageVersion));
+          sentence.append(" ");
+        }
+        progressBar.setValue(progessbarstart + (50 * ayahno / (to - from)));
       }
-      if (selectedTranslationInd) {
-        writeParagraph(text,
-            paragraphCursor,
-            getBismillah(selectedTranslationLanguage, selectedTranslationLanguageVersion),
-            selectedTranslationLanguage,
-            getTranslationFontName(selectedTranslationLanguage),
-            getTranslationFontSize(selectedTranslationLanguage));
+      sentence.append("\n");
+      writeSentence(textCursor, sentence.toString(), language);
+      writeParagraphBreak(textCursor);
+    } catch (com.sun.star.lang.IllegalArgumentException e) {
+      e.printStackTrace();
+    }
+  }
+
+  private void writeParagraphBreak(XTextCursor textCursor) {
+    final XText text = textCursor.getText();
+    text.insertControlCharacter(textCursor, ControlCharacter.PARAGRAPH_BREAK, false);
+    textCursor.gotoEnd(false);
+  }
+
+  private void writeSurahAyatTextLine(XTextCursor textCursor, final int ayahno, String language,
+      String languageVersion) {
+    final StringBuilder sentence = new StringBuilder();
+    if (isR2L(language)) {
+      sentence.append(getAyahText(ayahno, language, languageVersion));
+      sentence.append(" ");
+      sentence.append(getAyahNumber(ayahno, language));
+      sentence.append(" ");
+      writeSentence(textCursor, sentence.toString(), language);
+    } else {
+      sentence.append(getAyahNumber(ayahno, language));
+      sentence.append(" ");
+      sentence.append(getAyahText(ayahno, language, languageVersion));
+      sentence.append(" ");
+      writeSentence(textCursor, sentence.toString(), language);
+    }
+  }
+
+  private void writeSentence(final XTextCursor textCursor, String sentence, String language) {
+    try {
+      final XPropertySet paragraphCursorPropertySet = DocumentHandler.getPropertySet(
+          UnoRuntime.queryInterface(XParagraphCursor.class,
+              textCursor));
+      if (isR2L(language)) {
+        paragraphCursorPropertySet.setPropertyValue("ParaAdjust", RIGHT);
+        paragraphCursorPropertySet.setPropertyValue("WritingMode", RL_TB);
+      } else {
+        paragraphCursorPropertySet.setPropertyValue("ParaAdjust", LEFT);
+        paragraphCursorPropertySet.setPropertyValue("WritingMode", LR_TB);
       }
-      if (selectedTransliterationInd) {
-        writeParagraph(text,
-            paragraphCursor,
-            getBismillah(selectedTransliterationLanguage,
-                selectedTransliterationLanguageVersion),
-            selectedTranslationLanguage,
-            selectedLatinFontName,
-            selectedLatinFontSize);
-      }
+
+      textCursor.setString(sentence);
+      textCursor.gotoEnd(false);
+
     } catch (com.sun.star.lang.IllegalArgumentException
              | UnknownPropertyException
              | PropertyVetoException
              | WrappedTargetException e) {
       e.printStackTrace();
     }
-  }
 
-  private String getTranslationFontName(String language) {
-
-    if (getLanguageFontType(language).equals("Latin")) {
-      return selectedLatinFontName;
-    } else {
-      return selectedArabicFontName;
-    }
-  }
-
-  private double getTranslationFontSize(String language) {
-    if (getLanguageFontType(language).equals("Latin")) {
-      return selectedLatinFontSize;
-    } else {
-      return selectedArabicFontSize;
-    }
   }
 }

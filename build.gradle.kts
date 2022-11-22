@@ -3,7 +3,7 @@ plugins {
 }
 
 group = "nl.mossoft.lo"
-version = "3.0.0"
+version = "3.1.0"
 
 repositories {
     mavenCentral()
@@ -12,6 +12,7 @@ repositories {
 dependencies {
     implementation("org.libreoffice:officebean:7.4.1")
     implementation("org.libreoffice:libreoffice:7.4.1")
+    testImplementation("org.testng:testng:7.6.1")
 }
 
 tasks.withType<Jar> {
@@ -105,7 +106,7 @@ tasks.register<Exec>("compileRDBfile") {
 }
 
 tasks.register<Zip>("prepareDistributionPackage") {
-    dependsOn("copyQuranDirForDeploy")
+     dependsOn("copyQuranDirForDeploy")
     dependsOn("copyDescriptionDirForDeploy")
     dependsOn("copyDescriptionXMLForDeploy")
     dependsOn("copyImagesDirForDeploy")
@@ -131,4 +132,10 @@ tasks.register<Exec>("InstallDistributionPackage") {
         "--suppress-license",
         "build/dist/${project.name}-${version}.oxt"
     )
+}
+
+tasks.test {
+    useTestNG {
+        preserveOrder = true
+    }
 }

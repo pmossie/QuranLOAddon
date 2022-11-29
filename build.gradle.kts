@@ -106,7 +106,7 @@ tasks.register<Exec>("compileRDBfile") {
 }
 
 tasks.register<Zip>("prepareDistributionPackage") {
-     dependsOn("copyQuranDirForDeploy")
+    dependsOn("copyQuranDirForDeploy")
     dependsOn("copyDescriptionDirForDeploy")
     dependsOn("copyDescriptionXMLForDeploy")
     dependsOn("copyImagesDirForDeploy")

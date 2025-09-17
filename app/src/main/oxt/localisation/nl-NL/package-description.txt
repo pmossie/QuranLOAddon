@@ -1,0 +1,4 @@
+Met deze add-on kun je de Arabische tekst van de Koran in je document invoegen,
+door een enkele aya of een reeks van ayat uit een soera te selecteren.
+
+Daarnaast heb je de mogelijkheid om meerdere vertalingen aan de tekst toe te voegen.

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<manifest:manifest xmlns:manifest="http://openoffice.org/2001/manifest">
+  <manifest:file-entry
+      manifest:media-type="application/vnd.sun.star.package-bundle-description;locale=en-US"
+      manifest:full-path="description.xml"
+  />
+  <manifest:file-entry
+      manifest:media-type="application/vnd.sun.star.uno-component;type=Java"
+      manifest:full-path="QuranLOAddon.jar"
+  />
+  <manifest:file-entry
+      manifest:media-type="application/vnd.sun.star.uno-typelibrary;type=RDB"
+      manifest:full-path="types.rdb"
+  />
+
+  <manifest:file-entry
+      manifest:media-type="application/vnd.sun.star.configuration-data"
+      manifest:full-path="registry/org/openoffice/Office/UI/WriterWindowState.xcu"
+  />
+  <manifest:file-entry
+      manifest:media-type="application/vnd.sun.star.configuration-data"
+      manifest:full-path="registry/org/openoffice/Office/Accelerators.xcu"
+  />
+  <manifest:file-entry
+      manifest:media-type="application/vnd.sun.star.configuration-data"
+      manifest:full-path="registry/org/openoffice/Office/Addons.xcu"
+  />
+</manifest:manifest>

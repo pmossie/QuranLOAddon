@@ -1,0 +1,11 @@
+# Ignore Intellij IDEA items
+.idea
+
+# Ignore Gradle project-specific cache directory
+.gradle
+
+# Ignore Gradle build output directory
+build
+app/build
+app/logs
+/app/src/main/oxt/images/MainDialog.png

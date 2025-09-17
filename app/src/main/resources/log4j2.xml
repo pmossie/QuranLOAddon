@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+    <Appenders>
+        <Console name="Console">
+            <PatternLayout
+                pattern="%d{DEFAULT} %-5level %C{1} [%t] %logger{1} - %msg%n" />
+        </Console>
+
+        <File name="File-Appender"
+            fileName="logs/${sys:LOG_FILE_NAME:-/QuranLOAddon.log}"
+            append="false">
+            <PatternLayout
+                pattern="%d{ISO8601} %-5level %C [%t] %logger{1} - %msg%n" />
+
+        </File>
+
+    </Appenders>
+
+    <Loggers>
+        <Root level="${sys:LOG_LEVEL:-DEBUG}">
+            <AppenderRef ref="File-Appender" />
+            <AppenderRef ref="Console" />
+        </Root>
+    </Loggers>
+</Configuration>

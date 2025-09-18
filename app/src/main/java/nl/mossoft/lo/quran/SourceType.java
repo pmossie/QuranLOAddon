@@ -18,7 +18,7 @@ package nl.mossoft.lo.quran;
 import java.util.stream.Stream;
 
 public enum SourceType {
-  ARABIC("Arabic"),
+  ORIGINAL("Original"),
   TRANSLATION("Translation"),
   TRANSLITERATION("Transliteration");
 

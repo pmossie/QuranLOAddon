@@ -28,6 +28,7 @@ public enum ConfigurationKeys {
   ARABIC_VERSION_CHECK_BOX_STATE("ArabicVersionCheckBoxState"),
   ARABIC_VERSION_LIST_BOX_ITEM_LIST("ArabicVersionListBoxItemList"),
   ARABIC_VERSION_LIST_BOX_ITEM_SELECTED("ArabicVersionListBoxItemSelected"),
+  ARABIC_VERSION_SELECTED("ArabicVersionSelected"),
   AYAT_FROM_NUMERIC_FIELD_MAX("AyatFromNumericFieldMax"),
   AYAT_FROM_NUMERIC_FIELD_MIN("AyatFromNumericFieldMin"),
   AYAT_FROM_NUMERIC_FIELD_VALUE("AyatFromNumericFieldValue"),
@@ -48,9 +49,11 @@ public enum ConfigurationKeys {
   TRANSLATION_VERSION_CHECK_BOX_STATE("TranslationVersionCheckBoxState"),
   TRANSLATION_VERSION_LIST_BOX_ITEM_LIST("TranslationVersionListBoxItemList"),
   TRANSLATION_VERSION_LIST_BOX_ITEM_SELECTED("TranslationVersionListBoxItemSelected"),
+  TRANSLATION_VERSION_SELECTED("TranslationVersionSelected"),
   TRANSLITERATION_VERSION_CHECK_BOX_STATE("TransliterationVersionCheckBoxState"),
   TRANSLITERATION_VERSION_LIST_BOX_ITEM_LIST("TransliterationVersionListBoxItemList"),
-  TRANSLITERATION_VERSION_LIST_BOX_ITEM_SELECTED("TransliterationVersionListBoxItemSelected");
+  TRANSLITERATION_VERSION_LIST_BOX_ITEM_SELECTED("TransliterationVersionListBoxItemSelected"),
+  TRANSLITERATION_VERSION_SELECTED("TransliterationVersionSelected");
 
   /* the name of the Configuration Key */
   private final String key;

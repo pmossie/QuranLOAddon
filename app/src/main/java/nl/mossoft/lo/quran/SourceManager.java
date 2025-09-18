@@ -31,7 +31,7 @@ public final class SourceManager {
 
   // Static block initializes the data once
   static {
-    addSource(SourceType.ARABIC, ARABIC, "Uthmani", "data/quran/QuranText.Arabic.Uthmani.xml");
+    addSource(SourceType.ORIGINAL, ARABIC, "Uthmani", "data/quran/QuranText.Arabic.Uthmani.xml");
     addSource(SourceType.TRANSLATION, DUTCH, "Leemhuis", "data/quran/QuranText.Dutch.Leemhuis.xml");
     addSource(SourceType.TRANSLATION, DUTCH, "Siregar", "data/quran/QuranText.Dutch.Siregar.xml");
     addSource(
@@ -49,7 +49,7 @@ public final class SourceManager {
     addSource(
         SourceType.TRANSLITERATION,
         ENGLISH,
-        "Tanzil.net",
+        "International",
         "data/quran/QuranText.English.Transliteration.xml");
 
     // Convert to immutable maps for safety

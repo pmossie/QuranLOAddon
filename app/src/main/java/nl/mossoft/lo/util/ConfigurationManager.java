@@ -17,8 +17,8 @@ package nl.mossoft.lo.util;
 
 import static nl.mossoft.lo.dialog.DialogHelper.getLocalizedSize;
 import static nl.mossoft.lo.dialog.UnoControlProperties.*;
+import static nl.mossoft.lo.quran.SourceManager.getSourceFilename;
 import static nl.mossoft.lo.quran.SourceType.*;
-import static nl.mossoft.lo.quran.SourceType.ARABIC;
 import static nl.mossoft.lo.util.ConfigurationKeys.*;
 
 import com.sun.star.beans.PropertyValue;
@@ -35,6 +35,7 @@ import java.util.Comparator;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
+import nl.mossoft.lo.quran.SourceLanguage;
 import nl.mossoft.lo.quran.SourceManager;
 import nl.mossoft.lo.quran.SurahManager;
 import org.slf4j.Logger;
@@ -51,7 +52,10 @@ public enum ConfigurationManager {
   private static final String ZERO = "0";
   private static final String HIGHEST_AYAT_NUMBER_AL_FATIHAH = "7";
   private static final String LOWEST_AYAT_NUMBER = "1";
+  private static final String DEFAULT_ARABIC_VERSION = "Uthmani";
   private static final String DEFAULT_SURAH = "Al-Fâtihah";
+  private static final String DEFAULT_TRANSLATION_VERSION = "Siregar";
+  private static final String DEFAULT_TRANSLITERATION_VERSION = "International";
 
   private static String DEFAULT_ARABIC_FONT;
   private static String DEFAULT_ARABIC_FONT_SIZE;
@@ -81,8 +85,11 @@ public enum ConfigurationManager {
     defaults.put(ARABIC_FONT_SIZE_COMBO_BOX_VALUE, DEFAULT_ARABIC_FONT_SIZE);
     defaults.put(ARABIC_VERSION_CHECK_BOX_STATE, TRUE);
     defaults.put(
-        ARABIC_VERSION_LIST_BOX_ITEM_LIST, SourceManager.getVersionsOfTypeAsString(ARABIC));
+        ARABIC_VERSION_LIST_BOX_ITEM_LIST, SourceManager.getVersionsOfTypeAsString(ORIGINAL));
     defaults.put(ARABIC_VERSION_LIST_BOX_ITEM_SELECTED, ZERO);
+    defaults.put(
+        ARABIC_VERSION_SELECTED,
+        getSourceFilename(ORIGINAL, SourceLanguage.ARABIC, DEFAULT_ARABIC_VERSION));
     defaults.put(AYAT_FROM_NUMERIC_FIELD_MAX, HIGHEST_AYAT_NUMBER_AL_FATIHAH);
     defaults.put(AYAT_FROM_NUMERIC_FIELD_MIN, LOWEST_AYAT_NUMBER);
     defaults.put(AYAT_FROM_NUMERIC_FIELD_VALUE, LOWEST_AYAT_NUMBER);
@@ -104,11 +111,18 @@ public enum ConfigurationManager {
         TRANSLATION_VERSION_LIST_BOX_ITEM_LIST,
         SourceManager.getVersionsOfTypeAsString(TRANSLATION));
     defaults.put(TRANSLATION_VERSION_LIST_BOX_ITEM_SELECTED, ONE);
+    defaults.put(
+        TRANSLATION_VERSION_SELECTED,
+        getSourceFilename(TRANSLATION, SourceLanguage.DUTCH, DEFAULT_TRANSLATION_VERSION));
     defaults.put(TRANSLITERATION_VERSION_CHECK_BOX_STATE, FALSE);
     defaults.put(
         TRANSLITERATION_VERSION_LIST_BOX_ITEM_LIST,
         SourceManager.getVersionsOfTypeAsString(TRANSLITERATION));
     defaults.put(TRANSLITERATION_VERSION_LIST_BOX_ITEM_SELECTED, ZERO);
+    defaults.put(
+        TRANSLITERATION_VERSION_SELECTED,
+        getSourceFilename(
+            TRANSLITERATION, SourceLanguage.ENGLISH, DEFAULT_TRANSLITERATION_VERSION));
     return defaults;
   }
 

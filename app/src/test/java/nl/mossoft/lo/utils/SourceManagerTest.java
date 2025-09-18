@@ -17,7 +17,7 @@ package nl.mossoft.lo.utils;
 
 import static nl.mossoft.lo.quran.SourceLanguage.*;
 import static nl.mossoft.lo.quran.SourceManager.getSourcesOfTypeAsArray;
-import static nl.mossoft.lo.quran.SourceType.TRANSLATION;
+import static nl.mossoft.lo.quran.SourceType.*;
 import static nl.mossoft.lo.quran.SurahManager.getSurahSize;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertTimeoutPreemptively;
@@ -73,10 +73,10 @@ public class SourceManagerTest {
 
   @Test
   void getSourcesOfTypeAsArray_transliteration_singleEntry() {
-    SourceInfo[] arr = getSourcesOfTypeAsArray(SourceType.TRANSLITERATION);
+    SourceInfo[] arr = getSourcesOfTypeAsArray(TRANSLITERATION);
     assertThat(arr).hasSize(1);
     assertThat(arr[0].language()).isEqualTo(ENGLISH);
-    assertThat(arr[0].version()).isEqualTo("Tanzil.net");
+    assertThat(arr[0].version()).isEqualTo("International");
     assertThat(arr[0].fileName()).isEqualTo("data/quran/QuranText.English.Transliteration.xml");
   }
 
@@ -130,14 +130,13 @@ public class SourceManagerTest {
 
   @Test
   void getSourceFilename_arabic_uthmani() {
-    String path = SourceManager.getSourceFilename(SourceType.ARABIC, ARABIC, "Uthmani");
+    String path = SourceManager.getSourceFilename(ORIGINAL, ARABIC, "Uthmani");
     assertThat(path).isEqualTo("data/quran/QuranText.Arabic.Uthmani.xml");
   }
 
   @Test
   void getSourceFilename_transliteration_tanzil() {
-    String path =
-        SourceManager.getSourceFilename(SourceType.TRANSLITERATION, ENGLISH, "Tanzil.net");
+    String path = SourceManager.getSourceFilename(TRANSLITERATION, ENGLISH, "International");
     assertThat(path).isEqualTo("data/quran/QuranText.English.Transliteration.xml");
   }
 

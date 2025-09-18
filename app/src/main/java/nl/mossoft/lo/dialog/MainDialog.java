@@ -25,6 +25,8 @@ import static nl.mossoft.lo.dialog.DialogHelper.*;
 import static nl.mossoft.lo.dialog.UnoControlProperties.*;
 import static nl.mossoft.lo.dialog.UnoOperations.*;
 import static nl.mossoft.lo.quran.SourceLanguage.*;
+import static nl.mossoft.lo.quran.SourceManager.getSourcesOfTypeAsArray;
+import static nl.mossoft.lo.quran.SourceType.*;
 import static nl.mossoft.lo.quran.SurahManager.getSurahName;
 import static nl.mossoft.lo.quran.SurahManager.getSurahSize;
 import static nl.mossoft.lo.util.ConfigurationKeys.*;
@@ -499,6 +501,9 @@ public class MainDialog extends BaseDialog {
 
     configManager.setConfig(
         TRANSLITERATION_VERSION_LIST_BOX_ITEM_SELECTED, String.valueOf(versionNo));
+    configManager.setConfig(
+        TRANSLITERATION_VERSION_SELECTED,
+        getSourcesOfTypeAsArray(TRANSLITERATION)[versionNo].fileName());
   }
 
   private void handleTransliterationVersionCheckButtonPressed(
@@ -546,6 +551,8 @@ public class MainDialog extends BaseDialog {
     int versionNo = listBox.getSelectedItemPos();
 
     configManager.setConfig(TRANSLATION_VERSION_LIST_BOX_ITEM_SELECTED, String.valueOf(versionNo));
+    configManager.setConfig(
+        TRANSLATION_VERSION_SELECTED, getSourcesOfTypeAsArray(TRANSLATION)[versionNo].fileName());
   }
 
   private void handleTranslationVersionCheckButtonPressed(XDialog xDialog, Object o, String event) {
@@ -590,6 +597,8 @@ public class MainDialog extends BaseDialog {
     int versionNo = listBox.getSelectedItemPos();
 
     configManager.setConfig(ARABIC_VERSION_LIST_BOX_ITEM_SELECTED, String.valueOf(versionNo));
+    configManager.setConfig(
+        ARABIC_VERSION_SELECTED, getSourcesOfTypeAsArray(ORIGINAL)[versionNo].fileName());
   }
 
   private void handleArabicVersionCheckButtonPressed(XDialog xDialog, Object o, String event) {
@@ -791,34 +800,30 @@ public class MainDialog extends BaseDialog {
     final XController controller = textDoc.getCurrentController();
     final XTextViewCursorSupplier textViewCursorSupplier = getCursorSupplier(controller);
     final XTextViewCursor textViewCursor = textViewCursorSupplier.getViewCursor();
-    /*
-     final XText text = textViewCursor.getText();
-    final XTextCursor textCursor = text.createTextCursorByRange(textViewCursor.getStart());
-       final XParagraphCursor paragraphCursor =
-            UnoRuntime.queryInterface(XParagraphCursor.class, textCursor);
-        final XPropertySet paragraphCursorPropertySet = getPropertySet(paragraphCursor);
 
-        paragraphCursorPropertySet.setPropertyValue(
-            "CharFontName", configManager.getConfig(LATIN_FONT_SELECTED));
-        paragraphCursorPropertySet.setPropertyValue(
-            "CharFontNameComplex", configManager.getConfig(ARABIC_FONT_SELECTED));
-        paragraphCursorPropertySet.setPropertyValue(
-            "CharHeight", parseDouble(configManager.getConfig(LATIN_FONT_SIZE_COMBO_BOX_VALUE)));
-        paragraphCursorPropertySet.setPropertyValue(
-            "CharHeightComplex",
-            parseDouble(configManager.getConfig(ARABIC_FONT_SIZE_COMBO_BOX_VALUE)));
-    */
     writeSurahTextBlock(surahNo, textViewCursor);
   }
 
   private void writeSurahTextBlock(int surahNo, XTextViewCursor textViewCursor)
       throws PropertyVetoException, WrappedTargetException, UnknownPropertyException {
 
+    //    try (QuranReader reader =
+    //             new QuranReader(getFilePath(getSourceFilename(SourceType.ARABIC,ARABIC,
+    //                 configManager.getConfig(ARABIC_VERSION_LIST_BOX_ITEM_SELECTED),ctx))) {
+    //
+    //    }
+
+    configManager.getConfig(ARABIC_VERSION_LIST_BOX_ITEM_SELECTED);
+
+    /*
     writeTextParagraph(textViewCursor, ARABIC, "مَآ أَغْنَىٰ عَنْهُ مَالُهُۥ وَمَا كَسَبَ");
     writeEndOfParagraph(textViewCursor, ARABIC);
+
     writeTextParagraph(
         textViewCursor, ENGLISH, "His wealth will not avail him or that which he gained.");
     writeEndOfParagraph(textViewCursor, ENGLISH);
+
+     */
   }
 
   private void writeTextParagraph(

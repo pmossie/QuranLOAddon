@@ -1,128 +1,166 @@
 /*
- * Copyright (c) 2020-2025. <mossie@mossoft.nl>
+ * Copyright (C) 2020-2024 <mossie@mossoft.nl>
  *
- * This is free software:  you can redistribute it and/or modify it under the terms of the  GNU
+ * This is free software: you can redistribute it and/or modify it under the terms of the GNU
  * General Public License as published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+ * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License along with this program.
- * If not, see <https://www.gnu.org/
+ * You should have received a copy of the GNU General Public License along with this program. If
+ * not, see <https://www.gnu.org/licenses/>.
  */
 
 package nl.mossoft.lo.util;
 
-import java.awt.*;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import com.sun.star.text.WritingMode2;
+import java.awt.Font;
+import java.awt.GraphicsEnvironment;
+import java.awt.HeadlessException;
+import java.util.*;
+import nl.mossoft.lo.quran.SourceLanguage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@SuppressWarnings("unused")
-public class FontManager {
+public final class FontManager {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(FontManager.class);
 
-  /** Cached lists to avoid redundant calculations. */
-  private static final List<String> ARABIC_FONTS = new ArrayList<>();
+  /** Frozen caches (never mutate after static init). */
+  private static final List<FontAttr> ARABIC_FONTS;
 
-  private static final List<String> LATIN_FONTS = new ArrayList<>();
+  private static final List<FontAttr> LATIN_FONTS;
+  private static final Map<String, FontAttr> BY_NAME;
 
   static {
-    initializeFonts();
-  }
+    List<FontAttr> arabic = new ArrayList<>();
+    List<FontAttr> latin = new ArrayList<>();
+    Map<String, FontAttr> byName = new HashMap<>();
 
-  /** Initializes Arabic and Latin fonts. */
-  private static void initializeFonts() {
-    GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-    String[] allFonts = ge.getAvailableFontFamilyNames();
+    try {
+      GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+      String[] allFonts = ge.getAvailableFontFamilyNames();
 
-    for (String font : allFonts) {
-      Font testFont = new Font(font, Font.PLAIN, 10);
-      if (testFont.canDisplay(0x0627)) { // Arabic character check
-        ARABIC_FONTS.add(font);
+      // Deterministic order
+      Arrays.sort(allFonts, String.CASE_INSENSITIVE_ORDER);
+
+      for (String font : allFonts) {
+        Font test = new Font(font, Font.PLAIN, 10);
+
+        // Arabic-supporting fonts
+        if (test.canDisplay(0x0627)) { // Arabic ALEF
+          FontAttr attr =
+              new FontAttr(
+                  font,
+                  fontNumberBase(SourceLanguage.ARABIC, font),
+                  // Parentheses & marks as code points
+                  pickCodePoint(
+                      test,
+                      font.contains("KFGQPC") ? ' ' : 0xFD3E,
+                      ')'), // ARABIC ORNATE LEFT PARENTHESIS
+                  pickCodePoint(
+                      test,
+                      font.contains("KFGQPC") ? ' ' : 0xFD3F,
+                      '('), // ARABIC ORNATE RIGHT PARENTHESIS
+                  pickCodePoint(test, 0x0652, 0), // SUKUN (optional)
+                  pickCodePoint(test, 0x06E0, 0) // ARABIC SMALL HIGH ROUNDED ZERO (optional)
+                  );
+          arabic.add(attr);
+          byName.putIfAbsent(font, attr);
+        }
+
+        // Latin-supporting fonts
+        if (test.canDisplay(0x0061)) { // 'a'
+          FontAttr attr =
+              new FontAttr(
+                  font,
+                  0x0030, // ASCII digits
+                  '(',
+                  ')',
+                  0,
+                  0 // not typically present / needed
+                  );
+          latin.add(attr);
+          byName.putIfAbsent(font, attr);
+        }
       }
-      if (testFont.canDisplay(0x0061)) { // Latin character check
-        LATIN_FONTS.add(font);
-      }
+
+    } catch (HeadlessException | SecurityException e) {
+      LOGGER.warn("Font discovery unavailable in this environment: {}", e.toString());
     }
+
+    // Freeze lists and map
+    ARABIC_FONTS = List.copyOf(arabic);
+    LATIN_FONTS = List.copyOf(latin);
+    BY_NAME = Map.copyOf(byName);
+  }
+
+  private FontManager() {}
+
+  /** Choose cp if displayable, else fallback (or 0 meaning 'absent'). */
+  private static int pickCodePoint(Font font, int cp, int fallbackIfMissing) {
+    return font.canDisplay(cp) ? cp : fallbackIfMissing;
   }
 
   /**
-   * Retrieves a list of fonts that support Arabic script.
-   *
-   * @return List of Arabic-supporting font names.
+   * Zero codepoint for the digit set to use with this font & language. Returns 0x0030 (ASCII) for
+   * LTR, or Arabic-Indic (0x0660) / Extended (0x06F0) if supported.
    */
+  static int fontNumberBase(SourceLanguage language, String fontName) {
+    if (language.wm() == WritingMode2.LR_TB) {
+      return 0x0030;
+    }
+    Font font = new Font(fontName, Font.PLAIN, 10);
+    if (font.canDisplay(0x0660)) return 0x0660; // Arabic-Indic digits
+    if (font.canDisplay(0x06F0)) return 0x06F0; // Extended Arabic-Indic
+    return 0x0030;
+  }
+
+  // ---------------------- Public API ----------------------
+
+  /** Fonts that support Arabic (frozen list, deterministically ordered). */
   public static List<String> getArabicSupportedFonts() {
-    return Collections.unmodifiableList(ARABIC_FONTS);
+    return ARABIC_FONTS.stream().map(FontAttr::fontName).toList();
   }
 
-  /**
-   * Retrieves a list of fonts that support Latin script.
-   *
-   * @return List of Latin-supporting font names.
-   */
+  /** Fonts that support Latin (frozen list, deterministically ordered). */
   public static List<String> getLatinSupportedFonts() {
-    return Collections.unmodifiableList(LATIN_FONTS);
+    return LATIN_FONTS.stream().map(FontAttr::fontName).toList();
   }
 
-  /**
-   * Retrieves the index of a font in the Arabic fonts list.
-   *
-   * @param fontName The name of the font.
-   * @return The index of the font in the Arabic font list, or -1 if not found.
-   */
-  public static int getFontIndexInArabicList(String fontName) {
-    return ARABIC_FONTS.indexOf(fontName);
-  }
-
-  /**
-   * Retrieves the index of a font in the Latin fonts list.
-   *
-   * @param fontName The name of the font.
-   * @return The index of the font in the Latin font list, or -1 if not found.
-   */
-  public static int getFontIndexInLatinList(String fontName) {
-    return LATIN_FONTS.indexOf(fontName);
-  }
-
-  /**
-   * Retrieves Arabic fonts as a comma-separated string.
-   *
-   * @return A string containing Arabic fonts, or "No Arabic fonts found".
-   */
-  public static String getArabicSupportedFontsAsString() {
-    return ARABIC_FONTS.isEmpty() ? "No Arabic fonts found" : String.join(", ", ARABIC_FONTS);
-  }
-
-  /**
-   * Retrieves Latin fonts as a comma-separated string.
-   *
-   * @return A string containing Latin fonts, or "No Latin fonts found".
-   */
-  public static String getLatinSupportedFontsAsString() {
-    return LATIN_FONTS.isEmpty() ? "No Latin fonts found" : String.join(", ", LATIN_FONTS);
-  }
-
-  /**
-   * Retrieves all Latin fonts as an array.
-   *
-   * @return An array of Latin font names.
-   */
   public static String[] getLatinSupportedFontsAsArray() {
-    return LATIN_FONTS.toArray(String[]::new);
+    return getLatinSupportedFonts().toArray(String[]::new);
   }
 
-  /**
-   * Retrieves all Arabic fonts as an array.
-   *
-   * @return An array of Arabic font names.
-   */
   public static String[] getArabicSupportedFontsAsArray() {
-    return ARABIC_FONTS.toArray(String[]::new);
+    return getArabicSupportedFonts().toArray(String[]::new);
+  }
+
+  public static String getArabicSupportedFontsAsString() {
+    if (ARABIC_FONTS.isEmpty()) return "No Arabic fonts found";
+    return String.join(", ", getArabicSupportedFonts());
+  }
+
+  public static String getLatinSupportedFontsAsString() {
+    if (LATIN_FONTS.isEmpty()) return "No Latin fonts found";
+    return String.join(", ", getLatinSupportedFonts());
+  }
+
+  public static int getFontIndexInArabicList(String fontName) {
+    Objects.requireNonNull(fontName, "fontName");
+    return getArabicSupportedFonts().indexOf(fontName);
+  }
+
+  public static int getFontIndexInLatinList(String fontName) {
+    Objects.requireNonNull(fontName, "fontName");
+    return getLatinSupportedFonts().indexOf(fontName);
+  }
+
+  /** Fast lookup: full attributes for a font if known. */
+  public static Optional<FontAttr> getFontAttrByName(String fontName) {
+    Objects.requireNonNull(fontName, "fontName");
+    return Optional.ofNullable(BY_NAME.get(fontName));
   }
 }

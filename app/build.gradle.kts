@@ -30,7 +30,7 @@ plugins {
     java
     jacoco
     id("com.gradleup.shadow") version "9.0.0-beta2"
-    id("com.diffplug.spotless") version "6.22.0"
+    id("com.diffplug.spotless") version "7.2.1"
     id("com.github.spotbugs") version "6.2.6"
 }
 

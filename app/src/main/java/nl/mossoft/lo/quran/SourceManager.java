@@ -117,7 +117,7 @@ public final class SourceManager {
    * @param type The SourceType to filter by.
    * @return An array of SourceInfo objects for the given SourceType, sorted by language.
    */
-  public static SourceInfo[] getSourcesOfTypeAsArray(SourceType type) {
+  public static SourceInfo[] getSourceInfoOfTypeAsArray(SourceType type) {
     List<SourceInfo> sources =
         new ArrayList<>(SOURCES_BY_TYPE.getOrDefault(type, Collections.emptyList()));
     sources.sort(
@@ -127,6 +127,6 @@ public final class SourceManager {
   }
 
   public static File getSourceUri(SourceType type, int version, XComponentContext ctx) {
-    return getFilePath(getSourcesOfTypeAsArray(type)[version].fileName(), ctx);
+    return getFilePath(getSourceInfoOfTypeAsArray(type)[version].fileName(), ctx);
   }
 }

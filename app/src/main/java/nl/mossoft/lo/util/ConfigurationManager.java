@@ -48,13 +48,13 @@ public enum ConfigurationManager {
 
   private static final String FALSE = "false";
   private static final String TRUE = "true";
-  private static final String ONE = "1";
+  private static final String THREE = "3";
   private static final String ZERO = "0";
   private static final String HIGHEST_AYAT_NUMBER_AL_FATIHAH = "7";
   private static final String LOWEST_AYAT_NUMBER = "1";
   private static final String DEFAULT_ARABIC_VERSION = "Uthmani";
   private static final String DEFAULT_SURAH = "Al-Fâtihah";
-  private static final String DEFAULT_TRANSLATION_VERSION = "Siregar";
+  private static final String DEFAULT_TRANSLATION_VERSION = "Sahih International";
   private static final String DEFAULT_TRANSLITERATION_VERSION = "International";
 
   private static String DEFAULT_ARABIC_FONT;
@@ -83,12 +83,13 @@ public enum ConfigurationManager {
         Integer.toString(FontManager.getFontIndexInArabicList(DEFAULT_ARABIC_FONT)));
     defaults.put(ARABIC_FONT_SELECTED, DEFAULT_ARABIC_FONT);
     defaults.put(ARABIC_FONT_SIZE_COMBO_BOX_VALUE, DEFAULT_ARABIC_FONT_SIZE);
+    defaults.put(ARABIC_LANGUAGE_SELECTED, SourceLanguage.ARABIC.id());
     defaults.put(ARABIC_VERSION_CHECK_BOX_STATE, TRUE);
     defaults.put(
         ARABIC_VERSION_LIST_BOX_ITEM_LIST, SourceManager.getVersionsOfTypeAsString(ORIGINAL));
     defaults.put(ARABIC_VERSION_LIST_BOX_ITEM_SELECTED, ZERO);
     defaults.put(
-        ARABIC_VERSION_SELECTED,
+        ARABIC_SOURCE_SELECTED,
         getSourceFilename(ORIGINAL, SourceLanguage.ARABIC, DEFAULT_ARABIC_VERSION));
     defaults.put(AYAT_FROM_NUMERIC_FIELD_MAX, HIGHEST_AYAT_NUMBER_AL_FATIHAH);
     defaults.put(AYAT_FROM_NUMERIC_FIELD_MIN, LOWEST_AYAT_NUMBER);
@@ -106,21 +107,23 @@ public enum ConfigurationManager {
     defaults.put(SURAH_LIST_BOX_ITEM_LIST, SurahManager.getAllSurahsAsString());
     defaults.put(SURAH_LIST_BOX_ITEM_SELECTED, ZERO);
     defaults.put(SURAH_SELECTED, DEFAULT_SURAH);
+    defaults.put(TRANSLATION_LANGUAGE_SELECTED, SourceLanguage.ENGLISH.id());
     defaults.put(TRANSLATION_VERSION_CHECK_BOX_STATE, FALSE);
     defaults.put(
         TRANSLATION_VERSION_LIST_BOX_ITEM_LIST,
         SourceManager.getVersionsOfTypeAsString(TRANSLATION));
-    defaults.put(TRANSLATION_VERSION_LIST_BOX_ITEM_SELECTED, ONE);
+    defaults.put(TRANSLATION_VERSION_LIST_BOX_ITEM_SELECTED, THREE);
     defaults.put(
-        TRANSLATION_VERSION_SELECTED,
-        getSourceFilename(TRANSLATION, SourceLanguage.DUTCH, DEFAULT_TRANSLATION_VERSION));
+        TRANSLATION_SOURCE_SELECTED,
+        getSourceFilename(TRANSLATION, SourceLanguage.ENGLISH, DEFAULT_TRANSLATION_VERSION));
+    defaults.put(TRANSLITERATION_LANGUAGE_SELECTED, SourceLanguage.ENGLISH.id());
     defaults.put(TRANSLITERATION_VERSION_CHECK_BOX_STATE, FALSE);
     defaults.put(
         TRANSLITERATION_VERSION_LIST_BOX_ITEM_LIST,
         SourceManager.getVersionsOfTypeAsString(TRANSLITERATION));
     defaults.put(TRANSLITERATION_VERSION_LIST_BOX_ITEM_SELECTED, ZERO);
     defaults.put(
-        TRANSLITERATION_VERSION_SELECTED,
+        TRANSLITERATION_SOURCE_SELECTED,
         getSourceFilename(
             TRANSLITERATION, SourceLanguage.ENGLISH, DEFAULT_TRANSLITERATION_VERSION));
     return defaults;

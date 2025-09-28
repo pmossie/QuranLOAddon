@@ -15,6 +15,7 @@
 
 package nl.mossoft.lo.dialog;
 
+import static com.sun.star.text.ControlCharacter.LINE_BREAK;
 import static com.sun.star.text.ControlCharacter.PARAGRAPH_BREAK;
 import static java.lang.Boolean.parseBoolean;
 import static java.lang.Double.parseDouble;
@@ -24,15 +25,14 @@ import static nl.mossoft.lo.dialog.DialogEvents.*;
 import static nl.mossoft.lo.dialog.DialogHelper.*;
 import static nl.mossoft.lo.dialog.UnoControlProperties.*;
 import static nl.mossoft.lo.dialog.UnoOperations.*;
-import static nl.mossoft.lo.quran.SourceLanguage.*;
-import static nl.mossoft.lo.quran.SourceManager.getSourcesOfTypeAsArray;
+import static nl.mossoft.lo.quran.SourceManager.getSourceInfoOfTypeAsArray;
 import static nl.mossoft.lo.quran.SourceType.*;
 import static nl.mossoft.lo.quran.SurahManager.getSurahName;
 import static nl.mossoft.lo.quran.SurahManager.getSurahSize;
 import static nl.mossoft.lo.util.ConfigurationKeys.*;
-import static nl.mossoft.lo.util.DocumentHelper.getLanguageWritingMode;
-import static nl.mossoft.lo.util.FontManager.getArabicSupportedFontsAsArray;
-import static nl.mossoft.lo.util.FontManager.getLatinSupportedFontsAsArray;
+import static nl.mossoft.lo.util.DocumentHelper.numToAyatNumber;
+import static nl.mossoft.lo.util.FileHelper.getFilePath;
+import static nl.mossoft.lo.util.FontManager.*;
 
 import com.sun.star.awt.*;
 import com.sun.star.beans.PropertyVetoException;
@@ -44,8 +44,12 @@ import com.sun.star.style.ParagraphAdjust;
 import com.sun.star.text.*;
 import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XComponentContext;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Optional;
-import nl.mossoft.lo.quran.SourceLanguage;
+import nl.mossoft.lo.quran.*;
+import nl.mossoft.lo.util.ConfigurationKeys;
+import nl.mossoft.lo.util.FontAttr;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -502,8 +506,14 @@ public class MainDialog extends BaseDialog {
     configManager.setConfig(
         TRANSLITERATION_VERSION_LIST_BOX_ITEM_SELECTED, String.valueOf(versionNo));
     configManager.setConfig(
-        TRANSLITERATION_VERSION_SELECTED,
-        getSourcesOfTypeAsArray(TRANSLITERATION)[versionNo].fileName());
+        TRANSLITERATION_LANGUAGE_SELECTED,
+        String.valueOf(
+            SourceManager.getSourceInfoOfTypeAsArray(SourceType.TRANSLITERATION)[versionNo]
+                .language()));
+
+    configManager.setConfig(
+        TRANSLITERATION_SOURCE_SELECTED,
+        getSourceInfoOfTypeAsArray(TRANSLITERATION)[versionNo].fileName());
   }
 
   private void handleTransliterationVersionCheckButtonPressed(
@@ -552,7 +562,12 @@ public class MainDialog extends BaseDialog {
 
     configManager.setConfig(TRANSLATION_VERSION_LIST_BOX_ITEM_SELECTED, String.valueOf(versionNo));
     configManager.setConfig(
-        TRANSLATION_VERSION_SELECTED, getSourcesOfTypeAsArray(TRANSLATION)[versionNo].fileName());
+        TRANSLATION_LANGUAGE_SELECTED,
+        String.valueOf(
+            SourceManager.getSourceInfoOfTypeAsArray(SourceType.TRANSLATION)[versionNo]
+                .language()));
+    configManager.setConfig(
+        TRANSLATION_SOURCE_SELECTED, getSourceInfoOfTypeAsArray(TRANSLATION)[versionNo].fileName());
   }
 
   private void handleTranslationVersionCheckButtonPressed(XDialog xDialog, Object o, String event) {
@@ -598,7 +613,7 @@ public class MainDialog extends BaseDialog {
 
     configManager.setConfig(ARABIC_VERSION_LIST_BOX_ITEM_SELECTED, String.valueOf(versionNo));
     configManager.setConfig(
-        ARABIC_VERSION_SELECTED, getSourcesOfTypeAsArray(ORIGINAL)[versionNo].fileName());
+        ARABIC_SOURCE_SELECTED, getSourceInfoOfTypeAsArray(ORIGINAL)[versionNo].fileName());
   }
 
   private void handleArabicVersionCheckButtonPressed(XDialog xDialog, Object o, String event) {
@@ -713,7 +728,8 @@ public class MainDialog extends BaseDialog {
       from.setValue(parseDouble(configManager.getConfig(AYAT_FROM_NUMERIC_FIELD_VALUE)));
 
     } else {
-      configManager.setConfig(AYAT_FROM_NUMERIC_FIELD_VALUE, String.valueOf(from.getValue()));
+      configManager.setConfig(
+          AYAT_FROM_NUMERIC_FIELD_VALUE, String.valueOf((int) Math.round(from.getValue())));
     }
   }
 
@@ -731,7 +747,8 @@ public class MainDialog extends BaseDialog {
       to.setValue(parseDouble(configManager.getConfig(AYAT_TO_NUMERIC_FIELD_VALUE)));
 
     } else {
-      configManager.setConfig(AYAT_TO_NUMERIC_FIELD_VALUE, String.valueOf(to.getValue()));
+      configManager.setConfig(
+          AYAT_TO_NUMERIC_FIELD_VALUE, String.valueOf((int) Math.round(to.getValue())));
     }
   }
 
@@ -800,74 +817,134 @@ public class MainDialog extends BaseDialog {
     final XController controller = textDoc.getCurrentController();
     final XTextViewCursorSupplier textViewCursorSupplier = getCursorSupplier(controller);
     final XTextViewCursor textViewCursor = textViewCursorSupplier.getViewCursor();
-
-    writeSurahTextBlock(surahNo, textViewCursor);
-  }
-
-  private void writeSurahTextBlock(int surahNo, XTextViewCursor textViewCursor)
-      throws PropertyVetoException, WrappedTargetException, UnknownPropertyException {
-
-    //    try (QuranReader reader =
-    //             new QuranReader(getFilePath(getSourceFilename(SourceType.ARABIC,ARABIC,
-    //                 configManager.getConfig(ARABIC_VERSION_LIST_BOX_ITEM_SELECTED),ctx))) {
-    //
-    //    }
-
-    configManager.getConfig(ARABIC_VERSION_LIST_BOX_ITEM_SELECTED);
-
-    /*
-    writeTextParagraph(textViewCursor, ARABIC, "مَآ أَغْنَىٰ عَنْهُ مَالُهُۥ وَمَا كَسَبَ");
-    writeEndOfParagraph(textViewCursor, ARABIC);
-
-    writeTextParagraph(
-        textViewCursor, ENGLISH, "His wealth will not avail him or that which he gained.");
-    writeEndOfParagraph(textViewCursor, ENGLISH);
-
-     */
-  }
-
-  private void writeTextParagraph(
-      XTextViewCursor textViewCursor, SourceLanguage language, String paragraph)
-      throws PropertyVetoException, WrappedTargetException, UnknownPropertyException {
-
     final XText text = textViewCursor.getText();
     final XTextCursor textCursor = text.createTextCursorByRange(textViewCursor.getStart());
+    final XParagraphCursor paragraphCursor =
+        UnoRuntime.queryInterface(XParagraphCursor.class, textCursor);
 
-    final XParagraphCursor paragraphCursor = getParagraphCursor(language, textCursor);
+    final XPropertySet paragraphCursorPropertySet = getPropertySet(paragraphCursor);
+    paragraphCursorPropertySet.setPropertyValue(
+        CHAR_FONT_NAME, configManager.getConfig(LATIN_FONT_SELECTED));
+    paragraphCursorPropertySet.setPropertyValue(
+        CHAR_HEIGHT, parseDouble(configManager.getConfig(LATIN_FONT_SIZE_COMBO_BOX_VALUE)));
+    paragraphCursorPropertySet.setPropertyValue(
+        CHAR_FONT_NAME_COMPLEX, configManager.getConfig(ARABIC_FONT_SELECTED));
+    paragraphCursorPropertySet.setPropertyValue(
+        CHAR_HEIGHT_COMPLEX,
+        parseDouble(configManager.getConfig(ARABIC_FONT_SIZE_COMBO_BOX_VALUE)));
+
+    LOGGER.debug("insertQuranText({}) Default Properties set", getSurahName(surahNo));
+
+    try {
+      writeSurahTextAsOneBlock(surahNo, paragraphCursorPropertySet, textViewCursor);
+    } catch (Exception e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  private void writeSurahTextAsOneBlock(
+      int surahNo, XPropertySet paragraphCursorPropertySet, XTextViewCursor textViewCursor)
+      throws Exception {
+    LOGGER.debug("writeSurahTextAsOneBlock({})", surahNo);
+
+    int from = parseInt(configManager.getConfig(AYAT_FROM_NUMERIC_FIELD_VALUE));
+    int to = parseInt(configManager.getConfig(AYAT_TO_NUMERIC_FIELD_VALUE));
+
+    if (parseBoolean(configManager.getConfig(ARABIC_VERSION_CHECK_BOX_STATE))) {
+      setParagraphDirection(paragraphCursorPropertySet, ARABIC_LANGUAGE_SELECTED);
+      writeParagraph(
+          textViewCursor,
+          getSurahTextBlock(surahNo, from, to, ARABIC_LANGUAGE_SELECTED, ARABIC_SOURCE_SELECTED));
+      writeEndOfParagraph(textViewCursor);
+    }
+
+    if (parseBoolean(configManager.getConfig(TRANSLATION_VERSION_CHECK_BOX_STATE))) {
+      setParagraphDirection(paragraphCursorPropertySet, TRANSLATION_LANGUAGE_SELECTED);
+      writeParagraph(
+          textViewCursor,
+          getSurahTextBlock(
+              surahNo, from, to, TRANSLATION_LANGUAGE_SELECTED, TRANSLATION_SOURCE_SELECTED));
+      writeEndOfParagraph(textViewCursor);
+    }
+
+    if (parseBoolean(configManager.getConfig(TRANSLITERATION_VERSION_CHECK_BOX_STATE))) {
+      setParagraphDirection(paragraphCursorPropertySet, TRANSLITERATION_LANGUAGE_SELECTED);
+      writeParagraph(
+          textViewCursor,
+          getSurahTextBlock(
+              surahNo,
+              from,
+              to,
+              TRANSLITERATION_LANGUAGE_SELECTED,
+              TRANSLITERATION_SOURCE_SELECTED));
+      writeEndOfParagraph(textViewCursor);
+    }
+  }
+
+  private String getSurahTextBlock(
+      int surahNo, int from, int to, ConfigurationKeys sourceLanguage, ConfigurationKeys source)
+      throws Exception {
+
+    try (QuranReader reader = new QuranReader(getFilePath(configManager.getConfig(source), ctx))) {
+      List<String> ayat = reader.getAyatFromToOfSuraNo(surahNo, from, to);
+
+      SourceLanguage language = SourceLanguage.fromId(configManager.getConfig(sourceLanguage));
+      short writingMode = language.wm();
+      String fontName =
+          (writingMode == WritingMode2.LR_TB)
+              ? configManager.getConfig(LATIN_FONT_SELECTED)
+              : configManager.getConfig(ARABIC_FONT_SELECTED);
+      FontAttr fa = getFontAttrByName(fontName).orElseThrow();
+
+      final StringBuilder paragraph = new StringBuilder();
+      int ayatNo = 1;
+      for (Iterator<String> it = ayat.iterator(); it.hasNext(); ayatNo++) {
+        if (writingMode == WritingMode2.LR_TB) {
+          paragraph.append(fa.leftParenthesisStr());
+          paragraph.append(numToAyatNumber(ayatNo, language, fontName));
+          paragraph.append(fa.rightParenthesisStr());
+          paragraph.append(' ');
+          paragraph.append(it.next());
+          paragraph.append(' ');
+        } else {
+          paragraph.append(it.next());
+          paragraph.append(fa.rightParenthesisStr());
+          paragraph.append(numToAyatNumber(ayatNo, language, fontName));
+          paragraph.append(fa.leftParenthesisStr());
+          paragraph.append(' ');
+        }
+      }
+      return paragraph.toString();
+    }
+  }
+
+  private void writeParagraph(XTextViewCursor textViewCursor, String paragraph) {
+    final XText text = textViewCursor.getText();
+    final XTextCursor textCursor = text.createTextCursorByRange(textViewCursor.getStart());
+    final XParagraphCursor paragraphCursor =
+        UnoRuntime.queryInterface(XParagraphCursor.class, textCursor);
     text.insertString(paragraphCursor, paragraph, false);
   }
 
-  private void writeEndOfParagraph(XTextViewCursor textViewCursor, SourceLanguage language)
-      throws PropertyVetoException, WrappedTargetException, UnknownPropertyException {
+  private void writeEndOfParagraph(XTextViewCursor textViewCursor) {
     final XText text = textViewCursor.getText();
     final XTextCursor textCursor = text.createTextCursorByRange(textViewCursor.getStart());
-
-    final XParagraphCursor paragraphCursor = getParagraphCursor(language, textCursor);
+    final XParagraphCursor paragraphCursor =
+        UnoRuntime.queryInterface(XParagraphCursor.class, textCursor);
+    text.insertControlCharacter(paragraphCursor, LINE_BREAK, false);
     text.insertControlCharacter(paragraphCursor, PARAGRAPH_BREAK, false);
   }
 
-  public XParagraphCursor getParagraphCursor(SourceLanguage language, XTextCursor textCursor)
+  public void setParagraphDirection(
+      XPropertySet paragraphCursorPropertySet, ConfigurationKeys languageKey)
       throws UnknownPropertyException, PropertyVetoException, WrappedTargetException {
-    final XParagraphCursor paragraphCursor =
-        UnoRuntime.queryInterface(XParagraphCursor.class, textCursor);
-    final XPropertySet paragraphCursorPropertySet = getPropertySet(paragraphCursor);
 
-    if (getLanguageWritingMode(language) == WritingMode2.LR_TB) {
+    if (SourceLanguage.fromId(configManager.getConfig(languageKey)).wm() == WritingMode2.LR_TB) {
       paragraphCursorPropertySet.setPropertyValue(PARA_ADJUST, ParagraphAdjust.LEFT);
       paragraphCursorPropertySet.setPropertyValue(WRITING_MODE, WritingMode2.LR_TB);
-      paragraphCursorPropertySet.setPropertyValue(
-          CHAR_FONT_NAME, configManager.getConfig(LATIN_FONT_SELECTED));
-      paragraphCursorPropertySet.setPropertyValue(
-          CHAR_HEIGHT, parseDouble(configManager.getConfig(LATIN_FONT_SIZE_COMBO_BOX_VALUE)));
     } else {
       paragraphCursorPropertySet.setPropertyValue(PARA_ADJUST, ParagraphAdjust.RIGHT);
       paragraphCursorPropertySet.setPropertyValue(WRITING_MODE, WritingMode2.RL_TB);
-      paragraphCursorPropertySet.setPropertyValue(
-          CHAR_FONT_NAME_COMPLEX, configManager.getConfig(ARABIC_FONT_SELECTED));
-      paragraphCursorPropertySet.setPropertyValue(
-          CHAR_HEIGHT_COMPLEX,
-          parseDouble(configManager.getConfig(ARABIC_FONT_SIZE_COMBO_BOX_VALUE)));
     }
-    return paragraphCursor;
   }
 }

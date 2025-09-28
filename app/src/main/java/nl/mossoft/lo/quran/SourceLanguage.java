@@ -15,19 +15,47 @@
 
 package nl.mossoft.lo.quran;
 
+import com.sun.star.text.WritingMode2;
+import java.util.HashMap;
+import java.util.Map;
+
 public enum SourceLanguage {
-  ARABIC("Arabic"),
-  DUTCH("Dutch"),
-  ENGLISH("English"),
-  INDONESIAN("Indonesian");
+  ARABIC("Arabic", WritingMode2.RL_TB),
+  DUTCH("Dutch", WritingMode2.LR_TB),
+  ENGLISH("English", WritingMode2.LR_TB),
+  INDONESIAN("Indonesian", WritingMode2.LR_TB);
+
+  private static final Map<String, SourceLanguage> BY_ID = new HashMap<>();
+
+  static {
+    for (SourceLanguage lang : values()) {
+      BY_ID.put(lang.id, lang);
+    }
+  }
 
   private final String id;
+  private final short wm;
 
-  SourceLanguage(String id) {
+  SourceLanguage(String id, short wm) {
     this.id = id;
+    this.wm = wm;
+  }
+
+  /**
+   * Lookup a SourceLanguage by its id string.
+   *
+   * @param id the id string (e.g. "Arabic")
+   * @return the matching SourceLanguage, or null if none matches
+   */
+  public static SourceLanguage fromId(String id) {
+    return BY_ID.get(id);
   }
 
   public String id() {
     return id;
+  }
+
+  public short wm() {
+    return wm;
   }
 }

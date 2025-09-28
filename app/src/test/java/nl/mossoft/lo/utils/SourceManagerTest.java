@@ -16,7 +16,7 @@
 package nl.mossoft.lo.utils;
 
 import static nl.mossoft.lo.quran.SourceLanguage.*;
-import static nl.mossoft.lo.quran.SourceManager.getSourcesOfTypeAsArray;
+import static nl.mossoft.lo.quran.SourceManager.getSourceInfoOfTypeAsArray;
 import static nl.mossoft.lo.quran.SourceType.*;
 import static nl.mossoft.lo.quran.SurahManager.getSurahSize;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -43,8 +43,8 @@ import org.mockito.MockedStatic;
 public class SourceManagerTest {
 
   @Test
-  void getSourcesOfTypeAsArray_translation_sortedAndContentOk() {
-    SourceInfo[] arr = getSourcesOfTypeAsArray(TRANSLATION);
+  void getSourceInfoOfTypeAsArray_translation_sortedAndContentOk() {
+    SourceInfo[] arr = getSourceInfoOfTypeAsArray(TRANSLATION);
 
     // Ensure it is sorted by language, then version
     // Expected order (lexicographic):
@@ -72,8 +72,8 @@ public class SourceManagerTest {
   }
 
   @Test
-  void getSourcesOfTypeAsArray_transliteration_singleEntry() {
-    SourceInfo[] arr = getSourcesOfTypeAsArray(TRANSLITERATION);
+  void getSourceInfoOfTypeAsArray_transliteration_singleEntry() {
+    SourceInfo[] arr = getSourceInfoOfTypeAsArray(TRANSLITERATION);
     assertThat(arr).hasSize(1);
     assertThat(arr[0].language()).isEqualTo(ENGLISH);
     assertThat(arr[0].version()).isEqualTo("International");
@@ -206,7 +206,7 @@ public class SourceManagerTest {
     return Arrays.stream(SourceType.values())
         .flatMap(
             type ->
-                Arrays.stream(SourceManager.getSourcesOfTypeAsArray(type))
+                Arrays.stream(SourceManager.getSourceInfoOfTypeAsArray(type))
                     .map(
                         si ->
                             org.junit.jupiter.params.provider.Arguments.of(

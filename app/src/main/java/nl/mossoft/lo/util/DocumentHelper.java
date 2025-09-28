@@ -1,21 +1,22 @@
 package nl.mossoft.lo.util;
 
-import static nl.mossoft.lo.quran.SourceLanguage.*;
-
-import java.util.LinkedHashMap;
-import java.util.Map;
 import nl.mossoft.lo.quran.SourceLanguage;
 
 public class DocumentHelper {
+  /**
+   * Returns the string representation of a number based on language and font.
+   *
+   * @param n number between 0-9
+   * @return number string
+   */
+  public static String numToAyatNumber(int n, SourceLanguage language, String fontName) {
+    final int base = FontManager.fontNumberBase(language, fontName);
 
-  public static short getLanguageWritingMode(final SourceLanguage language) {
-    final Map<SourceLanguage, Short> directionmap = new LinkedHashMap<>();
-
-    directionmap.put(ARABIC, com.sun.star.text.WritingMode2.RL_TB);
-    directionmap.put(DUTCH, com.sun.star.text.WritingMode2.LR_TB);
-    directionmap.put(ENGLISH, com.sun.star.text.WritingMode2.LR_TB);
-    directionmap.put(INDONESIAN, com.sun.star.text.WritingMode2.LR_TB);
-
-    return directionmap.getOrDefault(language, com.sun.star.text.WritingMode2.LR_TB);
+    final StringBuilder as = new StringBuilder();
+    while (n > 0) {
+      as.append(Character.toChars(base + (n % 10)));
+      n = n / 10;
+    }
+    return as.reverse().toString();
   }
 }

@@ -25,10 +25,11 @@ public enum ConfigurationKeys {
   ARABIC_FONT_WEIGHT_LIST_BOX_ITEM_SELECTED("ArabicFontWeightListBoxItemSelected"),
   ARABIC_FONT_SELECTED("ArabicFontSelected"),
   ARABIC_FONT_SIZE_COMBO_BOX_VALUE("ArabicFontSizeComboBoxValue"),
+  ARABIC_LANGUAGE_SELECTED("ArabicLanguageSelected"),
+  ARABIC_SOURCE_SELECTED("ArabicSourceSelected"),
   ARABIC_VERSION_CHECK_BOX_STATE("ArabicVersionCheckBoxState"),
   ARABIC_VERSION_LIST_BOX_ITEM_LIST("ArabicVersionListBoxItemList"),
   ARABIC_VERSION_LIST_BOX_ITEM_SELECTED("ArabicVersionListBoxItemSelected"),
-  ARABIC_VERSION_SELECTED("ArabicVersionSelected"),
   AYAT_FROM_NUMERIC_FIELD_MAX("AyatFromNumericFieldMax"),
   AYAT_FROM_NUMERIC_FIELD_MIN("AyatFromNumericFieldMin"),
   AYAT_FROM_NUMERIC_FIELD_VALUE("AyatFromNumericFieldValue"),
@@ -46,14 +47,16 @@ public enum ConfigurationKeys {
   SURAH_LIST_BOX_ITEM_LIST("SurahListBoxItemList"),
   SURAH_LIST_BOX_ITEM_SELECTED("SurahListBoxItemSelected"),
   SURAH_SELECTED("SurahSelected"),
+  TRANSLATION_LANGUAGE_SELECTED("TranslationLanguageSelected"),
+  TRANSLATION_SOURCE_SELECTED("TranslationSourceSelected"),
   TRANSLATION_VERSION_CHECK_BOX_STATE("TranslationVersionCheckBoxState"),
   TRANSLATION_VERSION_LIST_BOX_ITEM_LIST("TranslationVersionListBoxItemList"),
   TRANSLATION_VERSION_LIST_BOX_ITEM_SELECTED("TranslationVersionListBoxItemSelected"),
-  TRANSLATION_VERSION_SELECTED("TranslationVersionSelected"),
+  TRANSLITERATION_LANGUAGE_SELECTED("TransliterationLanguageSelected"),
+  TRANSLITERATION_SOURCE_SELECTED("TransliterationSourceSelected"),
   TRANSLITERATION_VERSION_CHECK_BOX_STATE("TransliterationVersionCheckBoxState"),
   TRANSLITERATION_VERSION_LIST_BOX_ITEM_LIST("TransliterationVersionListBoxItemList"),
-  TRANSLITERATION_VERSION_LIST_BOX_ITEM_SELECTED("TransliterationVersionListBoxItemSelected"),
-  TRANSLITERATION_VERSION_SELECTED("TransliterationVersionSelected");
+  TRANSLITERATION_VERSION_LIST_BOX_ITEM_SELECTED("TransliterationVersionListBoxItemSelected");
 
   /* the name of the Configuration Key */
   private final String key;

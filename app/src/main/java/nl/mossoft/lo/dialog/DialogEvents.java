@@ -39,6 +39,7 @@ public enum DialogEvents {
   ON_AYAT_FROM_NUMERIC_FIELD_VALUE_CHANGED("onAyatFromNumericFieldValueChanged"),
   ON_AYAT_FROM_NUMERIC_FIELD_VALUE_UPDATED("onAyatFromNumericFieldValueUpdated"),
   ON_AYAT_RANGE_LABEL_PROPERTY_ENABLED_TO_BE_CHANGED("onAyatRangeLabelPropertyEnabledToBeChanged"),
+  ON_AYAT_PER_LINE_CHECK_BUTTON_PRESSED("onAyatPerLineCheckButtonPressed"),
   ON_AYAT_RANGE_SEPARATOR_LABEL_PROPERTY_ENABLED_TO_BE_CHANGED(
       "onAyatRangeSeparatorLabelPropertyEnabledToBeChanged"),
   ON_AYAT_TO_NUMERIC_FIELD_PROPERTY_ENABLED_TO_BE_CHANGED(

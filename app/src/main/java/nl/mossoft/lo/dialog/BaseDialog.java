@@ -27,6 +27,7 @@ import nl.mossoft.lo.util.ConfigurationManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/** the bases for the extension dialogs */
 public abstract class BaseDialog extends WeakBase implements XDialogEventHandler {
   private static final Logger LOGGER = LoggerFactory.getLogger(BaseDialog.class);
 

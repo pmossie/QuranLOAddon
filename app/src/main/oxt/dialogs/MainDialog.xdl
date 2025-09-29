@@ -404,6 +404,34 @@
       <dlg:title dlg:value="&amp;MiscellaneousGroupBox.title"/>
     </dlg:titledbox>
 
+    <dlg:text
+        dlg:id="AyatPerLineLabel"
+        dlg:align="right"
+        dlg:height="10"
+        dlg:left="157"
+        dlg:top="69"
+        dlg:valign="center"
+        dlg:value="&amp;AyatPerLineLabel.value"
+        dlg:width="55">
+    </dlg:text>
+
+    <dlg:checkbox
+        dlg:id="AyatPerLineCheckBox"
+        dlg:align="center"
+        dlg:checked="false"
+        dlg:height="10"
+        dlg:left="213"
+        dlg:top="69"
+        dlg:valign="center"
+        dlg:value=""
+        dlg:width="10">
+      <script:event
+          script:event-name="on-performaction"
+          script:language="UNO"
+          script:macro-name="vnd.sun.star.UNO:onAyatPerLineCheckButtonPressed"/>
+    </dlg:checkbox>
+
+
     <dlg:titledbox
         dlg:id="ButtonGroupBox"
         dlg:height="23"

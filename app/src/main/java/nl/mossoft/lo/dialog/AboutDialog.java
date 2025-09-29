@@ -23,6 +23,7 @@ import com.sun.star.uno.XComponentContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/** Creates the AboutDialog */
 public class AboutDialog extends BaseDialog {
   private static final Logger LOGGER = LoggerFactory.getLogger(AboutDialog.class);
 

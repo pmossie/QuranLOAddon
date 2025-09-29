@@ -102,7 +102,7 @@ public final class QuranReader implements AutoCloseable {
       throw new IllegalArgumentException("fromAyah must be <= toAyah");
     }
 
-    List<String> result = new ArrayList<>(toAyah - fromAyah + 1);
+    List<String> result = new ArrayList<>();
     for (int ayah = fromAyah; ayah <= toAyah; ayah++) {
       result.add(getAyahNoOfSurahNo(suraNo, ayah)); // will throw if not found
     }

@@ -108,7 +108,7 @@ public final class FontManager {
    * Zero codepoint for the digit set to use with this font & language. Returns 0x0030 (ASCII) for
    * LTR, or Arabic-Indic (0x0660) / Extended (0x06F0) if supported.
    */
-  static int fontNumberBase(SourceLanguage language, String fontName) {
+  public static int fontNumberBase(SourceLanguage language, String fontName) {
     if (language.wm() == WritingMode2.LR_TB) {
       return 0x0030;
     }

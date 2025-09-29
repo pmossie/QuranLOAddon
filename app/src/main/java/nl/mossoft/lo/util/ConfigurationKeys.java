@@ -33,6 +33,7 @@ public enum ConfigurationKeys {
   AYAT_FROM_NUMERIC_FIELD_MAX("AyatFromNumericFieldMax"),
   AYAT_FROM_NUMERIC_FIELD_MIN("AyatFromNumericFieldMin"),
   AYAT_FROM_NUMERIC_FIELD_VALUE("AyatFromNumericFieldValue"),
+  AYAT_PER_LINE_CHECK_BOX_STATE("AyatPerLineCheckBoxState"),
   AYAT_TO_NUMERIC_FIELD_MAX("AyatToNumericFieldMax"),
   AYAT_TO_NUMERIC_FIELD_MIN("AyatToNumericFieldMin"),
   AYAT_TO_NUMERIC_FIELD_VALUE("AyatToNumericFieldValue"),

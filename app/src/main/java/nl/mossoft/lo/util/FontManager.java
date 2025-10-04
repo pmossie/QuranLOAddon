@@ -34,6 +34,18 @@ public final class FontManager {
   private static final List<FontAttr> LATIN_FONTS;
   private static final Map<String, FontAttr> BY_NAME;
 
+  private static final int ARABIC_INDIC_DIGIT_ZERO = 0x0660;
+  private static final int ARABIC_SUKUN = 0x0652;
+  private static final int ARABIC_SMALL_DOTLESS_HEAD_OF_KHAH = 0x06E1;
+  private static final int ARABIC_SMALL_HIGH_ROUNDED_ZERO = 0x06DF;
+  private static final int DIGIT_ZERO = 0x0030;
+  private static final int EXTENDED_ARABIC_INDIC_DIGIT_ZERO = 0x06F0;
+  private static final int ORNATE_LEFT_PARENTHESIS = 0xFD3E;
+  private static final int ORNATE_RIGHT_PARENTHESIS = 0xFD3F;
+
+  private static final String ARABIC_SMALL_HIGH_ROUNDED_ZERO_STR = "۟";
+  private static final String ARABIC_SUKUN_STR = "ْ";
+
   static {
     List<FontAttr> arabic = new ArrayList<>();
     List<FontAttr> latin = new ArrayList<>();
@@ -58,14 +70,19 @@ public final class FontManager {
                   // Parentheses & marks as code points
                   pickCodePoint(
                       test,
-                      font.contains("KFGQPC") ? ' ' : 0xFD3E,
+                      font.contains("KFGQPC") ? ' ' : ORNATE_LEFT_PARENTHESIS,
                       ')'), // ARABIC ORNATE LEFT PARENTHESIS
                   pickCodePoint(
                       test,
-                      font.contains("KFGQPC") ? ' ' : 0xFD3F,
+                      font.contains("KFGQPC") ? ' ' : ORNATE_RIGHT_PARENTHESIS,
                       '('), // ARABIC ORNATE RIGHT PARENTHESIS
-                  pickCodePoint(test, 0x0652, 0), // SUKUN (optional)
-                  pickCodePoint(test, 0x06E0, 0) // ARABIC SMALL HIGH ROUNDED ZERO (optional)
+                  pickCodePoint(
+                      test, ARABIC_SMALL_DOTLESS_HEAD_OF_KHAH, ARABIC_SUKUN), // SUKUN (optional)
+                  pickCodePoint(
+                      test,
+                      font.contains("KFGQPC") ? ARABIC_SUKUN : ARABIC_SMALL_HIGH_ROUNDED_ZERO,
+                      0) // ARABIC SMALL HIGH ROUNDED ZERO
+                  // (optional)
                   );
           arabic.add(attr);
           byName.putIfAbsent(font, attr);
@@ -110,12 +127,14 @@ public final class FontManager {
    */
   public static int fontNumberBase(SourceLanguage language, String fontName) {
     if (language.wm() == WritingMode2.LR_TB) {
-      return 0x0030;
+      return DIGIT_ZERO;
     }
     Font font = new Font(fontName, Font.PLAIN, 10);
-    if (font.canDisplay(0x0660)) return 0x0660; // Arabic-Indic digits
-    if (font.canDisplay(0x06F0)) return 0x06F0; // Extended Arabic-Indic
-    return 0x0030;
+    if (font.canDisplay(ARABIC_INDIC_DIGIT_ZERO))
+      return ARABIC_INDIC_DIGIT_ZERO; // Arabic-Indic digits
+    if (font.canDisplay(EXTENDED_ARABIC_INDIC_DIGIT_ZERO))
+      return EXTENDED_ARABIC_INDIC_DIGIT_ZERO; // Extended Arabic-Indic
+    return DIGIT_ZERO;
   }
 
   // ---------------------- Public API ----------------------
@@ -156,6 +175,13 @@ public final class FontManager {
   public static int getFontIndexInLatinList(String fontName) {
     Objects.requireNonNull(fontName, "fontName");
     return getLatinSupportedFonts().indexOf(fontName);
+  }
+
+  public static String transFonter(String text, String fontName) {
+    return text.replace(ARABIC_SUKUN_STR, getFontAttrByName(fontName).orElseThrow().sukunStr())
+        .replace(
+            ARABIC_SMALL_HIGH_ROUNDED_ZERO_STR,
+            getFontAttrByName(fontName).orElseThrow().highRoundedZeroStr());
   }
 
   /** Fast lookup: full attributes for a font if known. */

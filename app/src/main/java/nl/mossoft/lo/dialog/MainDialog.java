@@ -926,10 +926,10 @@ public class MainDialog extends BaseDialog {
         paragraph.append(numToAyatNumber(ayatNo, language, fontName));
         paragraph.append(fa.rightParenthesisStr());
         paragraph.append(' ');
-        paragraph.append(ayat);
+        paragraph.append(transFonter(ayat, fontName));
         paragraph.append(' ');
       } else {
-        paragraph.append(ayat);
+        paragraph.append(transFonter(ayat, fontName));
         paragraph.append(fa.rightParenthesisStr());
         paragraph.append(numToAyatNumber(ayatNo, language, fontName));
         paragraph.append(fa.leftParenthesisStr());
@@ -1048,10 +1048,10 @@ public class MainDialog extends BaseDialog {
           paragraph.append(numToAyatNumber(ayatNo, language, fontName));
           paragraph.append(fa.rightParenthesisStr());
           paragraph.append(' ');
-          paragraph.append(it.next());
+          paragraph.append(transFonter(it.next(), fontName));
           paragraph.append(' ');
         } else {
-          paragraph.append(it.next());
+          paragraph.append(transFonter(it.next(), fontName));
           paragraph.append(fa.rightParenthesisStr());
           paragraph.append(numToAyatNumber(ayatNo, language, fontName));
           paragraph.append(fa.leftParenthesisStr());

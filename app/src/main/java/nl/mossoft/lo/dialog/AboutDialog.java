@@ -59,7 +59,7 @@ public class AboutDialog extends BaseDialog {
    *
    * @return the copyright string
    */
-  private String getCopyright() {
+  private static String getCopyright() {
     return "Copyright © 2020-" + getBuildTimestamp().substring(0, 4) + " <mossie@mossoft.nl>";
   }
 
@@ -73,7 +73,7 @@ public class AboutDialog extends BaseDialog {
    *
    * @return the build string
    */
-  private String getBuildTimestamp() {
+  private static String getBuildTimestamp() {
     return AboutDialog.class.getPackage().getImplementationVersion().split("-")[1];
   }
 
@@ -87,7 +87,7 @@ public class AboutDialog extends BaseDialog {
    *
    * @return the version string
    */
-  private String getVersion() {
+  private static String getVersion() {
     return AboutDialog.class.getPackage().getImplementationVersion().split("-")[0];
   }
 
@@ -97,7 +97,10 @@ public class AboutDialog extends BaseDialog {
         DialogEvents.ON_ABOUT_DIALOG_CLOSE_BUTTON_CLICKED, this::handleCloseButtonClicked);
   }
 
-  private void handleCloseButtonClicked(XDialog dialog, Object args, String event) {
+  private void handleCloseButtonClicked(
+      XDialog dialog,
+      @SuppressWarnings("unused") Object args,
+      @SuppressWarnings("unused") String event) {
     LOGGER.debug(HANDLE_CLOSE_BUTTON_CLICKED + "()");
     dialog.endExecute();
   }

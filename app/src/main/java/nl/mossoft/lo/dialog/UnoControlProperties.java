@@ -31,6 +31,9 @@ public final class UnoControlProperties {
   public static final String CHAR_FONT_NAME_COMPLEX = "CharFontNameComplex";
   public static final String CHAR_HEIGHT = "CharHeight";
   public static final String CHAR_HEIGHT_COMPLEX = "CharHeightComplex";
+  public static final String CHAR_LOCALE = "CharLocale";
+  public static final String CHAR_LOCALE_COMPLEX = "CharLocaleComplex";
+  public static final String CHAR_NO_SPELL_CHECK = "CharNoSpellCheck";
   public static final String CHAR_POSTURE = "CharPosture";
   public static final String DECIMAL_ACCURACY = "DecimalAccuracy";
   public static final String DROPDOWN = "Dropdown";

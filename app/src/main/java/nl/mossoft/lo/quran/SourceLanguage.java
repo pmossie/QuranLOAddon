@@ -15,15 +15,16 @@
 
 package nl.mossoft.lo.quran;
 
+import com.sun.star.lang.Locale;
 import com.sun.star.text.WritingMode2;
 import java.util.HashMap;
 import java.util.Map;
 
 public enum SourceLanguage {
-  ARABIC("Arabic", WritingMode2.RL_TB),
-  DUTCH("Dutch", WritingMode2.LR_TB),
-  ENGLISH("English", WritingMode2.LR_TB),
-  INDONESIAN("Indonesian", WritingMode2.LR_TB);
+  ARABIC("Arabic", WritingMode2.RL_TB, makeUnoLocale("ar", "SA")),
+  DUTCH("Dutch", WritingMode2.LR_TB, makeUnoLocale("nl", "NL")),
+  ENGLISH("English", WritingMode2.LR_TB, makeUnoLocale("en", "US")),
+  INDONESIAN("Indonesian", WritingMode2.LR_TB, makeUnoLocale("id", "ID"));
 
   private static final Map<String, SourceLanguage> BY_ID = new HashMap<>();
 
@@ -35,10 +36,12 @@ public enum SourceLanguage {
 
   private final String id;
   private final short wm;
+  private final Locale locale;
 
-  SourceLanguage(String id, short wm) {
+  SourceLanguage(String id, short wm, Locale locale) {
     this.id = id;
     this.wm = wm;
+    this.locale = locale;
   }
 
   /**
@@ -51,11 +54,23 @@ public enum SourceLanguage {
     return BY_ID.get(id);
   }
 
+  public static Locale makeUnoLocale(String lang, String country) {
+    Locale loc = new Locale();
+    loc.Language = lang;
+    loc.Country = country;
+    loc.Variant = "";
+    return loc;
+  }
+
   public String id() {
     return id;
   }
 
   public short wm() {
     return wm;
+  }
+
+  public Locale locale() {
+    return locale;
   }
 }

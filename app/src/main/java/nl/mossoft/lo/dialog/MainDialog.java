@@ -25,6 +25,7 @@ import static nl.mossoft.lo.dialog.DialogEvents.*;
 import static nl.mossoft.lo.dialog.DialogHelper.*;
 import static nl.mossoft.lo.dialog.UnoControlProperties.*;
 import static nl.mossoft.lo.dialog.UnoOperations.*;
+import static nl.mossoft.lo.quran.SourceLanguage.makeUnoLocale;
 import static nl.mossoft.lo.quran.SourceManager.getSourceInfoOfTypeAsArray;
 import static nl.mossoft.lo.quran.SourceType.*;
 import static nl.mossoft.lo.quran.SurahManager.getSurahName;
@@ -38,6 +39,7 @@ import com.sun.star.beans.PropertyVetoException;
 import com.sun.star.beans.UnknownPropertyException;
 import com.sun.star.beans.XPropertySet;
 import com.sun.star.frame.XController;
+import com.sun.star.lang.Locale;
 import com.sun.star.lang.WrappedTargetException;
 import com.sun.star.style.ParagraphAdjust;
 import com.sun.star.text.*;
@@ -45,6 +47,7 @@ import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XComponentContext;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import nl.mossoft.lo.quran.QuranReader;
 import nl.mossoft.lo.quran.SourceLanguage;
@@ -60,7 +63,6 @@ public class MainDialog extends BaseDialog {
   /* Controls */
   public static final String ALL_AYAT_CHECK_BOX = "AllAyatCheckBox";
   public static final String ARABIC_FONT_BOLD_BUTTON = "ArabicFontBoldButton";
-
   public static final String ARABIC_FONT_LIST_BOX = "ArabicFontListBox";
   public static final String ARABIC_FONT_SIZE_COMBO_BOX = "ArabicFontSizeComboBox";
   public static final String ARABIC_VERSION_CHECK_BOX = "ArabicVersionCheckBox";
@@ -517,7 +519,8 @@ public class MainDialog extends BaseDialog {
         TRANSLITERATION_LANGUAGE_SELECTED,
         String.valueOf(
             SourceManager.getSourceInfoOfTypeAsArray(SourceType.TRANSLITERATION)[versionNo]
-                .language()));
+                .language()
+                .id()));
 
     configManager.setConfig(
         TRANSLITERATION_SOURCE_SELECTED,
@@ -573,7 +576,8 @@ public class MainDialog extends BaseDialog {
         TRANSLATION_LANGUAGE_SELECTED,
         String.valueOf(
             SourceManager.getSourceInfoOfTypeAsArray(SourceType.TRANSLATION)[versionNo]
-                .language()));
+                .language()
+                .id()));
     configManager.setConfig(
         TRANSLATION_SOURCE_SELECTED, getSourceInfoOfTypeAsArray(TRANSLATION)[versionNo].fileName());
   }
@@ -879,14 +883,16 @@ public class MainDialog extends BaseDialog {
 
     for (int a = from; a <= to; a++) {
       if (arabic) {
-        setParagraphDirection(paragraphCursorPropertySet, ARABIC_LANGUAGE_SELECTED);
+        setParagraphDirectionSpellCheckLanguage(
+            paragraphCursorPropertySet, ARABIC_LANGUAGE_SELECTED, true);
         writeParagraph(
             textViewCursor,
             getSurahAyatText(surahNo, a, ARABIC_LANGUAGE_SELECTED, ARABIC_SOURCE_SELECTED));
         writeEndOfParagraph(textViewCursor);
       }
       if (transliteration) {
-        setParagraphDirection(paragraphCursorPropertySet, TRANSLITERATION_LANGUAGE_SELECTED);
+        setParagraphDirectionSpellCheckLanguage(
+            paragraphCursorPropertySet, TRANSLITERATION_LANGUAGE_SELECTED, false);
         writeParagraph(
             textViewCursor,
             getSurahAyatText(
@@ -895,7 +901,8 @@ public class MainDialog extends BaseDialog {
       }
 
       if (translation) {
-        setParagraphDirection(paragraphCursorPropertySet, TRANSLATION_LANGUAGE_SELECTED);
+        setParagraphDirectionSpellCheckLanguage(
+            paragraphCursorPropertySet, TRANSLATION_LANGUAGE_SELECTED, true);
         writeParagraph(
             textViewCursor,
             getSurahAyatText(
@@ -961,28 +968,58 @@ public class MainDialog extends BaseDialog {
     final XTextCursor textCursor = text.createTextCursorByRange(textViewCursor.getStart());
     final XParagraphCursor paragraphCursor =
         UnoRuntime.queryInterface(XParagraphCursor.class, textCursor);
+
     text.insertString(paragraphCursor, paragraph, false);
   }
 
   private void writeEndOfParagraph(XTextViewCursor textViewCursor) {
     final XText text = textViewCursor.getText();
     final XTextCursor textCursor = text.createTextCursorByRange(textViewCursor.getStart());
+
     final XParagraphCursor paragraphCursor =
         UnoRuntime.queryInterface(XParagraphCursor.class, textCursor);
     text.insertControlCharacter(paragraphCursor, LINE_BREAK, false);
     text.insertControlCharacter(paragraphCursor, PARAGRAPH_BREAK, false);
   }
 
-  public void setParagraphDirection(
-      XPropertySet paragraphCursorPropertySet, ConfigurationKeys languageKey)
-      throws UnknownPropertyException, PropertyVetoException, WrappedTargetException {
+  public void setParagraphDirectionSpellCheckLanguage(
+      final XPropertySet props,
+      final ConfigurationKeys languageKey,
+      final boolean enableSpellCheck) {
 
-    if (SourceLanguage.fromId(configManager.getConfig(languageKey)).wm() == WritingMode2.LR_TB) {
-      paragraphCursorPropertySet.setPropertyValue(PARA_ADJUST, ParagraphAdjust.LEFT);
-      paragraphCursorPropertySet.setPropertyValue(WRITING_MODE, WritingMode2.LR_TB);
-    } else {
-      paragraphCursorPropertySet.setPropertyValue(PARA_ADJUST, ParagraphAdjust.RIGHT);
-      paragraphCursorPropertySet.setPropertyValue(WRITING_MODE, WritingMode2.RL_TB);
+    Objects.requireNonNull(props, "paragraphCursorPropertySet must not be null");
+
+    final SourceLanguage srcLang = SourceLanguage.fromId(configManager.getConfig(languageKey));
+    final boolean isLeftToRight = srcLang.wm() == WritingMode2.LR_TB;
+
+    try {
+      // Paragraph alignment and writing mode
+      props.setPropertyValue(
+          PARA_ADJUST, isLeftToRight ? ParagraphAdjust.LEFT : ParagraphAdjust.RIGHT);
+      props.setPropertyValue(WRITING_MODE, isLeftToRight ? WritingMode2.LR_TB : WritingMode2.RL_TB);
+
+      // Build appropriate locale
+      Locale localeToUse =
+          enableSpellCheck
+              ? srcLang.locale()
+              : makeUnoLocale("zxx", ""); // "zxx" → no linguistic content (no spellcheck)
+
+      // Apply locale to correct property family
+      if (isLeftToRight) {
+        props.setPropertyValue(CHAR_LOCALE, localeToUse);
+      } else {
+        props.setPropertyValue(CHAR_LOCALE_COMPLEX, localeToUse);
+      }
+
+    } catch (UnknownPropertyException e) {
+      LOGGER.error("Unknown UNO property while setting paragraph direction/language", e);
+      throw new RuntimeException("Invalid UNO property", e);
+    } catch (PropertyVetoException e) {
+      LOGGER.error("Property veto while setting paragraph direction/language", e);
+      throw new RuntimeException("UNO property veto", e);
+    } catch (WrappedTargetException e) {
+      LOGGER.error("UNO target exception while setting paragraph direction/language", e);
+      throw new RuntimeException("UNO wrapped target exception", e);
     }
   }
 
@@ -995,7 +1032,9 @@ public class MainDialog extends BaseDialog {
     int to = parseInt(configManager.getConfig(AYAT_TO_NUMERIC_FIELD_VALUE));
 
     if (parseBoolean(configManager.getConfig(ARABIC_VERSION_CHECK_BOX_STATE))) {
-      setParagraphDirection(paragraphCursorPropertySet, ARABIC_LANGUAGE_SELECTED);
+      setParagraphDirectionSpellCheckLanguage(
+          paragraphCursorPropertySet, ARABIC_LANGUAGE_SELECTED, true);
+
       writeParagraph(
           textViewCursor,
           getSurahTextBlock(surahNo, from, to, ARABIC_LANGUAGE_SELECTED, ARABIC_SOURCE_SELECTED));
@@ -1003,7 +1042,9 @@ public class MainDialog extends BaseDialog {
     }
 
     if (parseBoolean(configManager.getConfig(TRANSLITERATION_VERSION_CHECK_BOX_STATE))) {
-      setParagraphDirection(paragraphCursorPropertySet, TRANSLITERATION_LANGUAGE_SELECTED);
+      setParagraphDirectionSpellCheckLanguage(
+          paragraphCursorPropertySet, TRANSLITERATION_LANGUAGE_SELECTED, false);
+
       writeParagraph(
           textViewCursor,
           getSurahTextBlock(
@@ -1016,7 +1057,9 @@ public class MainDialog extends BaseDialog {
     }
 
     if (parseBoolean(configManager.getConfig(TRANSLATION_VERSION_CHECK_BOX_STATE))) {
-      setParagraphDirection(paragraphCursorPropertySet, TRANSLATION_LANGUAGE_SELECTED);
+      setParagraphDirectionSpellCheckLanguage(
+          paragraphCursorPropertySet, TRANSLATION_LANGUAGE_SELECTED, true);
+
       writeParagraph(
           textViewCursor,
           getSurahTextBlock(
@@ -1041,7 +1084,7 @@ public class MainDialog extends BaseDialog {
       FontAttr fa = getFontAttrByName(fontName).orElseThrow();
 
       final StringBuilder paragraph = new StringBuilder();
-      int ayatNo = 1;
+      int ayatNo = from;
       for (Iterator<String> it = ayat.iterator(); it.hasNext(); ayatNo++) {
         if (writingMode == WritingMode2.LR_TB) {
           paragraph.append(fa.leftParenthesisStr());

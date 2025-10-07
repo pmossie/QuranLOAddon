@@ -17,8 +17,6 @@ package nl.mossoft.lo.util;
 
 public enum ConfigurationKeys {
   ALL_AYAT_CHECK_BOX_STATE("AllAyatCheckBoxState"),
-  ARABIC_FONT_BOLD_BUTTON_STATE("ArabicFontBoldButtonState"),
-  ARABIC_FONT_ITALIC_BUTTON_STATE("ArabicFontItalicButtonState"),
   ARABIC_FONT_LIST_BOX_ITEM_LIST("ArabicFontListBoxItemList"),
   ARABIC_FONT_LIST_BOX_ITEM_SELECTED("ArabicFontListBoxItemSelected"),
   ARABIC_FONT_WEIGHT_LIST_BOX_ITEM_LIST("ArabicFontWeightListBoxItemList"),
@@ -38,8 +36,6 @@ public enum ConfigurationKeys {
   AYAT_TO_NUMERIC_FIELD_MIN("AyatToNumericFieldMin"),
   AYAT_TO_NUMERIC_FIELD_VALUE("AyatToNumericFieldValue"),
   DEFAULT_FONT_SIZES("DefaultFontSizes"),
-  LATIN_FONT_BOLD_BUTTON_STATE("LatinFontBoldButtonState"),
-  LATIN_FONT_ITALIC_BUTTON_STATE("LatinFontItalicButtonState"),
   LATIN_FONT_LIST_BOX_ITEM_LIST("LatinFontListBoxItemList"),
   LATIN_FONT_LIST_BOX_ITEM_SELECTED("LatinFontListBoxItemSelected"),
   LATIN_FONT_SELECTED("LatinFontSelected"),

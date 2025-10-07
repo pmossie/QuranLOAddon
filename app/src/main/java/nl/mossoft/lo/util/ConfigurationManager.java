@@ -76,7 +76,6 @@ public enum ConfigurationManager {
     Map<ConfigurationKeys, String> defaults = new ConcurrentHashMap<>();
 
     defaults.put(ALL_AYAT_CHECK_BOX_STATE, TRUE);
-    defaults.put(ARABIC_FONT_BOLD_BUTTON_STATE, FALSE);
     defaults.put(ARABIC_FONT_LIST_BOX_ITEM_LIST, FontManager.getArabicSupportedFontsAsString());
     defaults.put(
         ARABIC_FONT_LIST_BOX_ITEM_SELECTED,
@@ -98,7 +97,6 @@ public enum ConfigurationManager {
     defaults.put(AYAT_TO_NUMERIC_FIELD_MAX, HIGHEST_AYAT_NUMBER_AL_FATIHAH);
     defaults.put(AYAT_TO_NUMERIC_FIELD_MIN, LOWEST_AYAT_NUMBER);
     defaults.put(AYAT_TO_NUMERIC_FIELD_VALUE, HIGHEST_AYAT_NUMBER_AL_FATIHAH);
-    defaults.put(LATIN_FONT_BOLD_BUTTON_STATE, FALSE);
     defaults.put(LATIN_FONT_LIST_BOX_ITEM_LIST, FontManager.getLatinSupportedFontsAsString());
     defaults.put(
         LATIN_FONT_LIST_BOX_ITEM_SELECTED,

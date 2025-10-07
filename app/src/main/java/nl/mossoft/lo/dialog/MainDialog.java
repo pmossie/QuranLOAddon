@@ -62,7 +62,6 @@ import org.slf4j.LoggerFactory;
 public class MainDialog extends BaseDialog {
   /* Controls */
   public static final String ALL_AYAT_CHECK_BOX = "AllAyatCheckBox";
-  public static final String ARABIC_FONT_BOLD_BUTTON = "ArabicFontBoldButton";
   public static final String ARABIC_FONT_LIST_BOX = "ArabicFontListBox";
   public static final String ARABIC_FONT_SIZE_COMBO_BOX = "ArabicFontSizeComboBox";
   public static final String ARABIC_VERSION_CHECK_BOX = "ArabicVersionCheckBox";
@@ -71,7 +70,6 @@ public class MainDialog extends BaseDialog {
   public static final String AYAT_PER_LINE_CHECK_BOX = "AyatPerLineCheckBox";
   public static final String AYAT_TO_NUMERIC_FIELD = "AyatToNumericField";
   public static final String INSERT_BUTTON = "InsertButton";
-  public static final String LATIN_FONT_BOLD_BUTTON = "LatinFontBoldButton";
   public static final String LATIN_FONT_LIST_BOX = "LatinFontListBox";
   public static final String LATIN_FONT_SIZE_COMBO_BOX = "LatinFontSizeComboBox";
   public static final String MAIN_DIALOG = "MainDialog";
@@ -109,10 +107,8 @@ public class MainDialog extends BaseDialog {
 
     initArabicFontListBox();
     initArabicFontSizeComboBox();
-    initArabicFontBoldButton();
     initLatinFontSizeComboBox();
     initLatinFontListBox();
-    initLatinFontBoldButton();
 
     initAyatPerLineCheckBox();
 
@@ -123,26 +119,6 @@ public class MainDialog extends BaseDialog {
 
   private void initFinalized() {
     initializationCompleted = true;
-  }
-
-  private void initLatinFontBoldButton() {
-    LOGGER.debug("initLatinFontBoldButton()");
-
-    setPropertyValue(
-        this.dialog,
-        LATIN_FONT_BOLD_BUTTON,
-        STATE,
-        boolean2Short(parseBoolean(configManager.getConfig(LATIN_FONT_BOLD_BUTTON_STATE))));
-  }
-
-  private void initArabicFontBoldButton() {
-    LOGGER.debug("initArabicFontBoldButton()");
-
-    setPropertyValue(
-        this.dialog,
-        ARABIC_FONT_BOLD_BUTTON,
-        STATE,
-        boolean2Short(parseBoolean(configManager.getConfig(ARABIC_FONT_BOLD_BUTTON_STATE))));
   }
 
   private void initDefaults() {
@@ -322,10 +298,6 @@ public class MainDialog extends BaseDialog {
   @Override
   protected void initHandlers() {
     registerHandler(ON_ALL_AYAT_CHECK_BUTTON_PRESSED, this::handleAllAyatCheckButtonPressed);
-    registerHandler(ON_ARABIC_FONT_BOLD_BUTTON_CLICKED, this::handleArabicFontBoldButtonClicked);
-    registerHandler(
-        ON_ARABIC_FONT_BOLD_BUTTON_PROPERTY_ENABLED_TO_BE_CHANGED,
-        this::handleControlPropertyEnabledToBeChanged);
     registerHandler(
         ON_ARABIC_FONT_LIST_BOX_ITEM_SELECTED, this::handleArabicFontListBoxItemSelected);
     registerHandler(
@@ -366,15 +338,10 @@ public class MainDialog extends BaseDialog {
         ON_AYAT_TO_NUMERIC_FIELD_VALUE_CHANGED, this::handleAyatToNumericFieldValueChanged);
     registerHandler(
         ON_AYAT_TO_NUMERIC_FIELD_VALUE_UPDATED, this::handleAyatToNumericFieldValueUpdated);
-    registerHandler(ON_LATIN_FONT_BOLD_BUTTON_CLICKED, this::handleLatinFontBoldButtonClicked);
     registerHandler(ON_INSERT_BUTTON_CLICKED, this::handleInsertButtonClicked);
     registerHandler(
         ON_INSERT_BUTTON_PROPERTY_ENABLED_TO_BE_CHANGED,
         this::handleInsertButtonPropertyEnabledToBeChanged);
-    registerHandler(
-        ON_LATIN_FONT_BOLD_BUTTON_PROPERTY_ENABLED_TO_BE_CHANGED,
-        this::handleLatinFontControlPropertyEnabledToBeChanged);
-
     registerHandler(ON_LATIN_FONT_LIST_BOX_ITEM_SELECTED, this::handleLatinFontListBoxItemSelected);
     registerHandler(
         ON_LATIN_FONT_LIST_BOX_PROPERTY_ENABLED_TO_BE_CHANGED,
@@ -416,26 +383,6 @@ public class MainDialog extends BaseDialog {
         parseBoolean(configManager.getConfig((ARABIC_VERSION_CHECK_BOX_STATE)))
             || parseBoolean((configManager.getConfig((TRANSLATION_VERSION_CHECK_BOX_STATE))))
             || parseBoolean(configManager.getConfig(TRANSLITERATION_VERSION_CHECK_BOX_STATE)));
-  }
-
-  private void handleLatinFontBoldButtonClicked(XDialog xDialog, Object o, String event) {
-    LOGGER.debug("handleLatinFontBoldButtonClicked()");
-
-    configManager.setConfig(
-        LATIN_FONT_BOLD_BUTTON_STATE,
-        String.valueOf(
-            short2Boolean(
-                getPropertyValue(this.dialog, LATIN_FONT_BOLD_BUTTON, STATE, Short.class))));
-  }
-
-  private void handleArabicFontBoldButtonClicked(XDialog xDialog, Object o, String event) {
-    LOGGER.debug("handleArabicFontBoldButtonClicked()");
-
-    configManager.setConfig(
-        ARABIC_FONT_BOLD_BUTTON_STATE,
-        String.valueOf(
-            short2Boolean(
-                getPropertyValue(this.dialog, ARABIC_FONT_BOLD_BUTTON, STATE, Short.class))));
   }
 
   private void handleLatinFontSizeComboBoxValueChanged(XDialog xDialog, Object o, String event) {
@@ -553,11 +500,6 @@ public class MainDialog extends BaseDialog {
         null,
         TRANSLITERATION_VERSION_CHECK_BOX);
     triggerEvent(
-        ON_LATIN_FONT_BOLD_BUTTON_PROPERTY_ENABLED_TO_BE_CHANGED,
-        dialog,
-        null,
-        TRANSLITERATION_VERSION_CHECK_BOX);
-    triggerEvent(
         ON_INSERT_BUTTON_PROPERTY_ENABLED_TO_BE_CHANGED,
         dialog,
         null,
@@ -606,11 +548,6 @@ public class MainDialog extends BaseDialog {
         null,
         TRANSLATION_VERSION_CHECK_BOX);
     triggerEvent(
-        ON_LATIN_FONT_BOLD_BUTTON_PROPERTY_ENABLED_TO_BE_CHANGED,
-        dialog,
-        null,
-        TRANSLATION_VERSION_CHECK_BOX);
-    triggerEvent(
         ON_INSERT_BUTTON_PROPERTY_ENABLED_TO_BE_CHANGED,
         dialog,
         null,
@@ -648,11 +585,6 @@ public class MainDialog extends BaseDialog {
         ARABIC_VERSION_CHECK_BOX);
     triggerEvent(
         ON_ARABIC_FONT_SIZE_COMBO_BOX_PROPERTY_ENABLED_TO_BE_CHANGED,
-        dialog,
-        null,
-        ARABIC_VERSION_CHECK_BOX);
-    triggerEvent(
-        ON_ARABIC_FONT_BOLD_BUTTON_PROPERTY_ENABLED_TO_BE_CHANGED,
         dialog,
         null,
         ARABIC_VERSION_CHECK_BOX);

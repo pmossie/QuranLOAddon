@@ -204,7 +204,7 @@
         dlg:top="85"
         dlg:valign="center"
         dlg:value="&amp;TranslationLabel.value"
-        dlg:width="50">
+        dlg:width="55">
     </dlg:text>
     <dlg:checkbox
         dlg:id="TranslationVersionCheckBox"
@@ -299,7 +299,7 @@
         dlg:spin="true"
         dlg:top="15"
         dlg:valign="center"
-        dlg:width="94">
+        dlg:width="110">
       <script:event
           script:event-name="on-performaction"
           script:language="UNO"
@@ -309,7 +309,7 @@
     <dlg:combobox
         dlg:id="ArabicFontSizeComboBox"
         dlg:height="14"
-        dlg:left="252"
+        dlg:left="268"
         dlg:linecount="10"
         dlg:spin="true"
         dlg:top="13"
@@ -320,21 +320,6 @@
           script:macro-name="vnd.sun.star.UNO:onArabicFontSizeComboBoxValueChanged"
       />
     </dlg:combobox>
-    <dlg:button
-        dlg:id="ArabicFontBoldButton"
-        dlg:height="14"
-        dlg:left="288"
-        dlg:style-id="BoldButtonStyle"
-        dlg:toggled="1"
-        dlg:top="13"
-        dlg:valign="center"
-        dlg:value="B"
-        dlg:width="14">
-      <script:event
-          script:event-name="on-performaction"
-          script:language="UNO"
-          script:macro-name="vnd.sun.star.UNO:onArabicFontBoldButtonClicked"/>
-    </dlg:button>
 
     <dlg:titledbox
         dlg:id="LatinFontGroupBox"
@@ -355,7 +340,7 @@
         dlg:spin="true"
         dlg:top="42"
         dlg:valign="center"
-        dlg:width="94">
+        dlg:width="110">
       <script:event
           script:event-name="on-performaction"
           script:language="UNO"
@@ -366,7 +351,7 @@
         dlg:id="LatinFontSizeComboBox"
         dlg:disabled="true"
         dlg:height="14"
-        dlg:left="252"
+        dlg:left="268"
         dlg:linecount="10"
         dlg:spin="true"
         dlg:top="40"
@@ -377,22 +362,6 @@
           script:macro-name="vnd.sun.star.UNO:onLatinFontSizeComboBoxValueChanged"
       />
       </dlg:combobox>
-    <dlg:button
-        dlg:id="LatinFontBoldButton"
-        dlg:disabled="true"
-        dlg:height="14"
-        dlg:left="288"
-        dlg:style-id="BoldButtonStyle"
-        dlg:toggled="1"
-        dlg:top="40"
-        dlg:valign="center"
-        dlg:value="B"
-        dlg:width="14">
-      <script:event
-          script:event-name="on-performaction"
-          script:language="UNO"
-          script:macro-name="vnd.sun.star.UNO:onLatinFontBoldButtonClicked"/>
-    </dlg:button>
 
     <dlg:titledbox
         dlg:id="MiscellaneousGroupBox"
@@ -406,9 +375,9 @@
 
     <dlg:text
         dlg:id="AyatPerLineLabel"
-        dlg:align="right"
+        dlg:align="left"
         dlg:height="10"
-        dlg:left="157"
+        dlg:left="168"
         dlg:top="69"
         dlg:valign="center"
         dlg:value="&amp;AyatPerLineLabel.value"
@@ -420,7 +389,7 @@
         dlg:align="center"
         dlg:checked="false"
         dlg:height="10"
-        dlg:left="213"
+        dlg:left="157"
         dlg:top="69"
         dlg:valign="center"
         dlg:value=""

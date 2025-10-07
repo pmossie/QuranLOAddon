@@ -24,9 +24,6 @@ public enum DialogEvents {
   ON_ARABIC_FONT_LIST_BOX_ITEM_SELECTED("onArabicFontListBoxItemSelected"),
   ON_ARABIC_FONT_LIST_BOX_PROPERTY_ENABLED_TO_BE_CHANGED(
       "onArabicFontListBoxPropertyEnabledToBeChanged"),
-  ON_ARABIC_FONT_BOLD_BUTTON_CLICKED("onArabicFontBoldButtonClicked"),
-  ON_ARABIC_FONT_BOLD_BUTTON_PROPERTY_ENABLED_TO_BE_CHANGED(
-      "onArabicFontBoldButtonPropertyEnabledToBeChanged"),
   ON_ARABIC_FONT_SIZE_COMBO_BOX_PROPERTY_ENABLED_TO_BE_CHANGED(
       "onArabicFontSizeComboBoxPropertyEnabledToBeChanged"),
   ON_ARABIC_FONT_SIZE_COMBO_BOX_VALUE_CHANGED("onArabicFontSizeComboBoxValueChanged"),
@@ -48,9 +45,6 @@ public enum DialogEvents {
   ON_AYAT_TO_NUMERIC_FIELD_VALUE_UPDATED("onAyatToNumericFieldValueUpdated"),
   ON_INSERT_BUTTON_CLICKED("onInsertButtonClicked"),
   ON_INSERT_BUTTON_PROPERTY_ENABLED_TO_BE_CHANGED("onInsertButtonPropertyEnabledToBeChanged"),
-  ON_LATIN_FONT_BOLD_BUTTON_CLICKED("onLatinFontBoldButtonClicked"),
-  ON_LATIN_FONT_BOLD_BUTTON_PROPERTY_ENABLED_TO_BE_CHANGED(
-      "onLatinFontBoldButtonPropertyEnabledToBeChanged"),
   ON_LATIN_FONT_LIST_BOX_ITEM_SELECTED("onLatinFontListBoxItemSelected"),
   ON_LATIN_FONT_LIST_BOX_PROPERTY_ENABLED_TO_BE_CHANGED(
       "onLatinFontListBoxPropertyEnabledToBeChanged"),

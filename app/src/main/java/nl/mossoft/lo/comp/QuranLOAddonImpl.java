@@ -21,51 +21,52 @@ import com.sun.star.lib.uno.helper.Factory;
 import com.sun.star.registry.XRegistryKey;
 import com.sun.star.task.XJobExecutor;
 import com.sun.star.uno.XComponentContext;
-import java.util.Objects;
+import java.util.*;
+import java.util.function.Consumer;
 import nl.mossoft.lo.dialog.AboutDialog;
 import nl.mossoft.lo.dialog.DialogAction;
 import nl.mossoft.lo.dialog.MainDialog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * LibreOffice Add-on entry point for the QuranLOAddon.
+ *
+ * <p>Provides UNO service registration, and maps addon toolbar or menu actions to dialogs.
+ */
 public final class QuranLOAddonImpl implements XServiceInfo, XJobExecutor {
+
   private static final Logger LOGGER = LoggerFactory.getLogger(QuranLOAddonImpl.class);
 
   public static final String ADDON_NAME = "nl.mossoft.lo.QuranLOAddon";
   private static final String IMPLEMENTATION_NAME = QuranLOAddonImpl.class.getName();
-  private static final String[] SERVICE_NAMES = {ADDON_NAME};
+  private static final List<String> SERVICE_NAMES = List.of(ADDON_NAME);
 
   private final XComponentContext ctx;
+  private final Map<DialogAction, Consumer<XComponentContext>> actionHandlers;
 
-  public QuranLOAddonImpl(XComponentContext ctx) {
+  // ---------------- Constructor ----------------
+
+  public QuranLOAddonImpl(final XComponentContext ctx) {
     this.ctx = Objects.requireNonNull(ctx, "componentContext must not be null");
+    this.actionHandlers = createActionHandlers();
   }
 
-  /**
-   * Get a Component Factory for the service to be implemented.
-   *
-   * @param implementationName name of the service to be implemented
-   * @return Component Factory for the service
-   */
+  // ---------------- Factory & Registry ----------------
+
   public static XSingleComponentFactory __getComponentFactory(final String implementationName) {
-    XSingleComponentFactory singleComponentFactory = null;
-
-    if (implementationName.equals(IMPLEMENTATION_NAME)) {
-      singleComponentFactory =
-          Factory.createComponentFactory(QuranLOAddonImpl.class, SERVICE_NAMES);
-    }
-    return singleComponentFactory;
+    return IMPLEMENTATION_NAME.equals(implementationName)
+        ? Factory.createComponentFactory(
+            QuranLOAddonImpl.class, SERVICE_NAMES.toArray(String[]::new))
+        : null;
   }
 
-  /**
-   * Registers the service to be implemented.
-   *
-   * @param registryKey the registration key
-   * @return true if successful
-   */
   public static boolean __writeRegistryServiceInfo(final XRegistryKey registryKey) {
-    return Factory.writeRegistryServiceInfo(IMPLEMENTATION_NAME, SERVICE_NAMES, registryKey);
+    return Factory.writeRegistryServiceInfo(
+        IMPLEMENTATION_NAME, SERVICE_NAMES.toArray(String[]::new), registryKey);
   }
+
+  // ---------------- XServiceInfo ----------------
 
   @Override
   public String getImplementationName() {
@@ -73,42 +74,48 @@ public final class QuranLOAddonImpl implements XServiceInfo, XJobExecutor {
   }
 
   @Override
-  public boolean supportsService(String name) {
-    for (String serviceName : SERVICE_NAMES) {
-      if (name.equals(serviceName)) return true;
-    }
-    return false;
+  public boolean supportsService(final String name) {
+    return SERVICE_NAMES.contains(name);
   }
 
   @Override
   public String[] getSupportedServiceNames() {
-    return SERVICE_NAMES.clone();
+    return SERVICE_NAMES.toArray(String[]::new);
   }
 
+  // ---------------- XJobExecutor ----------------
+
   @Override
-  public void trigger(String action) {
+  public void trigger(final String action) {
     LOGGER.debug("Executing action: '{}'", action);
 
     DialogAction.fromId(action)
         .ifPresentOrElse(
-            a -> {
-              switch (a) {
-                case SHOW_ABOUT_DIALOG:
-                  try {
-                    new AboutDialog(ctx).show();
-                  } catch (Exception e) {
-                    LOGGER.error("Failed to show 'AboutDialog'", e);
-                  }
-                  break;
-                case SHOW_MAIN_DIALOG:
-                  try {
-                    new MainDialog(ctx).show();
-                  } catch (Exception e) {
-                    LOGGER.error("Failed to show 'MainDialog'", e);
-                  }
-                  break;
-              }
-            },
-            () -> LOGGER.debug("trigger({}) called on {}", action, IMPLEMENTATION_NAME));
+            this::executeAction,
+            () -> LOGGER.warn("Unknown trigger action '{}' in {}", action, IMPLEMENTATION_NAME));
+  }
+
+  // ---------------- Implementation details ----------------
+
+  private void executeAction(DialogAction action) {
+    Consumer<XComponentContext> handler = actionHandlers.get(action);
+    if (handler == null) {
+      LOGGER.warn("No handler registered for DialogAction '{}'", action);
+      return;
+    }
+    try {
+      handler.accept(ctx);
+    } catch (Exception e) {
+      LOGGER.error("Failed to execute handler for action '{}'", action, e);
+    }
+  }
+
+  private Map<DialogAction, Consumer<XComponentContext>> createActionHandlers() {
+    Map<DialogAction, Consumer<XComponentContext>> handlers = new EnumMap<>(DialogAction.class);
+
+    handlers.put(DialogAction.SHOW_ABOUT_DIALOG, c -> new AboutDialog(c).show());
+    handlers.put(DialogAction.SHOW_MAIN_DIALOG, c -> new MainDialog(c).show());
+
+    return Collections.unmodifiableMap(handlers);
   }
 }

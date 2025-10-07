@@ -120,6 +120,7 @@ tasks.withType<Jar> {
     from(sourceSets.main.get().allSource) {
         exclude("**/*.java")
         exclude("**/*.xml")
+        exclude("**/*.classes")
         exclude("**/*.properties")
     }
 }

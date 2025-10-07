@@ -29,17 +29,35 @@ import nl.mossoft.lo.util.FileHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@SuppressWarnings("unused")
+/**
+ * Utility class providing helper methods for dialog creation and manipulation in the Quran
+ * LibreOffice Addon.
+ *
+ * <p>This class offers static utility methods for:
+ *
+ * <ul>
+ *   <li>Creating dialogs from XDL definition files
+ *   <li>Converting file paths to UNO URLs
+ *   <li>Converting between boolean and short values (for UNO checkbox states)
+ *   <li>Localizing numeric values for display
+ * </ul>
+ *
+ * <p>This is a utility class and should not be instantiated.
+ */
 public class DialogHelper {
   private static final Logger LOGGER = LoggerFactory.getLogger(DialogHelper.class);
 
   /**
-   * Create a dialog from a xdl definition file.
+   * Creates a dialog from an XDL definition file.
    *
-   * @param filename The filename of the xdl definition file
-   * @param ctx component context
-   * @param handler event handler
-   * @return XDialog
+   * <p>This method locates the specified XDL resource file within the addon's dialogs directory and
+   * creates a UNO dialog instance with the provided event handler.
+   *
+   * @param filename the filename of the XDL definition file (e.g., "MainDialog.xdl")
+   * @param ctx the UNO component context for accessing LibreOffice services
+   * @param handler the event handler for processing dialog events
+   * @return the created XDialog instance
+   * @throws RuntimeException if the dialog cannot be created
    */
   public static XDialog createDialog(
       String filename, XComponentContext ctx, XDialogEventHandler handler) {
@@ -58,7 +76,16 @@ public class DialogHelper {
     }
   }
 
-  /** Returns a URL to be used with XDialogProvider to create a dialog */
+  /**
+   * Converts a file path to a URL format required by XDialogProvider.
+   *
+   * <p>This method transforms a local file path into a UNO-compatible URL that can be used with the
+   * XDialogProvider service to create dialogs.
+   *
+   * @param xContext the UNO component context
+   * @param dialogFile the dialog file to convert to URL format
+   * @return the URL string representation of the dialog file
+   */
   public static String convertToURL(XComponentContext xContext, File dialogFile) {
     String sURL;
     try {
@@ -76,25 +103,51 @@ public class DialogHelper {
   }
 
   /**
-   * Convert boolean to short.
+   * Converts a boolean value to a short value.
    *
-   * @param b the boolean
-   * @return the short
+   * <p>This conversion is necessary for UNO checkbox states, where:
+   *
+   * <ul>
+   *   <li>{@code true} is represented as {@code 1}
+   *   <li>{@code false} is represented as {@code 0}
+   * </ul>
+   *
+   * @param b the boolean value to convert
+   * @return {@code 1} if {@code true}, {@code 0} if {@code false}
+   * @see #short2Boolean(short)
    */
   public static short boolean2Short(final boolean b) {
     return (short) (b ? 1 : 0);
   }
 
   /**
-   * Convert short to boolean.
+   * Converts a short value to a boolean value.
    *
-   * @param s the short
-   * @return the boolean
+   * <p>This conversion is necessary for interpreting UNO checkbox states, where:
+   *
+   * <ul>
+   *   <li>Non-zero values are interpreted as {@code true}
+   *   <li>Zero is interpreted as {@code false}
+   * </ul>
+   *
+   * @param s the short value to convert
+   * @return {@code true} if {@code s} is non-zero, {@code false} otherwise
+   * @see #boolean2Short(boolean)
    */
   public static boolean short2Boolean(final short s) {
     return s != 0;
   }
 
+  /**
+   * Formats a numeric size value according to the system's locale settings.
+   *
+   * <p>This method ensures that numeric values (such as font sizes) are displayed using the
+   * appropriate decimal separator for the user's locale (e.g., comma vs. period).
+   *
+   * @param context the UNO component context for accessing locale information
+   * @param size the numeric size value to format
+   * @return the localized string representation of the size
+   */
   public static String getLocalizedSize(XComponentContext context, float size) {
     try {
       // Create NumberFormatsSupplier

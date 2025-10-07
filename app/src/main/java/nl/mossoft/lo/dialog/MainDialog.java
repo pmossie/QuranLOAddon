@@ -58,33 +58,79 @@ import nl.mossoft.lo.util.FontAttr;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/** Creates the MainDialog */
+/**
+ * Creates and manages the main dialog for the Quran LibreOffice Addon. This dialog allows users to
+ * select Quranic text, configure display options, and insert formatted text into LibreOffice
+ * documents.
+ */
 public class MainDialog extends BaseDialog {
   /* Controls */
+  /** Control ID for the "All Ayat" checkbox */
   public static final String ALL_AYAT_CHECK_BOX = "AllAyatCheckBox";
+
+  /** Control ID for the Arabic font list box */
   public static final String ARABIC_FONT_LIST_BOX = "ArabicFontListBox";
+
+  /** Control ID for the Arabic font size combo box */
   public static final String ARABIC_FONT_SIZE_COMBO_BOX = "ArabicFontSizeComboBox";
+
+  /** Control ID for the Arabic version checkbox */
   public static final String ARABIC_VERSION_CHECK_BOX = "ArabicVersionCheckBox";
+
+  /** Control ID for the Arabic version list box */
   public static final String ARABIC_VERSION_LIST_BOX = "ArabicVersionListBox";
+
+  /** Control ID for the "From Ayat" numeric field */
   public static final String AYAT_FROM_NUMERIC_FIELD = "AyatFromNumericField";
+
+  /** Control ID for the "Ayat Per Line" checkbox */
   public static final String AYAT_PER_LINE_CHECK_BOX = "AyatPerLineCheckBox";
+
+  /** Control ID for the "To Ayat" numeric field */
   public static final String AYAT_TO_NUMERIC_FIELD = "AyatToNumericField";
+
+  /** Control ID for the Insert button */
   public static final String INSERT_BUTTON = "InsertButton";
+
+  /** Control ID for the Latin font list box */
   public static final String LATIN_FONT_LIST_BOX = "LatinFontListBox";
+
+  /** Control ID for the Latin font size combo box */
   public static final String LATIN_FONT_SIZE_COMBO_BOX = "LatinFontSizeComboBox";
+
+  /** Control ID for the main dialog */
   public static final String MAIN_DIALOG = "MainDialog";
+
+  /** Control ID for the Surah list box */
   public static final String SURAH_LIST_BOX = "SurahListBox";
+
+  /** Control ID for the Translation version checkbox */
   public static final String TRANSLATION_VERSION_CHECK_BOX = "TranslationVersionCheckBox";
+
+  /** Control ID for the Translation version list box */
   public static final String TRANSLATION_VERSION_LIST_BOX = "TranslationVersionListBox";
+
+  /** Control ID for the Transliteration version checkbox */
   public static final String TRANSLITERATION_VERSION_CHECK_BOX = "TransliterationVersionCheckBox";
+
+  /** Control ID for the Transliteration version list box */
   public static final String TRANSLITERATION_VERSION_LIST_BOX = "TransliterationVersionListBox";
 
   private static final Logger LOGGER = LoggerFactory.getLogger(MainDialog.class);
 
+  /**
+   * Constructs a new MainDialog instance.
+   *
+   * @param ctx the UNO component context
+   */
   public MainDialog(XComponentContext ctx) {
     super(ctx, MAIN_DIALOG + ".xdl");
   }
 
+  /**
+   * Initializes all dialog controls with their default values and configurations. This method sets
+   * up list boxes, checkboxes, numeric fields, and combo boxes.
+   */
   @Override
   protected void initDialogControls() {
     LOGGER.debug("Initializing Dialog Controls");
@@ -117,10 +163,12 @@ public class MainDialog extends BaseDialog {
     LOGGER.debug("Initialization Completed");
   }
 
+  /** Marks dialog initialization as complete. */
   private void initFinalized() {
     initializationCompleted = true;
   }
 
+  /** Initializes default configuration values for the dialog. */
   private void initDefaults() {
     LOGGER.debug("initializeDefaults()");
 
@@ -128,6 +176,7 @@ public class MainDialog extends BaseDialog {
     this.configManager.listAllConfigurationKeys();
   }
 
+  /** Initializes the Arabic font size combo box with available font sizes. */
   private void initArabicFontSizeComboBox() {
     LOGGER.debug("initArabicFontSizeComboBox()");
 
@@ -141,6 +190,11 @@ public class MainDialog extends BaseDialog {
     textComponent.setText(configManager.getConfig(ARABIC_FONT_SIZE_COMBO_BOX_VALUE) + " pt");
   }
 
+  /**
+   * Populates a combo box with the standard set of available font sizes.
+   *
+   * @param comboBox the combo box to populate
+   */
   private void initializeFontSizes(XComboBox comboBox) {
     final Float[] AVAILABLE_FONT_SIZES =
         new Float[] {
@@ -153,6 +207,7 @@ public class MainDialog extends BaseDialog {
     }
   }
 
+  /** Initializes the Latin font size combo box with available font sizes. */
   private void initLatinFontSizeComboBox() {
     LOGGER.debug("initLatinFontSizeComboBox()");
 
@@ -166,6 +221,7 @@ public class MainDialog extends BaseDialog {
     textComponent.setText(configManager.getConfig(LATIN_FONT_SIZE_COMBO_BOX_VALUE) + " pt");
   }
 
+  /** Initializes the Latin font list box with available Latin fonts. */
   private void initLatinFontListBox() {
     LOGGER.debug("initLatinFontListBox()");
 
@@ -176,6 +232,7 @@ public class MainDialog extends BaseDialog {
         (short) parseUnsignedInt(configManager.getConfig(LATIN_FONT_LIST_BOX_ITEM_SELECTED)), true);
   }
 
+  /** Initializes the Arabic font list box with available Arabic fonts. */
   private void initArabicFontListBox() {
     LOGGER.debug("initArabicFontListBox()");
 
@@ -188,6 +245,7 @@ public class MainDialog extends BaseDialog {
         true);
   }
 
+  /** Initializes the Translation version list box with available translations. */
   private void initTranslationVersionListBox() {
     LOGGER.debug("initTranslationVersionListBox()");
 
@@ -201,6 +259,7 @@ public class MainDialog extends BaseDialog {
         true);
   }
 
+  /** Initializes the Translation version checkbox with its saved state. */
   private void initTranslationVersionCheckBox() {
     LOGGER.debug("initTranslationVersionCheckBox()");
 
@@ -210,6 +269,7 @@ public class MainDialog extends BaseDialog {
         boolean2Short(parseBoolean(configManager.getConfig(TRANSLATION_VERSION_CHECK_BOX_STATE))));
   }
 
+  /** Initializes the Transliteration version list box with available transliterations. */
   private void initTransliterationVersionListBox() {
     LOGGER.debug("initTransliterationVersionListBox()");
 
@@ -224,6 +284,7 @@ public class MainDialog extends BaseDialog {
         true);
   }
 
+  /** Initializes the Transliteration version checkbox with its saved state. */
   private void initTransliterationVersionCheckBox() {
     LOGGER.debug("initTransliterationVersionCheckBox()");
 
@@ -235,6 +296,7 @@ public class MainDialog extends BaseDialog {
             parseBoolean(configManager.getConfig(TRANSLITERATION_VERSION_CHECK_BOX_STATE))));
   }
 
+  /** Initializes the Arabic version list box with available Arabic versions. */
   private void initArabicVersionListBox() {
     LOGGER.debug("initArabicVersionListBox()");
 
@@ -247,6 +309,7 @@ public class MainDialog extends BaseDialog {
         true);
   }
 
+  /** Initializes the Arabic version checkbox with its saved state. */
   private void initArabicVersionCheckBox() {
     LOGGER.debug("initArabicVersionCheckBox()");
 
@@ -256,6 +319,7 @@ public class MainDialog extends BaseDialog {
         boolean2Short(parseBoolean(configManager.getConfig(ARABIC_VERSION_CHECK_BOX_STATE))));
   }
 
+  /** Initializes the "To Ayat" numeric field with minimum, maximum, and current values. */
   private void initAyatToNumericField() {
     LOGGER.debug("initAyatToNumericField()");
 
@@ -266,6 +330,7 @@ public class MainDialog extends BaseDialog {
     to.setValue(parseDouble(configManager.getConfig(AYAT_TO_NUMERIC_FIELD_MAX)));
   }
 
+  /** Initializes the "From Ayat" numeric field with minimum, maximum, and current values. */
   private void initAyatFromNumericField() {
     LOGGER.debug("initAyatFromNumericField()");
 
@@ -276,6 +341,7 @@ public class MainDialog extends BaseDialog {
     from.setValue(parseDouble(configManager.getConfig(AYAT_FROM_NUMERIC_FIELD_MIN)));
   }
 
+  /** Initializes the "All Ayat" checkbox with its saved state. */
   private void initAllAyatCheckBox() {
     LOGGER.debug("initAllAyatCheckBox()");
 
@@ -285,6 +351,7 @@ public class MainDialog extends BaseDialog {
         boolean2Short(parseBoolean(configManager.getConfig(ALL_AYAT_CHECK_BOX_STATE))));
   }
 
+  /** Initializes the Surah list box with all available Surahs. */
   private void initSurahListBox() {
     LOGGER.debug("initSurahListBox()");
 
@@ -295,6 +362,7 @@ public class MainDialog extends BaseDialog {
         (short) parseUnsignedInt(configManager.getConfig(SURAH_LIST_BOX_ITEM_SELECTED)), true);
   }
 
+  /** Registers all event handlers for dialog controls. */
   @Override
   protected void initHandlers() {
     registerHandler(ON_ALL_AYAT_CHECK_BUTTON_PRESSED, this::handleAllAyatCheckButtonPressed);
@@ -372,6 +440,13 @@ public class MainDialog extends BaseDialog {
         this::handleControlPropertyEnabledToBeChanged);
   }
 
+  /**
+   * Handles changes to the Insert button's enabled state based on version checkbox states.
+   *
+   * @param xDialog the dialog instance
+   * @param o additional event data
+   * @param event the event name
+   */
   private void handleInsertButtonPropertyEnabledToBeChanged(
       XDialog xDialog, Object o, String event) {
     LOGGER.debug("handleInsertButtonPropertyEnabledToBeChanged()");
@@ -385,6 +460,13 @@ public class MainDialog extends BaseDialog {
             || parseBoolean(configManager.getConfig(TRANSLITERATION_VERSION_CHECK_BOX_STATE)));
   }
 
+  /**
+   * Handles changes to the Latin font size combo box value.
+   *
+   * @param xDialog the dialog instance
+   * @param o additional event data
+   * @param event the event name
+   */
   private void handleLatinFontSizeComboBoxValueChanged(XDialog xDialog, Object o, String event) {
     LOGGER.debug("handleLatinFontSizeComboBoxValueChanged()");
 
@@ -396,6 +478,13 @@ public class MainDialog extends BaseDialog {
         s -> configManager.setConfig(LATIN_FONT_SIZE_COMBO_BOX_VALUE, String.valueOf(s)));
   }
 
+  /**
+   * Handles changes to the Arabic font size combo box value.
+   *
+   * @param xDialog the dialog instance
+   * @param o additional event data
+   * @param event the event name
+   */
   private void handleArabicFontSizeComboBoxValueChanged(XDialog xDialog, Object o, String event) {
     LOGGER.debug("handleArabicFontSizeComboBoxValueChanged()");
 
@@ -407,6 +496,13 @@ public class MainDialog extends BaseDialog {
         s -> configManager.setConfig(ARABIC_FONT_SIZE_COMBO_BOX_VALUE, String.valueOf(s)));
   }
 
+  /**
+   * Extracts a positive float point size value from a string. Handles both comma and dot as decimal
+   * separators and removes "pt" suffix.
+   *
+   * @param input the input string containing a size value
+   * @return an Optional containing the parsed positive float value, or empty if invalid
+   */
   public static Optional<Float> extractPositivePointSize(String input) {
     if (input == null) return Optional.empty();
 
@@ -425,6 +521,13 @@ public class MainDialog extends BaseDialog {
     return Optional.empty();
   }
 
+  /**
+   * Handles selection of an item in the Latin font list box.
+   *
+   * @param xDialog the dialog instance
+   * @param o additional event data
+   * @param event the event name
+   */
   private void handleLatinFontListBoxItemSelected(XDialog xDialog, Object o, String event) {
     LOGGER.debug("handleLatinFontListBoxItemSelected()");
 
@@ -439,6 +542,13 @@ public class MainDialog extends BaseDialog {
     configManager.setConfig(LATIN_FONT_SELECTED, getLatinSupportedFontsAsArray()[fontNo]);
   }
 
+  /**
+   * Handles selection of an item in the Arabic font list box.
+   *
+   * @param xDialog the dialog instance
+   * @param o additional event data
+   * @param event the event name
+   */
   private void handleArabicFontListBoxItemSelected(XDialog xDialog, Object o, String event) {
     LOGGER.debug("handleArabicFontListBoxItemSelected()");
 
@@ -453,6 +563,13 @@ public class MainDialog extends BaseDialog {
     configManager.setConfig(ARABIC_FONT_SELECTED, getArabicSupportedFontsAsArray()[fontNo]);
   }
 
+  /**
+   * Handles selection of an item in the Transliteration version list box.
+   *
+   * @param xDialog the dialog instance
+   * @param o additional event data
+   * @param event the event name
+   */
   private void handleTransliterationVersionListBoxItemSelected(
       XDialog xDialog, Object o, String event) {
     LOGGER.debug("handleTransliterationVersionListBoxItemSelected()");
@@ -474,6 +591,13 @@ public class MainDialog extends BaseDialog {
         getSourceInfoOfTypeAsArray(TRANSLITERATION)[versionNo].fileName());
   }
 
+  /**
+   * Handles the Transliteration version checkbox state change.
+   *
+   * @param xDialog the dialog instance
+   * @param o additional event data
+   * @param event the event name
+   */
   private void handleTransliterationVersionCheckButtonPressed(
       XDialog xDialog, Object o, String event) {
     LOGGER.debug("handleTransliterationVersionCheckButtonPressed()");
@@ -506,6 +630,13 @@ public class MainDialog extends BaseDialog {
         TRANSLITERATION_VERSION_CHECK_BOX);
   }
 
+  /**
+   * Handles selection of an item in the Translation version list box.
+   *
+   * @param xDialog the dialog instance
+   * @param o additional event data
+   * @param event the event name
+   */
   private void handleTranslationVersionListBoxItemSelected(
       XDialog xDialog, Object o, String event) {
     LOGGER.debug("handleTranslationVersionListBoxItemSelected()");
@@ -524,6 +655,13 @@ public class MainDialog extends BaseDialog {
         TRANSLATION_SOURCE_SELECTED, getSourceInfoOfTypeAsArray(TRANSLATION)[versionNo].fileName());
   }
 
+  /**
+   * Handles the Translation version checkbox state change.
+   *
+   * @param xDialog the dialog instance
+   * @param o additional event data
+   * @param event the event name
+   */
   private void handleTranslationVersionCheckButtonPressed(XDialog xDialog, Object o, String event) {
     LOGGER.debug("handleTranslationVersionCheckButtonPressed()");
 
@@ -554,6 +692,13 @@ public class MainDialog extends BaseDialog {
         TRANSLATION_VERSION_CHECK_BOX);
   }
 
+  /**
+   * Handles selection of an item in the Arabic version list box.
+   *
+   * @param xDialog the dialog instance
+   * @param o additional event data
+   * @param event the event name
+   */
   private void handleArabicVersionListBoxItemSelected(XDialog xDialog, Object o, String event) {
     LOGGER.debug("handleArabicVersionListBoxItemSelected()");
 
@@ -565,6 +710,13 @@ public class MainDialog extends BaseDialog {
         ARABIC_SOURCE_SELECTED, getSourceInfoOfTypeAsArray(ORIGINAL)[versionNo].fileName());
   }
 
+  /**
+   * Handles the Arabic version checkbox state change.
+   *
+   * @param xDialog the dialog instance
+   * @param o additional event data
+   * @param event the event name
+   */
   private void handleArabicVersionCheckButtonPressed(XDialog xDialog, Object o, String event) {
     LOGGER.debug("handleArabicVersionCheckButtonPressed()");
 
@@ -592,6 +744,13 @@ public class MainDialog extends BaseDialog {
         ON_INSERT_BUTTON_PROPERTY_ENABLED_TO_BE_CHANGED, dialog, null, ARABIC_VERSION_CHECK_BOX);
   }
 
+  /**
+   * Handles generic control enabled property changes by toggling the enabled state.
+   *
+   * @param dialog the dialog instance
+   * @param args additional event arguments
+   * @param event the event name containing the control ID
+   */
   private void handleControlPropertyEnabledToBeChanged(XDialog dialog, Object args, String event) {
 
     final String controlId =
@@ -606,6 +765,14 @@ public class MainDialog extends BaseDialog {
         Boolean.FALSE.equals(getPropertyValue(dialog, controlId, "Enabled", Boolean.class)));
   }
 
+  /**
+   * Handles enabled property changes for Latin font controls based on translation/transliteration
+   * states.
+   *
+   * @param xDialog the dialog instance
+   * @param o additional event data
+   * @param event the event name
+   */
   private void handleLatinFontControlPropertyEnabledToBeChanged(
       XDialog xDialog, Object o, String event) {
     final String controlId =
@@ -621,6 +788,13 @@ public class MainDialog extends BaseDialog {
             || parseBoolean(configManager.getConfig(TRANSLITERATION_VERSION_CHECK_BOX_STATE)));
   }
 
+  /**
+   * Updates the "To Ayat" numeric field based on the selected Surah.
+   *
+   * @param dialog the dialog instance
+   * @param args additional event arguments
+   * @param event the event name
+   */
   private void handleAyatToNumericFieldValueUpdated(XDialog dialog, Object args, String event) {
     LOGGER.debug("handleAyatToNumericFieldValueUpdated()");
 
@@ -639,6 +813,13 @@ public class MainDialog extends BaseDialog {
     to.setValue(surahSize);
   }
 
+  /**
+   * Updates the "From Ayat" numeric field based on the selected Surah.
+   *
+   * @param dialog the dialog instance
+   * @param args additional event arguments
+   * @param event the event name
+   */
   private void handleAyatFromNumericFieldValueUpdated(XDialog dialog, Object args, String event) {
     LOGGER.debug("handleAyatFromNumericFieldValueUpdated()");
 
@@ -658,6 +839,14 @@ public class MainDialog extends BaseDialog {
     from.setValue(1);
   }
 
+  /**
+   * Validates and handles changes to the "From Ayat" numeric field value. Ensures "From" is not
+   * greater than "To".
+   *
+   * @param dialog the dialog instance
+   * @param args additional event arguments
+   * @param event the event name
+   */
   private void handleAyatFromNumericFieldValueChanged(XDialog dialog, Object args, String event) {
     LOGGER.debug("handleAyatFromNumericFieldValueChanged()");
 
@@ -677,6 +866,14 @@ public class MainDialog extends BaseDialog {
     }
   }
 
+  /**
+   * Validates and handles changes to the "To Ayat" numeric field value. Ensures "To" is not less
+   * than "From".
+   *
+   * @param dialog the dialog instance
+   * @param args additional event arguments
+   * @param event the event name
+   */
   private void handleAyatToNumericFieldValueChanged(XDialog dialog, Object args, String event) {
     LOGGER.debug("handleAyatToNumericFieldValueChanged()");
 
@@ -696,6 +893,13 @@ public class MainDialog extends BaseDialog {
     }
   }
 
+  /**
+   * Handles the "All Ayat" checkbox state change.
+   *
+   * @param dialog the dialog instance
+   * @param args additional event arguments
+   * @param event the event name
+   */
   private void handleAllAyatCheckButtonPressed(XDialog dialog, Object args, String event) {
     LOGGER.debug("handleAllAyatCheckButtonPressed()");
 
@@ -720,6 +924,13 @@ public class MainDialog extends BaseDialog {
         ON_AYAT_TO_NUMERIC_FIELD_PROPERTY_ENABLED_TO_BE_CHANGED, dialog, null, ALL_AYAT_CHECK_BOX);
   }
 
+  /**
+   * Handles selection of a Surah in the Surah list box.
+   *
+   * @param dialog the dialog instance
+   * @param args additional event arguments
+   * @param event the event name
+   */
   private void handleSurahListBoxItemSelected(XDialog dialog, Object args, String event) {
     LOGGER.debug("handleSurahListBoxItemSelected()");
 
@@ -739,6 +950,13 @@ public class MainDialog extends BaseDialog {
     triggerEvent(ON_AYAT_TO_NUMERIC_FIELD_VALUE_UPDATED, dialog, null, SURAH_LIST_BOX);
   }
 
+  /**
+   * Handles the "Ayat Per Line" checkbox state change.
+   *
+   * @param xDialog the dialog instance
+   * @param o additional event data
+   * @param event the event name
+   */
   private void handleAyatPerLineCheckButtonPressed(XDialog xDialog, Object o, String event) {
     LOGGER.debug("handleAyatPerLineCheckButtonPressed()");
 
@@ -748,6 +966,13 @@ public class MainDialog extends BaseDialog {
         AYAT_PER_LINE_CHECK_BOX_STATE, String.valueOf(short2Boolean(checkBox.getState())));
   }
 
+  /**
+   * Handles the Insert button click event to insert Quranic text into the document.
+   *
+   * @param dialog the dialog instance
+   * @param args additional event arguments
+   * @param event the event name
+   */
   private void handleInsertButtonClicked(XDialog dialog, Object args, String event) {
     LOGGER.debug("handleInsertButtonClicked()");
 
@@ -760,6 +985,14 @@ public class MainDialog extends BaseDialog {
     dialog.endExecute();
   }
 
+  /**
+   * Inserts Quranic text for the specified Surah into the current document.
+   *
+   * @param surahNo the Surah number (1-based)
+   * @throws PropertyVetoException if a property cannot be set
+   * @throws WrappedTargetException if a UNO operation fails
+   * @throws UnknownPropertyException if an unknown property is accessed
+   */
   private void insertQuranText(int surahNo)
       throws PropertyVetoException, WrappedTargetException, UnknownPropertyException {
     LOGGER.debug("insertQuranText({})", getSurahName(surahNo));
@@ -799,6 +1032,14 @@ public class MainDialog extends BaseDialog {
     }
   }
 
+  /**
+   * Writes Surah text with each Ayat on a separate line.
+   *
+   * @param surahNo the Surah number
+   * @param paragraphCursorPropertySet property set for paragraph formatting
+   * @param textViewCursor the text view cursor
+   * @throws Exception if an error occurs during text insertion
+   */
   private void writeSurahTextAsAyatPerLine(
       int surahNo, XPropertySet paragraphCursorPropertySet, XTextViewCursor textViewCursor)
       throws Exception {
@@ -844,6 +1085,16 @@ public class MainDialog extends BaseDialog {
     }
   }
 
+  /**
+   * Retrieves formatted text for a specific Ayat of a Surah.
+   *
+   * @param surahNo the Surah number
+   * @param ayatNo the Ayat number
+   * @param sourceLanguage the source language configuration key
+   * @param source the source file configuration key
+   * @return formatted Ayat text with number
+   * @throws Exception if an error occurs reading the Quran text
+   */
   private String getSurahAyatText(
       int surahNo, int ayatNo, ConfigurationKeys sourceLanguage, ConfigurationKeys source)
       throws Exception {
@@ -879,10 +1130,12 @@ public class MainDialog extends BaseDialog {
   }
 
   /**
-   * Returns the string representation of a number based on language and font.
+   * Converts a number to its Ayat number representation based on language and font.
    *
-   * @param n number between 0-9
-   * @return number string
+   * @param n the number to convert
+   * @param language the source language
+   * @param fontName the font name
+   * @return string representation of the Ayat number
    */
   public static String numToAyatNumber(int n, SourceLanguage language, String fontName) {
     final int base = fontNumberBase(language, fontName);
@@ -895,6 +1148,12 @@ public class MainDialog extends BaseDialog {
     return as.reverse().toString();
   }
 
+  /**
+   * Writes a paragraph of text at the current cursor position.
+   *
+   * @param textViewCursor the text view cursor
+   * @param paragraph the paragraph text to write
+   */
   private void writeParagraph(XTextViewCursor textViewCursor, String paragraph) {
     final XText text = textViewCursor.getText();
     final XTextCursor textCursor = text.createTextCursorByRange(textViewCursor.getStart());
@@ -904,6 +1163,11 @@ public class MainDialog extends BaseDialog {
     text.insertString(paragraphCursor, paragraph, false);
   }
 
+  /**
+   * Inserts line break and paragraph break at the current cursor position.
+   *
+   * @param textViewCursor the text view cursor
+   */
   private void writeEndOfParagraph(XTextViewCursor textViewCursor) {
     final XText text = textViewCursor.getText();
     final XTextCursor textCursor = text.createTextCursorByRange(textViewCursor.getStart());
@@ -914,6 +1178,13 @@ public class MainDialog extends BaseDialog {
     text.insertControlCharacter(paragraphCursor, PARAGRAPH_BREAK, false);
   }
 
+  /**
+   * Sets paragraph direction, writing mode, and spell check language.
+   *
+   * @param props the property set to configure
+   * @param languageKey the configuration key for the language
+   * @param enableSpellCheck whether to enable spell checking
+   */
   public void setParagraphDirectionSpellCheckLanguage(
       final XPropertySet props,
       final ConfigurationKeys languageKey,
@@ -955,6 +1226,14 @@ public class MainDialog extends BaseDialog {
     }
   }
 
+  /**
+   * Writes Surah text as a single continuous block.
+   *
+   * @param surahNo the Surah number
+   * @param paragraphCursorPropertySet property set for paragraph formatting
+   * @param textViewCursor the text view cursor
+   * @throws Exception if an error occurs during text insertion
+   */
   private void writeSurahTextAsOneBlock(
       int surahNo, XPropertySet paragraphCursorPropertySet, XTextViewCursor textViewCursor)
       throws Exception {
@@ -1000,6 +1279,17 @@ public class MainDialog extends BaseDialog {
     }
   }
 
+  /**
+   * Retrieves formatted text for a range of Ayat as a single block.
+   *
+   * @param surahNo the Surah number
+   * @param from the starting Ayat number
+   * @param to the ending Ayat number
+   * @param sourceLanguage the source language configuration key
+   * @param source the source file configuration key
+   * @return formatted block of Ayat text
+   * @throws Exception if an error occurs reading the Quran text
+   */
   private String getSurahTextBlock(
       int surahNo, int from, int to, ConfigurationKeys sourceLanguage, ConfigurationKeys source)
       throws Exception {
@@ -1037,6 +1327,7 @@ public class MainDialog extends BaseDialog {
     }
   }
 
+  /** Initializes the "Ayat Per Line" checkbox with its saved state. */
   private void initAyatPerLineCheckBox() {
     LOGGER.debug("initAyatPerLineCheckBox()");
 

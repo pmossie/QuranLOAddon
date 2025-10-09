@@ -20,6 +20,10 @@ import com.sun.star.text.WritingMode2;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Enumeration of supported Quran source languages. Provides localization information for each
+ * language including writing direction and locale.
+ */
 public enum SourceLanguage {
   ARABIC("Arabic", WritingMode2.RL_TB, makeUnoLocale("ar", "SA")),
   DUTCH("Dutch", WritingMode2.LR_TB, makeUnoLocale("nl", "NL")),
@@ -45,15 +49,22 @@ public enum SourceLanguage {
   }
 
   /**
-   * Lookup a SourceLanguage by its id string.
+   * Looks up a SourceLanguage by its identifier string.
    *
-   * @param id the id string (e.g. "Arabic")
-   * @return the matching SourceLanguage, or null if none matches
+   * @param id the language identifier (e.g., "Arabic", "English")
+   * @return the matching SourceLanguage, or {@code null} if no match found
    */
   public static SourceLanguage fromId(String id) {
     return BY_ID.get(id);
   }
 
+  /**
+   * Creates a UNO Locale for the specified language and country.
+   *
+   * @param lang the language code (e.g., "ar", "en")
+   * @param country the country code (e.g., "SA", "US")
+   * @return a configured Locale object
+   */
   public static Locale makeUnoLocale(String lang, String country) {
     Locale loc = new Locale();
     loc.Language = lang;
@@ -62,14 +73,29 @@ public enum SourceLanguage {
     return loc;
   }
 
+  /**
+   * Returns the language identifier.
+   *
+   * @return the language name as identifier
+   */
   public String id() {
     return id;
   }
 
+  /**
+   * Returns the writing direction.
+   *
+   * @return writing direction of the language
+   */
   public short wm() {
     return wm;
   }
 
+  /**
+   * Returns the locale setting for the language.
+   *
+   * @return the locale setting for the language.
+   */
   public Locale locale() {
     return locale;
   }

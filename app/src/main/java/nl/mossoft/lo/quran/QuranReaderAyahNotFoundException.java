@@ -15,7 +15,18 @@
 
 package nl.mossoft.lo.quran;
 
+/**
+ * Exception thrown when a requested Quran verse (ayah) cannot be found. This typically occurs when
+ * invalid surah or ayah numbers are provided.
+ *
+ * @see QuranReader
+ */
 public class QuranReaderAyahNotFoundException extends Exception {
+  /**
+   * Constructs a new exception with the specified detail message.
+   *
+   * @param message the detail message explaining which ayah was not found
+   */
   public QuranReaderAyahNotFoundException(String message) {
     super(message);
   }

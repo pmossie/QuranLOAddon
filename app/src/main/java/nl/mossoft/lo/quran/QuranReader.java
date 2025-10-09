@@ -29,6 +29,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 
+/**
+ * Reads and queries Quran XML files using XPath. Provides methods to retrieve verses (ayat), surah
+ * information, and counts. Implements {@link AutoCloseable} for resource management.
+ *
+ * @see QuranReaderAyahNotFoundException
+ */
 public final class QuranReader implements AutoCloseable {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(QuranReader.class);
@@ -37,9 +43,11 @@ public final class QuranReader implements AutoCloseable {
   private XPath xpath = null;
 
   /**
-   * Creates a document reader for the Qur'an xml files.
+   * Creates a QuranReader for the specified XML file.
    *
-   * @param uri to the xml file
+   * @param uri the XML file containing Quran data
+   * @throws SecurityException if file access is denied
+   * @throws IllegalArgumentException if the file is invalid
    */
   public QuranReader(File uri) {
     try {
@@ -63,10 +71,14 @@ public final class QuranReader implements AutoCloseable {
   }
 
   /**
-   * Returns the ayah text for the given surah and ayah numbers.
+   * Returns the text of a specific verse (ayah) from a surah.
    *
+   * @param suraNo the surah number (1-114)
+   * @param ayaNo the verse number within the surah
+   * @return the verse text, never {@code null} or empty
    * @throws QuranReaderAyahNotFoundException if the (surah, ayah) pair does not exist
-   * @throws IllegalStateException if the XPath cannot be compiled or evaluated
+   * @throws IllegalStateException if XPath compilation or evaluation fails
+   * @throws IllegalArgumentException if suraNo or ayaNo are out of valid range
    */
   public String getAyahNoOfSurahNo(int suraNo, int ayaNo) throws QuranReaderAyahNotFoundException {
     final String exprString =
@@ -110,15 +122,17 @@ public final class QuranReader implements AutoCloseable {
   }
 
   /**
-   * Get Bismillah.
+   * Returns Bismillah.
    *
-   * @return Bismillah
+   * @return Bismillah text
    */
   public String getBismillah() throws QuranReaderAyahNotFoundException {
     return getAyahNoOfSurahNo(getSurahNumber("Al-Fâtihah"), 1);
   }
 
   /**
+   * Returns the total number of surahs in the xml file.
+   *
    * @return number of <surah> elements in the file
    */
   public int getTotalSurahCount() {
@@ -133,6 +147,8 @@ public final class QuranReader implements AutoCloseable {
   }
 
   /**
+   * Returns the total number of ayahs in the xml file.
+   *
    * @return total number of <ayah> elements across all surahs
    */
   public int getTotalAyahCount() {
@@ -148,7 +164,10 @@ public final class QuranReader implements AutoCloseable {
   }
 
   /**
-   * @return number of <ayah> in a specific surah (by its @no attribute)
+   * Returns the number of ayahs in a specific surah.
+   *
+   * @param surahNo the surah number (1-114)
+   * @return number of ayahs in the surah, or 0 if surah not found or error occurs
    */
   public int getTotalAyahCountInSurah(int surahNo) {
     try {

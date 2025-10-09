@@ -16,11 +16,12 @@
 package nl.mossoft.lo.quran;
 
 /**
- * Represents a Quran translation source.
+ * Contains metadata about the source type, language, version, and file location.
  *
- * @param language The language of the Quran translation.
- * @param version The version of the Quran translation.
- * @param fileName The file path to the Quran source.
+ * @param type the type of source (original, translation, or transliteration)
+ * @param language the language of the Quran version
+ * @param version the specific version or translator name
+ * @param fileName the file path to the Quran XML source
  */
 public record SourceInfo(
     SourceType type, SourceLanguage language, String version, String fileName) {}

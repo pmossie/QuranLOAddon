@@ -23,7 +23,14 @@ import java.io.File;
 import java.util.*;
 import java.util.stream.Collectors;
 
-/** A singleton utility class that manages different Quran sources based on language and version. */
+/**
+ * Singleton utility class that manages different Quran sources. Provides access to available Quran
+ * versions by type, language, and version.
+ *
+ * @see SourceInfo
+ * @see SourceType
+ * @see SourceLanguage
+ */
 public final class SourceManager {
 
   /** A map storing sources by language, ensuring efficient lookup. */
@@ -79,12 +86,12 @@ public final class SourceManager {
   }
 
   /**
-   * Retrieves the filename for a given language and version.
+   * Retrieves the filename for a specific Quran source.
    *
-   * @param type The type of the Quran version (e.g., "Translation").
-   * @param language The language of the Quran version (e.g., "English").
-   * @param version The version of the Quran translation (e.g., "Pickthall").
-   * @return The file path to the Quran source, or {@code null} if not found.
+   * @param type the source type (original, translation, transliteration)
+   * @param language the language of the Quran version
+   * @param version the specific version or translator name
+   * @return the file path to the Quran source, or {@code null} if not found
    */
   public static String getSourceFilename(SourceType type, SourceLanguage language, String version) {
     return SOURCES_BY_TYPE.getOrDefault(type, Collections.emptyList()).stream()
@@ -96,9 +103,10 @@ public final class SourceManager {
   }
 
   /**
-   * Retrieves all versions of a SourceType as a comma-separated string.
+   * Retrieves all versions of a specific source type as a formatted string.
    *
-   * @return A string listing all versions of a SourceType.
+   * @param type the source type to filter by
+   * @return comma-separated string of available versions in format "Language (Version)"
    */
   public static String getVersionsOfTypeAsString(SourceType type) {
     return SOURCES_BY_TYPE.entrySet().stream()
@@ -126,6 +134,15 @@ public final class SourceManager {
     return sources.toArray(new SourceInfo[0]);
   }
 
+  /**
+   * Retrieves the file URI for a specific source type and version index.
+   *
+   * @param type the source type
+   * @param version the index of the version in the available sources array
+   * @param ctx the component context for file path resolution
+   * @return the File object pointing to the Quran source
+   * @throws ArrayIndexOutOfBoundsException if version index is invalid
+   */
   public static File getSourceUri(SourceType type, int version, XComponentContext ctx) {
     return getFilePath(getSourceInfoOfTypeAsArray(type)[version].fileName(), ctx);
   }

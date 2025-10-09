@@ -18,7 +18,10 @@ package nl.mossoft.lo.quran;
 import java.util.*;
 import java.util.stream.Collectors;
 
-/** A utility class providing information about Surahs, including their names and sizes. */
+/**
+ * Utility class providing information about Quran chapters (Surahs). Contains Surah names, sizes
+ * (number of verses), and lookup methods. All data is immutable and loaded statically.
+ */
 public final class SurahManager {
 
   /** Immutable map storing Surah names with formatted numbering (e.g., "001 Al-Fâtihah"). */
@@ -173,32 +176,23 @@ public final class SurahManager {
   }
 
   /**
-   * Retrieves the number of verses in a Surah.
+   * Retrieves the number of verses in a specific Surah.
    *
-   * @param order The Surah index (0-based).
-   * @return The number of verses, or -1 if not found.
+   * @param order the Surah number (1-114)
+   * @return the number of verses, or -1 if Surah not found
    */
   public static int getSurahSize(int order) {
     return SURAH_SIZES.getOrDefault(order, -1);
   }
 
   /**
-   * Retrieves a Surah name formatted as "001 Al-Fâtihah".
+   * Retrieves a formatted Surah name including its number.
    *
-   * @param order The Surah index (0-based).
-   * @return The formatted Surah name or {@code null} if not found.
+   * @param order the Surah number (1-114)
+   * @return formatted name (e.g., "001 Al-Fâtihah"), or {@code null} if not found
    */
   public static String getSurahName(int order) {
     return SURAH_NAMES.get(order);
-  }
-
-  /**
-   * Retrieves all Surah names as an array.
-   *
-   * @return An array of formatted Surah names.
-   */
-  public static String[] getSurahNamesAsArray() {
-    return SURAH_NAMES.values().toArray(new String[0]);
   }
 
   /**
@@ -211,10 +205,11 @@ public final class SurahManager {
   }
 
   /**
-   * Retrieves the Surah number (0-based) for a given Surah name.
+   * Finds the Surah number for a given Surah name. Supports both formatted names ("001 Al-Fâtihah")
+   * and plain names ("Al-Fâtihah").
    *
-   * @param surahName The Surah name (formatted, e.g. "001 Al-Fâtihah" or just "Al-Fâtihah").
-   * @return The Surah number , or -1 if not found.
+   * @param surahName the Surah name to look up
+   * @return Surah number (1-114), or -1 if not found
    */
   public static int getSurahNumber(String surahName) {
     if (surahName == null || surahName.isBlank()) {

@@ -17,9 +17,16 @@ package nl.mossoft.lo.quran;
 
 import java.util.stream.Stream;
 
+/**
+ * Enumeration of Quran source types. Defines categories of Quran texts: original Arabic,
+ * translations, and transliterations.
+ */
 public enum SourceType {
+  /** The original Arabic Quran text. */
   ORIGINAL("Original"),
+  /** Translated versions of the Quran. */
   TRANSLATION("Translation"),
+  /** Phonetic transliterations of the Arabic text. */
   TRANSLITERATION("Transliteration");
 
   private final String id;
@@ -32,6 +39,11 @@ public enum SourceType {
     return id;
   }
 
+  /**
+   * Returns a stream of all source types.
+   *
+   * @return stream of all SourceType values
+   */
   public static Stream<SourceType> stream() {
     return Stream.of(SourceType.values());
   }

@@ -24,6 +24,17 @@ import nl.mossoft.lo.quran.SourceLanguage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Utility class for font discovery and management.
+ *
+ * <p>Automatically detects available system fonts and categorizes them by
+ * script support (Arabic vs. Latin). Provides font attributes including
+ * proper digit sets, parentheses, and Arabic diacritical marks.
+ *
+ * <p>All font lists are immutable and deterministically ordered after static initialization.
+ *
+ * @see FontAttr
+ */
 public final class FontManager {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(FontManager.class);
@@ -122,8 +133,15 @@ public final class FontManager {
   }
 
   /**
-   * Zero codepoint for the digit set to use with this font & language. Returns 0x0030 (ASCII) for
-   * LTR, or Arabic-Indic (0x0660) / Extended (0x06F0) if supported.
+   * Determines the appropriate digit set (number base) for a given language and font.
+   *
+   * <p>For left-to-right languages, returns ASCII digits (0x0030). For right-to-left
+   * languages (Arabic), attempts to use Arabic-Indic digits (0x0660) or Extended
+   * Arabic-Indic digits (0x06F0) if supported by the font, falling back to ASCII.
+   *
+   * @param language the target language for digit rendering
+   * @param fontName the font to check for digit support
+   * @return the Unicode code point for the digit set's zero character
    */
   public static int fontNumberBase(SourceLanguage language, String fontName) {
     if (language.wm() == WritingMode2.LR_TB) {
@@ -139,12 +157,22 @@ public final class FontManager {
 
   // ---------------------- Public API ----------------------
 
-  /** Fonts that support Arabic (frozen list, deterministically ordered). */
+  /**
+   * Returns an immutable list of fonts that support Arabic script.
+   * The list is deterministically ordered case-insensitively.
+   *
+   * @return immutable list of Arabic-capable font names
+   */
   public static List<String> getArabicSupportedFonts() {
     return ARABIC_FONTS.stream().map(FontAttr::fontName).toList();
   }
 
-  /** Fonts that support Latin (frozen list, deterministically ordered). */
+  /**
+   * Returns an immutable list of fonts that support Latin script.
+   * The list is deterministically ordered case-insensitively.
+   *
+   * @return immutable list of Latin-capable font names
+   */
   public static List<String> getLatinSupportedFonts() {
     return LATIN_FONTS.stream().map(FontAttr::fontName).toList();
   }
@@ -167,16 +195,40 @@ public final class FontManager {
     return String.join(", ", getLatinSupportedFonts());
   }
 
+  /**
+   * Finds the index of a font in the Arabic fonts list.
+   *
+   * @param fontName the font name to search for
+   * @return the index of the font, or -1 if not found
+   * @throws NullPointerException if fontName is {@code null}
+   */
   public static int getFontIndexInArabicList(String fontName) {
     Objects.requireNonNull(fontName, "fontName");
     return getArabicSupportedFonts().indexOf(fontName);
   }
 
+  /**
+   * Finds the index of a font in the Latin fonts list.
+   *
+   * @param fontName the font name to search for
+   * @return the index of the font, or -1 if not found
+   * @throws NullPointerException if fontName is {@code null}
+   */
   public static int getFontIndexInLatinList(String fontName) {
     Objects.requireNonNull(fontName, "fontName");
     return getLatinSupportedFonts().indexOf(fontName);
   }
 
+  /**
+   * Transforms Arabic text by replacing generic diacritical marks with
+   * font-specific equivalents when available.
+   *
+   * @param text the Arabic text to transform
+   * @param fontName the target font for the transformation
+   * @return the transformed text with font-specific characters
+   * @throws NullPointerException if text or fontName is {@code null}
+   * @throws NoSuchElementException if font attributes are not found
+   */
   public static String transFonter(String text, String fontName) {
     return text.replace(ARABIC_SUKUN_STR, getFontAttrByName(fontName).orElseThrow().sukunStr())
         .replace(
@@ -184,7 +236,13 @@ public final class FontManager {
             getFontAttrByName(fontName).orElseThrow().highRoundedZeroStr());
   }
 
-  /** Fast lookup: full attributes for a font if known. */
+  /**
+   * Retrieves font attributes for a given font name.
+   *
+   * @param fontName the font name to look up
+   * @return an Optional containing FontAttr if found, empty otherwise
+   * @throws NullPointerException if fontName is {@code null}
+   */
   public static Optional<FontAttr> getFontAttrByName(String fontName) {
     Objects.requireNonNull(fontName, "fontName");
     return Optional.ofNullable(BY_NAME.get(fontName));

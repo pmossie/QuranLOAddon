@@ -41,6 +41,23 @@ import nl.mossoft.lo.quran.SurahManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Singleton manager for application configuration settings.
+ *
+ * <p>Manages a centralized configuration store for all Quran add-on settings including:
+ *
+ * <ul>
+ *   <li>Font selections and sizes
+ *   <li>Language and version preferences
+ *   <li>Surah and verse range selections
+ *   <li>UI control states
+ * </ul>
+ *
+ * <p>Automatically initializes with sensible defaults and provides thread-safe access to
+ * configuration values.
+ *
+ * @see ConfigurationKeys
+ */
 public enum ConfigurationManager {
   INSTANCE; // ✅ the single instance
 
@@ -66,6 +83,21 @@ public enum ConfigurationManager {
 
   // === API remains the same ===
 
+  /**
+   * Initializes the configuration manager with default values. This method must be called before
+   * using any configuration operations.
+   *
+   * <p>Performs the following initialization steps:
+   *
+   * <ol>
+   *   <li>Detects system default fonts via a hidden document
+   *   <li>Loads all default configuration values
+   *   <li>Populates the configuration map
+   * </ol>
+   *
+   * @param ctx the component context used for font detection and service creation
+   * @throws RuntimeException if font detection fails
+   */
   public void initializeDefaults(XComponentContext ctx) {
     getAppDefaultFontsViaHiddenDoc(ctx);
     configMap.putAll(getDefaultConfigurations());
@@ -151,6 +183,14 @@ public enum ConfigurationManager {
     }
   }
 
+  /**
+   * Extracts default font information from an existing text document. Reads the default paragraph
+   * style to determine Latin and Arabic font settings.
+   *
+   * @param doc the text document to analyze
+   * @param ctx the component context for localization
+   * @throws RuntimeException if font properties cannot be accessed
+   */
   public static void getDocumentDefaultFonts(XTextDocument doc, XComponentContext ctx) {
     try {
       XStyleFamiliesSupplier famSup = UnoRuntime.queryInterface(XStyleFamiliesSupplier.class, doc);
@@ -204,6 +244,13 @@ public enum ConfigurationManager {
     throw new IllegalStateException("Default paragraph style not found.");
   }
 
+  /**
+   * Retrieves the configuration value for the specified key.
+   *
+   * @param key the configuration key to retrieve
+   * @return the configuration value as a string, or {@code null} if key not found
+   * @throws NullPointerException if key is {@code null}
+   */
   public String getConfig(ConfigurationKeys key) {
     String value = configMap.get(key);
     LOGGER.debug("Get key: '{}' -> '{}'", key, value);
@@ -213,11 +260,22 @@ public enum ConfigurationManager {
     return value;
   }
 
+  /**
+   * Updates the configuration value for the specified key.
+   *
+   * @param key the configuration key to update
+   * @param value the new value to store
+   * @throws NullPointerException if key is {@code null}
+   */
   public void setConfig(ConfigurationKeys key, String value) {
     LOGGER.debug("Update key: '{}' -> '{}'", key, value);
     configMap.put(key, value);
   }
 
+  /**
+   * Logs all current configuration keys and values in alphabetical order. Useful for debugging
+   * configuration state.
+   */
   public void listAllConfigurationKeys() {
     configMap.entrySet().stream()
         .sorted(Comparator.comparing(e -> e.getKey().toString()))

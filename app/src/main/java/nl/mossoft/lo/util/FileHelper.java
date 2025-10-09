@@ -26,17 +26,52 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import nl.mossoft.lo.dialog.UnoOperations;
 
+/**
+ * Utility class for file path resolution and resource location.
+ *
+ * <p>Provides methods to locate application resources within the add-on package, with special
+ * handling for dialog files and Quran data files. Uses UNO URL transformation to resolve paths
+ * correctly in the LibreOffice environment.
+ *
+ * @see PackageInformationProvider
+ */
 public class FileHelper {
   private static final String DIALOG_RESOURCES = "dialogs/";
   private static final String URL_TRANSFORMER_SERVICE = "com.sun.star.util.URLTransformer";
 
   private FileHelper() {}
 
-  /** Returns a path to a dialog file */
+  /**
+   * Returns the file path to a dialog resource file.
+   *
+   * @param xdlFile the dialog file name (without path)
+   * @param ctx the component context for package location resolution
+   * @return the canonical File object pointing to the dialog resource
+   * @throws IllegalStateException if the package location cannot be determined
+   * @throws IllegalArgumentException if xdlFile is blank
+   */
   public static File getDialogFilePath(String xdlFile, XComponentContext ctx) {
     return getFilePath(DIALOG_RESOURCES + xdlFile, ctx);
   }
 
+  /**
+   * Resolves a file path within the add-on package.
+   *
+   * <p>This method:
+   *
+   * <ol>
+   *   <li>Determines the add-on package location
+   *   <li>Constructs the complete URL
+   *   <li>Transforms the URL using UNO services
+   *   <li>Creates a canonical File object
+   * </ol>
+   *
+   * @param fileName the relative file path within the package
+   * @param context the component context for package resolution
+   * @return the canonical File object for the specified resource
+   * @throws IllegalArgumentException if fileName is blank
+   * @throws IllegalStateException if package location is unavailable or path resolution fails
+   */
   public static File getFilePath(String fileName, XComponentContext context) {
     UnoOperations.requireNonNull(fileName, context);
     if (fileName.isBlank()) {

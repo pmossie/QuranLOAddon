@@ -15,6 +15,14 @@
 
 package nl.mossoft.lo.util;
 
+/**
+ * Enumeration of configuration keys used throughout the application. Each key represents a specific
+ * configuration setting for the Quran add-on, including UI state, font settings, language
+ * selections, and verse ranges.
+ *
+ * <p>Keys are used to store and retrieve configuration values from the {@link ConfigurationManager}
+ * in a type-safe manner.
+ */
 public enum ConfigurationKeys {
   ALL_AYAT_CHECK_BOX_STATE("AllAyatCheckBoxState"),
   ARABIC_FONT_LIST_BOX_ITEM_LIST("ArabicFontListBoxItemList"),
@@ -55,13 +63,24 @@ public enum ConfigurationKeys {
   TRANSLITERATION_VERSION_LIST_BOX_ITEM_LIST("TransliterationVersionListBoxItemList"),
   TRANSLITERATION_VERSION_LIST_BOX_ITEM_SELECTED("TransliterationVersionListBoxItemSelected");
 
-  /* the name of the Configuration Key */
+  /** The name of the configuration key as stored in configuration files. */
   private final String key;
 
+  /**
+   * Constructs a new configuration key with the specified string identifier.
+   *
+   * @param key the string identifier for this configuration key
+   */
   ConfigurationKeys(String key) {
     this.key = key;
   }
 
+  /**
+   * Looks up a ConfigurationKeys enum value by its string key.
+   *
+   * @param key the string key to search for
+   * @return the matching ConfigurationKeys enum value, or {@code null} if no match found
+   */
   public static ConfigurationKeys fromKey(String key) {
     for (ConfigurationKeys configKey : values()) {
       if (configKey.getKey().equals(key)) {
@@ -71,6 +90,12 @@ public enum ConfigurationKeys {
     return null; // Return null if no match is found
   }
 
+  /**
+   * Returns the string representation of this configuration key. This is equivalent to {@link
+   * #getKey()}.
+   *
+   * @return the string key identifier
+   */
   public String getKey() {
     return key;
   }

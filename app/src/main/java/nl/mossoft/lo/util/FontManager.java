@@ -27,9 +27,9 @@ import org.slf4j.LoggerFactory;
 /**
  * Utility class for font discovery and management.
  *
- * <p>Automatically detects available system fonts and categorizes them by
- * script support (Arabic vs. Latin). Provides font attributes including
- * proper digit sets, parentheses, and Arabic diacritical marks.
+ * <p>Automatically detects available system fonts and categorizes them by script support (Arabic
+ * vs. Latin). Provides font attributes including proper digit sets, parentheses, and Arabic
+ * diacritical marks.
  *
  * <p>All font lists are immutable and deterministically ordered after static initialization.
  *
@@ -135,9 +135,9 @@ public final class FontManager {
   /**
    * Determines the appropriate digit set (number base) for a given language and font.
    *
-   * <p>For left-to-right languages, returns ASCII digits (0x0030). For right-to-left
-   * languages (Arabic), attempts to use Arabic-Indic digits (0x0660) or Extended
-   * Arabic-Indic digits (0x06F0) if supported by the font, falling back to ASCII.
+   * <p>For left-to-right languages, returns ASCII digits (0x0030). For right-to-left languages
+   * (Arabic), attempts to use Arabic-Indic digits (0x0660) or Extended Arabic-Indic digits (0x06F0)
+   * if supported by the font, falling back to ASCII.
    *
    * @param language the target language for digit rendering
    * @param fontName the font to check for digit support
@@ -158,8 +158,8 @@ public final class FontManager {
   // ---------------------- Public API ----------------------
 
   /**
-   * Returns an immutable list of fonts that support Arabic script.
-   * The list is deterministically ordered case-insensitively.
+   * Returns an immutable list of fonts that support Arabic script. The list is deterministically
+   * ordered case-insensitively.
    *
    * @return immutable list of Arabic-capable font names
    */
@@ -168,8 +168,8 @@ public final class FontManager {
   }
 
   /**
-   * Returns an immutable list of fonts that support Latin script.
-   * The list is deterministically ordered case-insensitively.
+   * Returns an immutable list of fonts that support Latin script. The list is deterministically
+   * ordered case-insensitively.
    *
    * @return immutable list of Latin-capable font names
    */
@@ -220,8 +220,8 @@ public final class FontManager {
   }
 
   /**
-   * Transforms Arabic text by replacing generic diacritical marks with
-   * font-specific equivalents when available.
+   * Transforms Arabic text by replacing generic diacritical marks with font-specific equivalents
+   * when available.
    *
    * @param text the Arabic text to transform
    * @param fontName the target font for the transformation

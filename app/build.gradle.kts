@@ -35,7 +35,7 @@ plugins {
 }
 
 group = "nl.mossoft.lo"
-version = "25.0.1"
+version = "25.0.1.1"
 
 val buildTimestamp: String? = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"))
 val buildVersion = "$version-$buildTimestamp"

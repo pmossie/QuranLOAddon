@@ -1,3 +1,1 @@
-Met deze add-on kun je de Arabische tekst van de Koran in je document invoegen, door een enkele aya of een reeks van ayat uit een soera te selecteren.
-
-Daarnaast heb je de mogelijkheid om meerdere vertalingen aan de tekst toe te voegen.
+QuranLOAddon is een krachtige LibreOffice-extensie waarmee je moeiteloos Koranische tekst kunt integreren in je documenten. Het maakt niet alleen het invoegen van Arabische verzen mogelijk, maar biedt ook vertalingen en transcripties — waardoor je werk wordt verrijkt met helderheid, diepgang en toegankelijkheid.

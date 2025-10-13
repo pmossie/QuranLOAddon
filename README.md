@@ -56,8 +56,9 @@ License: Creative Commons Attribution 3.0
 
 ## License
 
-This project follows the same **Creative Commons Attribution 3.0** license for the included Quran text data.
-See the LICENSE file for details.
+You can redistribute it and/or modify it under the terms of the **GNU General Public License** as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+The project follows the same **Creative Commons Attribution 3.0** license for the included Quran text data.
 
 ---
 

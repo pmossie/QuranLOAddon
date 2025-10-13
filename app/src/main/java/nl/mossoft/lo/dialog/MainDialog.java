@@ -1198,7 +1198,7 @@ public class MainDialog extends BaseDialog {
     try {
       // Paragraph alignment and writing mode
       props.setPropertyValue(
-          PARA_ADJUST, isLeftToRight ? ParagraphAdjust.LEFT : ParagraphAdjust.RIGHT);
+          PARA_ADJUST, isLeftToRight ? ParagraphAdjust.BLOCK : ParagraphAdjust.RIGHT);
       props.setPropertyValue(WRITING_MODE, isLeftToRight ? WritingMode2.LR_TB : WritingMode2.RL_TB);
 
       // Build appropriate locale

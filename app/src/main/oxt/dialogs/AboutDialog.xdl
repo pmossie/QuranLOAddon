@@ -122,7 +122,7 @@
         dlg:top="25"
         dlg:valign="center"
         dlg:value="&amp;VersionLabel.value"
-        dlg:width="30"
+        dlg:width="40"
     />
   </dlg:bulletinboard>
 </dlg:window>

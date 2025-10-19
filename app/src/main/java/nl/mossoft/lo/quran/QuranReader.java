@@ -70,6 +70,16 @@ public final class QuranReader implements AutoCloseable {
     }
   }
 
+  public String getAyahNameOfSurahNo(int suraNo) {
+    final String exprString = String.format("/quran/surah[@no='%d']//@name", suraNo);
+    try {
+      XPathExpression expr = xpath.compile(exprString);
+      return (String) expr.evaluate(doc, XPathConstants.STRING);
+    } catch (XPathExpressionException e) {
+      throw new IllegalStateException("Failed to evaluate XPath: " + exprString, e);
+    }
+  }
+
   /**
    * Returns the text of a specific verse (ayah) from a surah.
    *
@@ -127,7 +137,7 @@ public final class QuranReader implements AutoCloseable {
    * @return Bismillah text
    */
   public String getBismillah() throws QuranReaderAyahNotFoundException {
-    return getAyahNoOfSurahNo(getSurahNumber("Al-Fâtihah"), 1);
+    return getAyahNoOfSurahNo(getSurahNumber("Al-Fātihah"), 1);
   }
 
   /**

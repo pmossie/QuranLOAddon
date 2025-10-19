@@ -1060,7 +1060,8 @@ public class MainDialog extends BaseDialog {
             paragraphCursorPropertySet, ARABIC_LANGUAGE_SELECTED, true);
         writeParagraph(
             textViewCursor,
-            getSurahAyatText(surahNo, a, ARABIC_LANGUAGE_SELECTED, ARABIC_SOURCE_SELECTED));
+            getSurahAyatText(surahNo, a, ARABIC_LANGUAGE_SELECTED, ARABIC_SOURCE_SELECTED),
+            ParagraphAdjust.RIGHT);
         writeEndOfParagraph(textViewCursor);
       }
       if (transliteration) {
@@ -1069,7 +1070,8 @@ public class MainDialog extends BaseDialog {
         writeParagraph(
             textViewCursor,
             getSurahAyatText(
-                surahNo, a, TRANSLITERATION_LANGUAGE_SELECTED, TRANSLITERATION_SOURCE_SELECTED));
+                surahNo, a, TRANSLITERATION_LANGUAGE_SELECTED, TRANSLITERATION_SOURCE_SELECTED),
+            ParagraphAdjust.BLOCK);
         writeEndOfParagraph(textViewCursor);
       }
 
@@ -1079,7 +1081,8 @@ public class MainDialog extends BaseDialog {
         writeParagraph(
             textViewCursor,
             getSurahAyatText(
-                surahNo, a, TRANSLATION_LANGUAGE_SELECTED, TRANSLATION_SOURCE_SELECTED));
+                surahNo, a, TRANSLATION_LANGUAGE_SELECTED, TRANSLATION_SOURCE_SELECTED),
+            ParagraphAdjust.BLOCK);
         writeEndOfParagraph(textViewCursor);
       }
     }
@@ -1113,7 +1116,7 @@ public class MainDialog extends BaseDialog {
       final StringBuilder paragraph = new StringBuilder();
       if (writingMode == WritingMode2.LR_TB) {
         paragraph.append(fa.leftParenthesisStr());
-        paragraph.append(numToAyatNumber(ayatNo, language, fontName));
+        paragraph.append(numToNumberString(ayatNo, language, fontName));
         paragraph.append(fa.rightParenthesisStr());
         paragraph.append(' ');
         paragraph.append(transFonter(ayat, fontName));
@@ -1121,7 +1124,7 @@ public class MainDialog extends BaseDialog {
       } else {
         paragraph.append(transFonter(ayat, fontName));
         paragraph.append(fa.rightParenthesisStr());
-        paragraph.append(numToAyatNumber(ayatNo, language, fontName));
+        paragraph.append(numToNumberString(ayatNo, language, fontName));
         paragraph.append(fa.leftParenthesisStr());
         paragraph.append(' ');
       }
@@ -1130,14 +1133,14 @@ public class MainDialog extends BaseDialog {
   }
 
   /**
-   * Converts a number to its Ayat number representation based on language and font.
+   * Converts a number to its string representation based on language and font.
    *
    * @param n the number to convert
    * @param language the source language
    * @param fontName the font name
    * @return string representation of the Ayat number
    */
-  public static String numToAyatNumber(int n, SourceLanguage language, String fontName) {
+  public static String numToNumberString(int n, SourceLanguage language, String fontName) {
     final int base = fontNumberBase(language, fontName);
 
     final StringBuilder as = new StringBuilder();
@@ -1153,12 +1156,20 @@ public class MainDialog extends BaseDialog {
    *
    * @param textViewCursor the text view cursor
    * @param paragraph the paragraph text to write
+   * @param paragraphAdjust the paragraph alignment
    */
-  private void writeParagraph(XTextViewCursor textViewCursor, String paragraph) {
+  private void writeParagraph(
+      XTextViewCursor textViewCursor, String paragraph, ParagraphAdjust paragraphAdjust) {
     final XText text = textViewCursor.getText();
     final XTextCursor textCursor = text.createTextCursorByRange(textViewCursor.getStart());
     final XParagraphCursor paragraphCursor =
         UnoRuntime.queryInterface(XParagraphCursor.class, textCursor);
+    final XPropertySet props = getPropertySet(paragraphCursor);
+    try {
+      props.setPropertyValue(PARA_ADJUST, paragraphAdjust);
+    } catch (UnknownPropertyException | PropertyVetoException | WrappedTargetException e) {
+      throw new RuntimeException(e);
+    }
 
     text.insertString(paragraphCursor, paragraph, false);
   }
@@ -1174,8 +1185,8 @@ public class MainDialog extends BaseDialog {
 
     final XParagraphCursor paragraphCursor =
         UnoRuntime.queryInterface(XParagraphCursor.class, textCursor);
-    text.insertControlCharacter(paragraphCursor, LINE_BREAK, false);
     text.insertControlCharacter(paragraphCursor, PARAGRAPH_BREAK, false);
+    text.insertControlCharacter(paragraphCursor, LINE_BREAK, false);
   }
 
   /**
@@ -1196,9 +1207,7 @@ public class MainDialog extends BaseDialog {
     final boolean isLeftToRight = srcLang.wm() == WritingMode2.LR_TB;
 
     try {
-      // Paragraph alignment and writing mode
-      props.setPropertyValue(
-          PARA_ADJUST, isLeftToRight ? ParagraphAdjust.BLOCK : ParagraphAdjust.RIGHT);
+      // Writing mode
       props.setPropertyValue(WRITING_MODE, isLeftToRight ? WritingMode2.LR_TB : WritingMode2.RL_TB);
 
       // Build appropriate locale
@@ -1242,19 +1251,40 @@ public class MainDialog extends BaseDialog {
     int from = parseInt(configManager.getConfig(AYAT_FROM_NUMERIC_FIELD_VALUE));
     int to = parseInt(configManager.getConfig(AYAT_TO_NUMERIC_FIELD_VALUE));
 
+    final boolean addBismillah =
+        parseBoolean(configManager.getConfig(ALL_AYAT_CHECK_BOX_STATE))
+            && !((surahNo == 1) || (surahNo == 9));
+
     if (parseBoolean(configManager.getConfig(ARABIC_VERSION_CHECK_BOX_STATE))) {
       setParagraphDirectionSpellCheckLanguage(
           paragraphCursorPropertySet, ARABIC_LANGUAGE_SELECTED, true);
 
+      if (addBismillah) {
+        writeParagraph(
+            textViewCursor,
+            getBismillah(ARABIC_LANGUAGE_SELECTED, ARABIC_SOURCE_SELECTED),
+            ParagraphAdjust.RIGHT);
+        writeEndOfParagraph(textViewCursor);
+      }
+
       writeParagraph(
           textViewCursor,
-          getSurahTextBlock(surahNo, from, to, ARABIC_LANGUAGE_SELECTED, ARABIC_SOURCE_SELECTED));
+          getSurahTextBlock(surahNo, from, to, ARABIC_LANGUAGE_SELECTED, ARABIC_SOURCE_SELECTED),
+          ParagraphAdjust.RIGHT);
       writeEndOfParagraph(textViewCursor);
     }
 
     if (parseBoolean(configManager.getConfig(TRANSLITERATION_VERSION_CHECK_BOX_STATE))) {
       setParagraphDirectionSpellCheckLanguage(
           paragraphCursorPropertySet, TRANSLITERATION_LANGUAGE_SELECTED, false);
+
+      if (addBismillah) {
+        writeParagraph(
+            textViewCursor,
+            getBismillah(TRANSLITERATION_LANGUAGE_SELECTED, TRANSLITERATION_SOURCE_SELECTED),
+            ParagraphAdjust.LEFT);
+        writeEndOfParagraph(textViewCursor);
+      }
 
       writeParagraph(
           textViewCursor,
@@ -1263,7 +1293,8 @@ public class MainDialog extends BaseDialog {
               from,
               to,
               TRANSLITERATION_LANGUAGE_SELECTED,
-              TRANSLITERATION_SOURCE_SELECTED));
+              TRANSLITERATION_SOURCE_SELECTED),
+          ParagraphAdjust.BLOCK);
       writeEndOfParagraph(textViewCursor);
     }
 
@@ -1271,11 +1302,92 @@ public class MainDialog extends BaseDialog {
       setParagraphDirectionSpellCheckLanguage(
           paragraphCursorPropertySet, TRANSLATION_LANGUAGE_SELECTED, true);
 
+      if (addBismillah) {
+        writeParagraph(
+            textViewCursor,
+            getBismillah(TRANSLATION_LANGUAGE_SELECTED, TRANSLATION_SOURCE_SELECTED),
+            ParagraphAdjust.LEFT);
+        writeEndOfParagraph(textViewCursor);
+      }
+
       writeParagraph(
           textViewCursor,
           getSurahTextBlock(
-              surahNo, from, to, TRANSLATION_LANGUAGE_SELECTED, TRANSLATION_SOURCE_SELECTED));
+              surahNo, from, to, TRANSLATION_LANGUAGE_SELECTED, TRANSLATION_SOURCE_SELECTED),
+          ParagraphAdjust.BLOCK);
       writeEndOfParagraph(textViewCursor);
+      writeParagraph(
+          textViewCursor,
+          getSurahFooterText(
+              paragraphCursorPropertySet,
+              surahNo,
+              from,
+              to,
+              TRANSLATION_LANGUAGE_SELECTED,
+              TRANSLATION_SOURCE_SELECTED),
+          ParagraphAdjust.RIGHT);
+      writeEndOfParagraph(textViewCursor);
+    }
+  }
+
+  private String getSurahFooterText(
+      XPropertySet props,
+      int surahNo,
+      int from,
+      int to,
+      ConfigurationKeys sourceLanguage,
+      ConfigurationKeys source) {
+    try (QuranReader reader = new QuranReader(getFilePath(configManager.getConfig(source), ctx))) {
+      SourceLanguage language = SourceLanguage.fromId(configManager.getConfig(sourceLanguage));
+      short writingMode = language.wm();
+      String fontName =
+          (writingMode == WritingMode2.LR_TB)
+              ? configManager.getConfig(LATIN_FONT_SELECTED)
+              : configManager.getConfig(ARABIC_FONT_SELECTED);
+
+      final StringBuilder paragraph = new StringBuilder();
+
+      if (writingMode == WritingMode2.LR_TB) {
+        paragraph.append("(");
+        paragraph.append(reader.getAyahNameOfSurahNo(surahNo));
+        paragraph.append(" [");
+        paragraph.append(numToNumberString(surahNo, language, fontName));
+        paragraph.append(":");
+        if (to > from) {
+          paragraph.append(numToNumberString(from, language, fontName));
+          paragraph.append("-");
+        }
+        paragraph.append(numToNumberString(to, language, fontName));
+        paragraph.append("])");
+      } else {
+
+        paragraph.append(reader.getAyahNameOfSurahNo(surahNo));
+      }
+
+      return paragraph.toString();
+    }
+  }
+
+  /**
+   * Retrieves formatted text for Bismillah.
+   *
+   * @param sourceLanguage the source language configuration key
+   * @param source the source file configuration key
+   * @return formatted block of text
+   * @throws Exception if an error occurs reading the Quran text
+   */
+  private String getBismillah(ConfigurationKeys sourceLanguage, ConfigurationKeys source)
+      throws Exception {
+    try (QuranReader reader = new QuranReader(getFilePath(configManager.getConfig(source), ctx))) {
+
+      SourceLanguage language = SourceLanguage.fromId(configManager.getConfig(sourceLanguage));
+      short writingMode = language.wm();
+      String fontName =
+          (writingMode == WritingMode2.LR_TB)
+              ? configManager.getConfig(LATIN_FONT_SELECTED)
+              : configManager.getConfig(ARABIC_FONT_SELECTED);
+
+      return transFonter(reader.getBismillah(), fontName);
     }
   }
 
@@ -1310,7 +1422,7 @@ public class MainDialog extends BaseDialog {
       for (Iterator<String> it = ayat.iterator(); it.hasNext(); ayatNo++) {
         if (writingMode == WritingMode2.LR_TB) {
           paragraph.append(fa.leftParenthesisStr());
-          paragraph.append(numToAyatNumber(ayatNo, language, fontName));
+          paragraph.append(numToNumberString(ayatNo, language, fontName));
           paragraph.append(fa.rightParenthesisStr());
           paragraph.append(' ');
           paragraph.append(transFonter(it.next(), fontName));
@@ -1318,7 +1430,7 @@ public class MainDialog extends BaseDialog {
         } else {
           paragraph.append(transFonter(it.next(), fontName));
           paragraph.append(fa.rightParenthesisStr());
-          paragraph.append(numToAyatNumber(ayatNo, language, fontName));
+          paragraph.append(numToNumberString(ayatNo, language, fontName));
           paragraph.append(fa.leftParenthesisStr());
           paragraph.append(' ');
         }

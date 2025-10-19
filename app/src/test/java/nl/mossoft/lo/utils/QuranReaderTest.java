@@ -28,6 +28,8 @@ import org.junit.jupiter.api.Test;
 
 public class QuranReaderTest {
 
+  private static final String AL_BAQARAH_ARABIC = "البقرة";
+  private static final String AL_BAQARAH_ENGLISH = "Al-Baqarah";
   private static final String BISMILLAH_ARABIC = "بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ";
   private static final String BISMILLAH_ENGLISH =
       "In the name of Allah, the Entirely Merciful, the Especially Merciful.";
@@ -42,6 +44,24 @@ public class QuranReaderTest {
       "src/test/resources/quran_english.test.xml";
   private static final String QURAN_SOURCE_FILE_ENGLISH_WITH_ERRORS =
       "src/test/resources/quran_english_with_errors.test.xml";
+
+  @Test
+  void getAyahNameOfSurahNo_Arabic_isFoundAndContentIsCorrect() throws Exception {
+    String text;
+    try (QuranReader reader = new QuranReader(new File(QURAN_SOURCE_FILE_ARABIC))) {
+      text = assertDoesNotThrow(() -> reader.getAyahNameOfSurahNo(getSurahNumber("Al-Baqarah")));
+    }
+    assertThat(text).isEqualTo(AL_BAQARAH_ARABIC);
+  }
+
+  @Test
+  void getAyahNameOfSurahNo_English_isFoundAndContentIsCorrect() throws Exception {
+    String text;
+    try (QuranReader reader = new QuranReader(new File(QURAN_SOURCE_FILE_ENGLISH))) {
+      text = assertDoesNotThrow(() -> reader.getAyahNameOfSurahNo(getSurahNumber("Al-Baqarah")));
+    }
+    assertThat(text).isEqualTo(AL_BAQARAH_ENGLISH);
+  }
 
   @Test
   void getBismillah_Arabic_isFoundAndContentIsCorrect() throws Exception {
@@ -178,7 +198,7 @@ public class QuranReaderTest {
     List<String> text;
     try (QuranReader reader = new QuranReader(new File(QURAN_SOURCE_FILE_ARABIC))) {
 
-      text = assertDoesNotThrow(() -> reader.getAyatFromToOfSuraNo(getSurahNumber("An-Nȃs"), 2, 4));
+      text = assertDoesNotThrow(() -> reader.getAyatFromToOfSuraNo(getSurahNumber("An-Nās"), 2, 4));
     }
 
     assertThat(text)
@@ -191,7 +211,7 @@ public class QuranReaderTest {
     List<String> text;
     try (QuranReader reader = new QuranReader(new File(QURAN_SOURCE_FILE_ENGLISH))) {
 
-      text = assertDoesNotThrow(() -> reader.getAyatFromToOfSuraNo(getSurahNumber("An-Nȃs"), 2, 4));
+      text = assertDoesNotThrow(() -> reader.getAyatFromToOfSuraNo(getSurahNumber("An-Nās"), 2, 4));
     }
     assertThat(text)
         .isEqualTo(
@@ -207,7 +227,7 @@ public class QuranReaderTest {
     try (QuranReader reader = new QuranReader(new File(QURAN_SOURCE_FILE_ARABIC_WITH_ERRORS))) {
 
       text =
-          assertDoesNotThrow(() -> reader.getAyatFromToOfSuraNo(getSurahNumber("Al-Ikhlȃṣ"), 2, 3));
+          assertDoesNotThrow(() -> reader.getAyatFromToOfSuraNo(getSurahNumber("Al-Ikhlāṣ"), 2, 3));
     }
     assertThat(text).isEqualTo(List.of("ٱللَّهُ ٱلصَّمَدُ", "لَمْ يَلِدْ وَلَمْ يُولَدْ"));
   }
@@ -217,7 +237,7 @@ public class QuranReaderTest {
     List<String> text;
     try (QuranReader reader = new QuranReader(new File(QURAN_SOURCE_FILE_ENGLISH_WITH_ERRORS))) {
 
-      text = assertDoesNotThrow(() -> reader.getAyatFromToOfSuraNo(getSurahNumber("An-Nȃs"), 2, 4));
+      text = assertDoesNotThrow(() -> reader.getAyatFromToOfSuraNo(getSurahNumber("An-Nās"), 2, 4));
     }
 
     assertThat(text)

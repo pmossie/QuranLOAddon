@@ -1122,6 +1122,7 @@ public class MainDialog extends BaseDialog {
         paragraph.append(transFonter(ayat, fontName));
         paragraph.append(' ');
       } else {
+
         paragraph.append(transFonter(ayat, fontName));
         paragraph.append(fa.rightParenthesisStr());
         paragraph.append(numToNumberString(ayatNo, language, fontName));
@@ -1148,6 +1149,7 @@ public class MainDialog extends BaseDialog {
       as.append(Character.toChars(base + (n % 10)));
       n = n / 10;
     }
+    if (fontName.contains("KFGQPC")) return as.toString(); // special case
     return as.reverse().toString();
   }
 
@@ -1272,6 +1274,18 @@ public class MainDialog extends BaseDialog {
           getSurahTextBlock(surahNo, from, to, ARABIC_LANGUAGE_SELECTED, ARABIC_SOURCE_SELECTED),
           ParagraphAdjust.RIGHT);
       writeEndOfParagraph(textViewCursor);
+
+      writeParagraph(
+          textViewCursor,
+          getSurahFooterText(
+              paragraphCursorPropertySet,
+              surahNo,
+              from,
+              to,
+              ARABIC_LANGUAGE_SELECTED,
+              ARABIC_SOURCE_SELECTED),
+          ParagraphAdjust.RIGHT);
+      writeEndOfParagraph(textViewCursor);
     }
 
     if (parseBoolean(configManager.getConfig(TRANSLITERATION_VERSION_CHECK_BOX_STATE))) {
@@ -1296,6 +1310,17 @@ public class MainDialog extends BaseDialog {
               TRANSLITERATION_SOURCE_SELECTED),
           ParagraphAdjust.BLOCK);
       writeEndOfParagraph(textViewCursor);
+      writeParagraph(
+          textViewCursor,
+          getSurahFooterText(
+              paragraphCursorPropertySet,
+              surahNo,
+              from,
+              to,
+              TRANSLITERATION_LANGUAGE_SELECTED,
+              TRANSLITERATION_SOURCE_SELECTED),
+          ParagraphAdjust.RIGHT);
+      writeEndOfParagraph(textViewCursor);
     }
 
     if (parseBoolean(configManager.getConfig(TRANSLATION_VERSION_CHECK_BOX_STATE))) {
@@ -1316,6 +1341,7 @@ public class MainDialog extends BaseDialog {
               surahNo, from, to, TRANSLATION_LANGUAGE_SELECTED, TRANSLATION_SOURCE_SELECTED),
           ParagraphAdjust.BLOCK);
       writeEndOfParagraph(textViewCursor);
+
       writeParagraph(
           textViewCursor,
           getSurahFooterText(
@@ -1360,8 +1386,19 @@ public class MainDialog extends BaseDialog {
         paragraph.append(numToNumberString(to, language, fontName));
         paragraph.append("])");
       } else {
-
+        paragraph.append("(");
         paragraph.append(reader.getAyahNameOfSurahNo(surahNo));
+        paragraph.append(" [");
+        paragraph.append(numToNumberString(surahNo, language, fontName));
+        paragraph.append(":");
+        if (to > from) {
+          paragraph.append(numToNumberString(from, language, fontName));
+          paragraph.append("-");
+        }
+        paragraph.append(numToNumberString(to, language, fontName));
+        paragraph.append("])");
+
+        paragraph.append(")");
       }
 
       return paragraph.toString();

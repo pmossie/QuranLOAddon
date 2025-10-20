@@ -351,7 +351,7 @@ public class MainDialog extends BaseDialog {
         boolean2Short(parseBoolean(configManager.getConfig(ALL_AYAT_CHECK_BOX_STATE))));
   }
 
-  /** Initializes the Surah list box with all available Surahs. */
+  /** Initializes the Surah list box with all available Surah's. */
   private void initSurahListBox() {
     LOGGER.debug("initSurahListBox()");
 

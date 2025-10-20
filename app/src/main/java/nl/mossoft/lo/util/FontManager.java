@@ -53,6 +53,8 @@ public final class FontManager {
   private static final int EXTENDED_ARABIC_INDIC_DIGIT_ZERO = 0x06F0;
   private static final int ORNATE_LEFT_PARENTHESIS = 0xFD3E;
   private static final int ORNATE_RIGHT_PARENTHESIS = 0xFD3F;
+  // Special KFGQPC number base used for that specific font's digit style.
+  private static final int KFGQPC_SPECIAL_NUMBER_BASE = 0xFD50;
 
   private static final String ARABIC_SMALL_HIGH_ROUNDED_ZERO_STR = "۟";
   private static final String ARABIC_SUKUN_STR = "ْ";
@@ -69,54 +71,54 @@ public final class FontManager {
       // Deterministic order
       Arrays.sort(allFonts, String.CASE_INSENSITIVE_ORDER);
 
-      for (String font : allFonts) {
-        Font test = new Font(font, Font.PLAIN, 10);
+      for (String fontName : allFonts) {
+        Font test = new Font(fontName, Font.PLAIN, 10);
 
         // Arabic-supporting fonts
-        if (test.canDisplay(0x0627)) { // Arabic ALEF
+        if (test.canDisplay(0x0627)) { // Arabic ALIF
           FontAttr attr =
               new FontAttr(
-                  font,
-                  fontNumberBase(SourceLanguage.ARABIC, font),
+                  fontName,
+                  determineArabicNumberBase(fontName, test), // Pre-calculate number base
                   // Parentheses & marks as code points
                   pickCodePoint(
                       test,
-                      font.contains("KFGQPC") ? ' ' : ORNATE_LEFT_PARENTHESIS,
+                      fontName.contains("KFGQPC") ? 0xFD7A : ORNATE_LEFT_PARENTHESIS,
                       ')'), // ARABIC ORNATE LEFT PARENTHESIS
                   pickCodePoint(
                       test,
-                      font.contains("KFGQPC") ? ' ' : ORNATE_RIGHT_PARENTHESIS,
+                      fontName.contains("KFGQPC") ? 0xFD7B : ORNATE_RIGHT_PARENTHESIS,
                       '('), // ARABIC ORNATE RIGHT PARENTHESIS
                   pickCodePoint(
                       test, ARABIC_SMALL_DOTLESS_HEAD_OF_KHAH, ARABIC_SUKUN), // SUKUN (optional)
                   pickCodePoint(
                       test,
-                      font.contains("KFGQPC") ? ARABIC_SUKUN : ARABIC_SMALL_HIGH_ROUNDED_ZERO,
-                      0) // ARABIC SMALL HIGH ROUNDED ZERO
-                  // (optional)
+                      fontName.contains("KFGQPC") ? ARABIC_SUKUN : ARABIC_SMALL_HIGH_ROUNDED_ZERO,
+                      0) // ARABIC SMALL HIGH ROUNDED ZERO (optional)
                   );
           arabic.add(attr);
-          byName.putIfAbsent(font, attr);
+          byName.putIfAbsent(fontName, attr);
         }
 
         // Latin-supporting fonts
         if (test.canDisplay(0x0061)) { // 'a'
           FontAttr attr =
               new FontAttr(
-                  font,
-                  0x0030, // ASCII digits
+                  fontName,
+                  DIGIT_ZERO, // ASCII digits (0x0030)
                   '(',
                   ')',
                   0,
-                  0 // not typically present / needed
+                  0 // not typically present / needed for Latin
                   );
           latin.add(attr);
-          byName.putIfAbsent(font, attr);
+          byName.putIfAbsent(fontName, attr);
         }
       }
 
     } catch (HeadlessException | SecurityException e) {
-      LOGGER.warn("Font discovery unavailable in this environment: {}", e.toString());
+      // Log the stack trace for better diagnostics
+      LOGGER.warn("Font discovery unavailable in this environment: {}", e.toString(), e);
     }
 
     // Freeze lists and map
@@ -133,29 +135,52 @@ public final class FontManager {
   }
 
   /**
+   * Determines the appropriate digit set (number base) for an Arabic font.
+   *
+   * <p>Attempts to use Arabic-Indic digits (0x0660) or Extended Arabic-Indic digits (0x06F0) if
+   * supported by the font, falling back to ASCII (0x0030) or KFGQPC special base.
+   *
+   * @param fontName the font name
+   * @param font the font object to check for digit support
+   * @return the Unicode code point for the digit set's zero character
+   */
+  private static int determineArabicNumberBase(String fontName, Font font) {
+    if (fontName.contains("KFGQPC")) {
+      return KFGQPC_SPECIAL_NUMBER_BASE;
+    } // Return KFGQPC Font specific number base
+    if (font.canDisplay(ARABIC_INDIC_DIGIT_ZERO)) {
+      return ARABIC_INDIC_DIGIT_ZERO;
+    } // Arabic-Indic digits
+    if (font.canDisplay(EXTENDED_ARABIC_INDIC_DIGIT_ZERO)) {
+      return EXTENDED_ARABIC_INDIC_DIGIT_ZERO;
+    } // Extended Arabic-Indic
+    return DIGIT_ZERO;
+  }
+
+  // ---------------------- Public API ----------------------
+
+  /**
    * Determines the appropriate digit set (number base) for a given language and font.
    *
    * <p>For left-to-right languages, returns ASCII digits (0x0030). For right-to-left languages
-   * (Arabic), attempts to use Arabic-Indic digits (0x0660) or Extended Arabic-Indic digits (0x06F0)
-   * if supported by the font, falling back to ASCII.
+   * (Arabic), retrieves the pre-calculated number base from the font attributes.
    *
    * @param language the target language for digit rendering
-   * @param fontName the font to check for digit support
+   * @param fontName the font name to look up
    * @return the Unicode code point for the digit set's zero character
+   * @throws IllegalArgumentException if the font is Arabic-supported but not found in the manager
    */
   public static int fontNumberBase(SourceLanguage language, String fontName) {
     if (language.wm() == WritingMode2.LR_TB) {
       return DIGIT_ZERO;
     }
-    Font font = new Font(fontName, Font.PLAIN, 10);
-    if (font.canDisplay(ARABIC_INDIC_DIGIT_ZERO))
-      return ARABIC_INDIC_DIGIT_ZERO; // Arabic-Indic digits
-    if (font.canDisplay(EXTENDED_ARABIC_INDIC_DIGIT_ZERO))
-      return EXTENDED_ARABIC_INDIC_DIGIT_ZERO; // Extended Arabic-Indic
-    return DIGIT_ZERO;
-  }
 
-  // ---------------------- Public API ----------------------
+    // For RTL languages, rely on the pre-calculated value in FontAttr
+    return getFontAttrByName(fontName)
+        .orElseThrow(
+            () -> new IllegalArgumentException("Cannot find FontAttr for font: " + fontName))
+        .numberBase();
+  }
 
   /**
    * Returns an immutable list of fonts that support Arabic script. The list is deterministically
@@ -186,13 +211,15 @@ public final class FontManager {
   }
 
   public static String getArabicSupportedFontsAsString() {
-    if (ARABIC_FONTS.isEmpty()) return "No Arabic fonts found";
-    return String.join(", ", getArabicSupportedFonts());
+    List<String> arabicFonts = getArabicSupportedFonts();
+    if (arabicFonts.isEmpty()) return "No Arabic fonts found";
+    return String.join(", ", arabicFonts);
   }
 
   public static String getLatinSupportedFontsAsString() {
-    if (LATIN_FONTS.isEmpty()) return "No Latin fonts found";
-    return String.join(", ", getLatinSupportedFonts());
+    List<String> latinFonts = getLatinSupportedFonts();
+    if (latinFonts.isEmpty()) return "No Latin fonts found";
+    return String.join(", ", latinFonts);
   }
 
   /**
@@ -227,13 +254,21 @@ public final class FontManager {
    * @param fontName the target font for the transformation
    * @return the transformed text with font-specific characters
    * @throws NullPointerException if text or fontName is {@code null}
-   * @throws NoSuchElementException if font attributes are not found
+   * @throws IllegalArgumentException if font attributes are not found for {@code fontName}
    */
   public static String transFonter(String text, String fontName) {
-    return text.replace(ARABIC_SUKUN_STR, getFontAttrByName(fontName).orElseThrow().sukunStr())
-        .replace(
-            ARABIC_SMALL_HIGH_ROUNDED_ZERO_STR,
-            getFontAttrByName(fontName).orElseThrow().highRoundedZeroStr());
+    Objects.requireNonNull(text, "text");
+    Objects.requireNonNull(fontName, "fontName");
+
+    // Retrieve FontAttr once
+    FontAttr attr =
+        getFontAttrByName(fontName)
+            .orElseThrow(
+                () -> new IllegalArgumentException("No FontAttr found for font: " + fontName));
+
+    // Perform replacements using the retrieved attributes
+    return text.replace(ARABIC_SUKUN_STR, attr.sukunStr())
+        .replace(ARABIC_SMALL_HIGH_ROUNDED_ZERO_STR, attr.highRoundedZeroStr());
   }
 
   /**

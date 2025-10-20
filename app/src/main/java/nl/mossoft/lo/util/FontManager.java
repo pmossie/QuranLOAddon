@@ -55,6 +55,8 @@ public final class FontManager {
   private static final int ORNATE_RIGHT_PARENTHESIS = 0xFD3F;
   // Special KFGQPC number base used for that specific font's digit style.
   private static final int KFGQPC_SPECIAL_NUMBER_BASE = 0xFD50;
+  private static final int KFGQPC_SPECIAL_ORNATE_LEFT_PARENTHESIS = 0xFD76;
+  private static final int KFGQPC_SPECIAL_ORNATE_RIGHT_PARENTHESIS = 0xFD77;
 
   private static final String ARABIC_SMALL_HIGH_ROUNDED_ZERO_STR = "۟";
   private static final String ARABIC_SUKUN_STR = "ْ";
@@ -83,11 +85,15 @@ public final class FontManager {
                   // Parentheses & marks as code points
                   pickCodePoint(
                       test,
-                      fontName.contains("KFGQPC") ? 0xFD7A : ORNATE_LEFT_PARENTHESIS,
+                      fontName.contains("KFGQPC")
+                          ? KFGQPC_SPECIAL_ORNATE_LEFT_PARENTHESIS
+                          : ORNATE_LEFT_PARENTHESIS,
                       ')'), // ARABIC ORNATE LEFT PARENTHESIS
                   pickCodePoint(
                       test,
-                      fontName.contains("KFGQPC") ? 0xFD7B : ORNATE_RIGHT_PARENTHESIS,
+                      fontName.contains("KFGQPC")
+                          ? KFGQPC_SPECIAL_ORNATE_RIGHT_PARENTHESIS
+                          : ORNATE_RIGHT_PARENTHESIS,
                       '('), // ARABIC ORNATE RIGHT PARENTHESIS
                   pickCodePoint(
                       test, ARABIC_SMALL_DOTLESS_HEAD_OF_KHAH, ARABIC_SUKUN), // SUKUN (optional)

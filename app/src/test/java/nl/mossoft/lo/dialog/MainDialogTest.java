@@ -15,12 +15,13 @@ class MainDialogTest {
     assertThat(nms).isEqualTo("286");
   }
 
-    @Test
-    void numToNumberString_ARABIC_KFGQPC_HAFS_Uthmanic_Script_font_isCorrect() {
+  @Test
+  void numToNumberString_ARABIC_KFGQPC_HAFS_Uthmanic_Script_font_isCorrect() {
 
-      String nms = numToNumberString(286, SourceLanguage.ARABIC, "KFGQPC HAFS Uthmanic Script");
-      assertThat(nms).isEqualTo("ﵖﵘﵒ");
-    }
+    String nms = numToNumberString(286, SourceLanguage.ARABIC, "KFGQPC HAFS Uthmanic Script");
+    assertThat(nms).isEqualTo("ﵖﵘﵒ");
+  }
+
   @Test
   void numToNumberString_ARABIC_Amiri_Quran_font_isCorrect() {
 

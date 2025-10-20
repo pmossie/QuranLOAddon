@@ -1272,19 +1272,13 @@ public class MainDialog extends BaseDialog {
       writeParagraph(
           textViewCursor,
           getSurahTextBlock(surahNo, from, to, ARABIC_LANGUAGE_SELECTED, ARABIC_SOURCE_SELECTED),
-          ParagraphAdjust.RIGHT);
+          ParagraphAdjust.BLOCK);
       writeEndOfParagraph(textViewCursor);
 
       writeParagraph(
           textViewCursor,
-          getSurahFooterText(
-              paragraphCursorPropertySet,
-              surahNo,
-              from,
-              to,
-              ARABIC_LANGUAGE_SELECTED,
-              ARABIC_SOURCE_SELECTED),
-          ParagraphAdjust.RIGHT);
+          getSurahFooterText(surahNo, from, to, ARABIC_LANGUAGE_SELECTED, ARABIC_SOURCE_SELECTED),
+          ParagraphAdjust.LEFT);
       writeEndOfParagraph(textViewCursor);
     }
 
@@ -1313,7 +1307,6 @@ public class MainDialog extends BaseDialog {
       writeParagraph(
           textViewCursor,
           getSurahFooterText(
-              paragraphCursorPropertySet,
               surahNo,
               from,
               to,
@@ -1345,24 +1338,14 @@ public class MainDialog extends BaseDialog {
       writeParagraph(
           textViewCursor,
           getSurahFooterText(
-              paragraphCursorPropertySet,
-              surahNo,
-              from,
-              to,
-              TRANSLATION_LANGUAGE_SELECTED,
-              TRANSLATION_SOURCE_SELECTED),
+              surahNo, from, to, TRANSLATION_LANGUAGE_SELECTED, TRANSLATION_SOURCE_SELECTED),
           ParagraphAdjust.RIGHT);
       writeEndOfParagraph(textViewCursor);
     }
   }
 
   private String getSurahFooterText(
-      XPropertySet props,
-      int surahNo,
-      int from,
-      int to,
-      ConfigurationKeys sourceLanguage,
-      ConfigurationKeys source) {
+      int surahNo, int from, int to, ConfigurationKeys sourceLanguage, ConfigurationKeys source) {
     try (QuranReader reader = new QuranReader(getFilePath(configManager.getConfig(source), ctx))) {
       SourceLanguage language = SourceLanguage.fromId(configManager.getConfig(sourceLanguage));
       short writingMode = language.wm();
@@ -1373,33 +1356,17 @@ public class MainDialog extends BaseDialog {
 
       final StringBuilder paragraph = new StringBuilder();
 
-      if (writingMode == WritingMode2.LR_TB) {
-        paragraph.append("(");
-        paragraph.append(reader.getAyahNameOfSurahNo(surahNo));
-        paragraph.append(" [");
-        paragraph.append(numToNumberString(surahNo, language, fontName));
-        paragraph.append(":");
-        if (to > from) {
-          paragraph.append(numToNumberString(from, language, fontName));
-          paragraph.append("-");
-        }
-        paragraph.append(numToNumberString(to, language, fontName));
-        paragraph.append("])");
-      } else {
-        paragraph.append("(");
-        paragraph.append(reader.getAyahNameOfSurahNo(surahNo));
-        paragraph.append(" [");
-        paragraph.append(numToNumberString(surahNo, language, fontName));
-        paragraph.append(":");
-        if (to > from) {
-          paragraph.append(numToNumberString(from, language, fontName));
-          paragraph.append("-");
-        }
-        paragraph.append(numToNumberString(to, language, fontName));
-        paragraph.append("])");
-
-        paragraph.append(")");
+      paragraph.append("(");
+      paragraph.append(reader.getAyahNameOfSurahNo(surahNo));
+      paragraph.append(" [");
+      paragraph.append(numToNumberString(surahNo, language, fontName));
+      paragraph.append(":");
+      if (to > from) {
+        paragraph.append(numToNumberString(from, language, fontName));
+        paragraph.append("-");
       }
+      paragraph.append(numToNumberString(to, language, fontName));
+      paragraph.append("])");
 
       return paragraph.toString();
     }

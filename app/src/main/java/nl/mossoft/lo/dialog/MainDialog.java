@@ -1188,6 +1188,15 @@ public class MainDialog extends BaseDialog {
     final XParagraphCursor paragraphCursor =
         UnoRuntime.queryInterface(XParagraphCursor.class, textCursor);
     text.insertControlCharacter(paragraphCursor, PARAGRAPH_BREAK, false);
+    //  text.insertControlCharacter(paragraphCursor, LINE_BREAK, false);
+  }
+
+  private void writeNewLine(XTextViewCursor textViewCursor) {
+    final XText text = textViewCursor.getText();
+    final XTextCursor textCursor = text.createTextCursorByRange(textViewCursor.getStart());
+
+    final XParagraphCursor paragraphCursor =
+        UnoRuntime.queryInterface(XParagraphCursor.class, textCursor);
     text.insertControlCharacter(paragraphCursor, LINE_BREAK, false);
   }
 
@@ -1280,6 +1289,7 @@ public class MainDialog extends BaseDialog {
           getSurahFooterText(surahNo, from, to, ARABIC_LANGUAGE_SELECTED, ARABIC_SOURCE_SELECTED),
           ParagraphAdjust.LEFT);
       writeEndOfParagraph(textViewCursor);
+      writeNewLine(textViewCursor);
     }
 
     if (parseBoolean(configManager.getConfig(TRANSLITERATION_VERSION_CHECK_BOX_STATE))) {
@@ -1304,6 +1314,7 @@ public class MainDialog extends BaseDialog {
               TRANSLITERATION_SOURCE_SELECTED),
           ParagraphAdjust.BLOCK);
       writeEndOfParagraph(textViewCursor);
+
       writeParagraph(
           textViewCursor,
           getSurahFooterText(
@@ -1314,6 +1325,7 @@ public class MainDialog extends BaseDialog {
               TRANSLITERATION_SOURCE_SELECTED),
           ParagraphAdjust.RIGHT);
       writeEndOfParagraph(textViewCursor);
+      writeNewLine(textViewCursor);
     }
 
     if (parseBoolean(configManager.getConfig(TRANSLATION_VERSION_CHECK_BOX_STATE))) {
@@ -1341,6 +1353,7 @@ public class MainDialog extends BaseDialog {
               surahNo, from, to, TRANSLATION_LANGUAGE_SELECTED, TRANSLATION_SOURCE_SELECTED),
           ParagraphAdjust.RIGHT);
       writeEndOfParagraph(textViewCursor);
+      writeNewLine(textViewCursor);
     }
   }
 

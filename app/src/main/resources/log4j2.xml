@@ -17,7 +17,7 @@
     </Appenders>
 
     <Loggers>
-        <Root level="${sys:LOG_LEVEL:-INFO}">
+        <Root level="${sys:LOG_LEVEL:-OFF}">
             <AppenderRef ref="File-Appender" />
             <AppenderRef ref="Console" />
         </Root>

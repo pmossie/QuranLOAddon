@@ -1370,7 +1370,12 @@ public class MainDialog extends BaseDialog {
       final StringBuilder paragraph = new StringBuilder();
 
       paragraph.append("(");
-      paragraph.append(reader.getAyahNameOfSurahNo(surahNo));
+      if (writingMode == WritingMode2.LR_TB) {
+        paragraph.append(reader.getAyahNameOfSurahNo(surahNo));
+      } else {
+        paragraph.append(transFonter(reader.getAyahNameOfSurahNo(surahNo), fontName));
+      }
+
       paragraph.append(" [");
       paragraph.append(numToNumberString(surahNo, language, fontName));
       paragraph.append(":");

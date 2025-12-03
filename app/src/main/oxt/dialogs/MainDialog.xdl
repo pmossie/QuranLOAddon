@@ -116,7 +116,7 @@
         dlg:valign="center"
         dlg:width="20">
       <script:event
-          script:event-name="on-textchange"
+          script:event-name="on-blur"
           script:language="UNO"
           script:macro-name="vnd.sun.star.UNO:onAyatFromNumericFieldValueChanged"/>
     </dlg:numericfield>
@@ -141,7 +141,7 @@
         dlg:valign="center"
         dlg:width="20">
       <script:event
-          script:event-name="on-textchange"
+          script:event-name="on-blur"
           script:language="UNO"
           script:macro-name="vnd.sun.star.UNO:onAyatToNumericFieldValueChanged"/>
     </dlg:numericfield>

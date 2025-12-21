@@ -120,7 +120,7 @@ public class AboutDialog extends BaseDialog {
   @Override
   protected void initHandlers() {
     registerHandler(
-        DialogEvents.ON_ABOUT_DIALOG_CLOSE_BUTTON_CLICKED, this::handleCloseButtonClicked);
+        DialogEvents.EVENT_ABOUT_DIALOG_CLOSE_BUTTON_CLICKED, this::handleCloseButtonClicked);
   }
 
   /**

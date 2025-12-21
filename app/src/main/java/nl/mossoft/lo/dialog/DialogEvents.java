@@ -33,117 +33,126 @@ import java.util.stream.Stream;
  */
 public enum DialogEvents {
   /** Event fired when the Close button in the About dialog is clicked */
-  ON_ABOUT_DIALOG_CLOSE_BUTTON_CLICKED("onAboutDialogCloseButtonClicked"),
+  EVENT_ABOUT_DIALOG_CLOSE_BUTTON_CLICKED("eventAboutDialogCloseButtonClicked"),
 
   /** Event fired when the "All Ayat" checkbox is pressed */
-  ON_ALL_AYAT_CHECK_BUTTON_PRESSED("onAllAyatCheckButtonPressed"),
+  EVENT_ALL_AYAT_CHECK_BUTTON_PRESSED("eventAllAyatCheckButtonPressed"),
 
   /** Event fired when an item is selected in the Arabic font list box */
-  ON_ARABIC_FONT_LIST_BOX_ITEM_SELECTED("onArabicFontListBoxItemSelected"),
+  EVENT_ARABIC_FONT_LIST_BOX_ITEM_SELECTED("eventArabicFontListBoxItemSelected"),
 
   /** Event fired when the enabled property of the Arabic font list box is about to change */
-  ON_ARABIC_FONT_LIST_BOX_PROPERTY_ENABLED_TO_BE_CHANGED(
-      "onArabicFontListBoxPropertyEnabledToBeChanged"),
+  EVENT_ARABIC_FONT_LIST_BOX_PROPERTY_ENABLED_TO_BE_CHANGED(
+      "eventArabicFontListBoxPropertyEnabledToBeChanged"),
 
   /** Event fired when the enabled property of the Arabic font size combo box is about to change */
-  ON_ARABIC_FONT_SIZE_COMBO_BOX_PROPERTY_ENABLED_TO_BE_CHANGED(
-      "onArabicFontSizeComboBoxPropertyEnabledToBeChanged"),
+  EVENT_ARABIC_FONT_SIZE_COMBO_BOX_PROPERTY_ENABLED_TO_BE_CHANGED(
+      "eventArabicFontSizeComboBoxPropertyEnabledToBeChanged"),
 
   /** Event fired when the value of the Arabic font size combo box changes */
-  ON_ARABIC_FONT_SIZE_COMBO_BOX_VALUE_CHANGED("onArabicFontSizeComboBoxValueChanged"),
+  EVENT_ARABIC_FONT_SIZE_COMBO_BOX_VALUE_CHANGED("eventArabicFontSizeComboBoxValueChanged"),
 
   /** Event fired when the Arabic version checkbox is pressed */
-  ON_ARABIC_VERSION_CHECK_BUTTON_PRESSED("onArabicVersionCheckButtonPressed"),
+  EVENT_ARABIC_VERSION_CHECK_BUTTON_PRESSED("eventArabicVersionCheckButtonPressed"),
 
   /** Event fired when an item is selected in the Arabic version list box */
-  ON_ARABIC_VERSION_LIST_BOX_ITEM_SELECTED("onArabicVersionListBoxItemSelected"),
+  EVENT_ARABIC_VERSION_LIST_BOX_ITEM_SELECTED("eventArabicVersionListBoxItemSelected"),
 
   /** Event fired when the enabled property of the Arabic version list box is about to change */
-  ON_ARABIC_VERSION_LIST_BOX_PROPERTY_ENABLED_TO_BE_CHANGED(
-      "onArabicVersionListBoxPropertyEnabledToBeChanged"),
+  EVENT_ARABIC_VERSION_LIST_BOX_PROPERTY_ENABLED_TO_BE_CHANGED(
+      "eventArabicVersionListBoxPropertyEnabledToBeChanged"),
 
   /** Event fired when the enabled property of the "From Ayat" numeric field is about to change */
-  ON_AYAT_FROM_NUMERIC_FIELD_PROPERTY_ENABLED_TO_BE_CHANGED(
-      "onAyatFromNumericFieldPropertyEnabledToBeChanged"),
+  EVENT_AYAT_FROM_NUMERIC_FIELD_PROPERTY_ENABLED_TO_BE_CHANGED(
+      "eventAyatFromNumericFieldPropertyEnabledToBeChanged"),
 
   /** Event fired when the value of the "From Ayat" numeric field changes */
-  ON_AYAT_FROM_NUMERIC_FIELD_VALUE_CHANGED("onAyatFromNumericFieldValueChanged"),
+  EVENT_AYAT_FROM_NUMERIC_FIELD_VALUE_CHANGED("eventAyatFromNumericFieldValueChanged"),
 
   /**
    * Event fired when the "From Ayat" numeric field needs to be updated (e.g., after Surah
    * selection)
    */
-  ON_AYAT_FROM_NUMERIC_FIELD_VALUE_UPDATED("onAyatFromNumericFieldValueUpdated"),
+  EVENT_AYAT_FROM_NUMERIC_FIELD_VALUE_UPDATED("eventAyatFromNumericFieldValueUpdated"),
 
   /** Event fired when the "Ayat Per Line" checkbox is pressed */
-  ON_AYAT_PER_LINE_CHECK_BUTTON_PRESSED("onAyatPerLineCheckButtonPressed"),
+  EVENT_AYAT_PER_LINE_CHECK_BUTTON_PRESSED("eventAyatPerLineCheckButtonPressed"),
 
   /** Event fired when the enabled property of the Ayat range label is about to change */
-  ON_AYAT_RANGE_LABEL_PROPERTY_ENABLED_TO_BE_CHANGED("onAyatRangeLabelPropertyEnabledToBeChanged"),
+  EVENT_AYAT_RANGE_LABEL_PROPERTY_ENABLED_TO_BE_CHANGED(
+      "eventAyatRangeLabelPropertyEnabledToBeChanged"),
 
   /** Event fired when the enabled property of the Ayat range separator label is about to change */
-  ON_AYAT_RANGE_SEPARATOR_LABEL_PROPERTY_ENABLED_TO_BE_CHANGED(
-      "onAyatRangeSeparatorLabelPropertyEnabledToBeChanged"),
+  EVENT_AYAT_RANGE_SEPARATOR_LABEL_PROPERTY_ENABLED_TO_BE_CHANGED(
+      "eventAyatRangeSeparatorLabelPropertyEnabledToBeChanged"),
+
+  /** Event fired when the Ayat Range validation fails */
+  EVENT_AYAT_RANGE_VALIDATION_ERROR("eventAyatRangeValidationError"),
 
   /** Event fired when the enabled property of the "To Ayat" numeric field is about to change */
-  ON_AYAT_TO_NUMERIC_FIELD_PROPERTY_ENABLED_TO_BE_CHANGED(
-      "onAyatToNumericFieldPropertyEnabledToBeChanged"),
+  EVENT_AYAT_TO_NUMERIC_FIELD_PROPERTY_ENABLED_TO_BE_CHANGED(
+      "eventAyatToNumericFieldPropertyEnabledToBeChanged"),
 
   /** Event fired when the value of the "To Ayat" numeric field changes */
-  ON_AYAT_TO_NUMERIC_FIELD_VALUE_CHANGED("onAyatToNumericFieldValueChanged"),
+  EVENT_AYAT_TO_NUMERIC_FIELD_VALUE_CHANGED("eventAyatToNumericFieldValueChanged"),
 
   /**
    * Event fired when the "To Ayat" numeric field needs to be updated (e.g., after Surah selection)
    */
-  ON_AYAT_TO_NUMERIC_FIELD_VALUE_UPDATED("onAyatToNumericFieldValueUpdated"),
+  EVENT_AYAT_TO_NUMERIC_FIELD_VALUE_UPDATED("eventAyatToNumericFieldValueUpdated"),
 
   /** Event fired when the Insert button is clicked */
-  ON_INSERT_BUTTON_CLICKED("onInsertButtonClicked"),
+  EVENT_INSERT_BUTTON_CLICKED("eventInsertButtonClicked"),
 
   /** Event fired when the enabled property of the Insert button is about to change */
-  ON_INSERT_BUTTON_PROPERTY_ENABLED_TO_BE_CHANGED("onInsertButtonPropertyEnabledToBeChanged"),
+  EVENT_INSERT_BUTTON_PROPERTY_ENABLED_TO_BE_CHANGED("eventInsertButtonPropertyEnabledToBeChanged"),
 
   /** Event fired when an item is selected in the Latin font list box */
-  ON_LATIN_FONT_LIST_BOX_ITEM_SELECTED("onLatinFontListBoxItemSelected"),
+  EVENT_LATIN_FONT_LIST_BOX_ITEM_SELECTED("eventLatinFontListBoxItemSelected"),
 
   /** Event fired when the enabled property of the Latin font list box is about to change */
-  ON_LATIN_FONT_LIST_BOX_PROPERTY_ENABLED_TO_BE_CHANGED(
-      "onLatinFontListBoxPropertyEnabledToBeChanged"),
+  EVENT_LATIN_FONT_LIST_BOX_PROPERTY_ENABLED_TO_BE_CHANGED(
+      "eventLatinFontListBoxPropertyEnabledToBeChanged"),
 
   /** Event fired when the enabled property of the Latin font size combo box is about to change */
-  ON_LATIN_FONT_SIZE_COMBO_BOX_PROPERTY_ENABLED_TO_BE_CHANGED(
-      "onLatinFontSizeComboBoxPropertyEnabledToBeChanged"),
+  EVENT_LATIN_FONT_SIZE_COMBO_BOX_PROPERTY_ENABLED_TO_BE_CHANGED(
+      "eventLatinFontSizeComboBoxPropertyEnabledToBeChanged"),
 
   /** Event fired when the value of the Latin font size combo box changes */
-  ON_LATIN_FONT_SIZE_COMBO_BOX_VALUE_CHANGED("onLatinFontSizeComboBoxValueChanged"),
+  EVENT_LATIN_FONT_SIZE_COMBO_BOX_VALUE_CHANGED("eventLatinFontSizeComboBoxValueChanged"),
+
+  /** Event fired when the value of the Status Text Label needs to be reset */
+  EVENT_STATUS_TEXT_LABEL_RESET("eventStatusTextLabelReset"),
 
   /** Event fired when an item is selected in the Surah list box */
-  ON_SURAH_LIST_BOX_ITEM_SELECTED("onSurahListBoxItemSelected"),
+  EVENT_SURAH_LIST_BOX_ITEM_SELECTED("eventSurahListBoxItemSelected"),
 
   /** Event fired when the Translation version checkbox is pressed */
-  ON_TRANSLATION_VERSION_CHECK_BUTTON_PRESSED("onTranslationVersionCheckButtonPressed"),
+  EVENT_TRANSLATION_VERSION_CHECK_BUTTON_PRESSED("eventTranslationVersionCheckButtonPressed"),
 
   /** Event fired when an item is selected in the Translation version list box */
-  ON_TRANSLATION_VERSION_LIST_BOX_ITEM_SELECTED("onTranslationVersionListBoxItemSelected"),
+  EVENT_TRANSLATION_VERSION_LIST_BOX_ITEM_SELECTED("eventTranslationVersionListBoxItemSelected"),
 
   /**
    * Event fired when the enabled property of the Translation version list box is about to change
    */
-  ON_TRANSLATION_VERSION_LIST_BOX_PROPERTY_ENABLED_TO_BE_CHANGED(
-      "onTranslationVersionListBoxPropertyEnabledToBeChanged"),
+  EVENT_TRANSLATION_VERSION_LIST_BOX_PROPERTY_ENABLED_TO_BE_CHANGED(
+      "eventTranslationVersionListBoxPropertyEnabledToBeChanged"),
 
   /** Event fired when the Transliteration version checkbox is pressed */
-  ON_TRANSLITERATION_VERSION_CHECK_BUTTON_PRESSED("onTransliterationVersionCheckButtonPressed"),
+  EVENT_TRANSLITERATION_VERSION_CHECK_BUTTON_PRESSED(
+      "eventTransliterationVersionCheckButtonPressed"),
 
   /** Event fired when an item is selected in the Transliteration version list box */
-  ON_TRANSLITERATION_VERSION_LIST_BOX_ITEM_SELECTED("onTransliterationVersionListBoxItemSelected"),
+  EVENT_TRANSLITERATION_VERSION_LIST_BOX_ITEM_SELECTED(
+      "eventTransliterationVersionListBoxItemSelected"),
 
   /**
    * Event fired when the enabled property of the Transliteration version list box is about to
    * change
    */
-  ON_TRANSLITERATION_VERSION_LIST_BOX_PROPERTY_ENABLED_TO_BE_CHANGED(
-      "onTransliterationVersionListBoxPropertyEnabledToBeChanged");
+  EVENT_TRANSLITERATION_VERSION_LIST_BOX_PROPERTY_ENABLED_TO_BE_CHANGED(
+      "eventTransliterationVersionListBoxPropertyEnabledToBeChanged");
 
   /** The string identifier for this dialog event */
   private final String id;

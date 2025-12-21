@@ -81,7 +81,7 @@
       <script:event
           script:event-name="on-performaction"
           script:language="UNO"
-          script:macro-name="vnd.sun.star.UNO:onAboutDialogCloseButtonClicked"/>
+          script:macro-name="vnd.sun.star.UNO:eventAboutDialogCloseButtonClicked"/>
     </dlg:button>
     <dlg:text
         dlg:id="CopyrightLabel"

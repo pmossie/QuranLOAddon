@@ -13,7 +13,10 @@
     xmlns:dlg="http://openoffice.org/2000/dialog"
     xmlns:script="http://openoffice.org/2000/script">
   <dlg:styles>
-    <dlg:style dlg:style-id="GroupBoxTitle" dlg:font-weight="150"/>
+    <dlg:style
+        dlg:style-id="GroupBoxTitle"
+        dlg:font-weight="150"
+    />
     <dlg:style
         dlg:style-id="BoldButtonStyle"
         dlg:font-family="swiss"
@@ -21,6 +24,15 @@
         dlg:font-name="Liberation Sans"
         dlg:font-stylename="bold"
         dlg:font-weight="150"
+    />
+    <dlg:style
+        dlg:style-id="StatusFontStyle"
+        dlg:font-family="swiss"
+        dlg:font-height="10"
+        dlg:font-name="Liberation Sans"
+        dlg:font-stylename="bold"
+        dlg:font-weight="150"
+        dlg:text-color="0xff0000"
     />
   </dlg:styles>
 
@@ -57,7 +69,7 @@
       <script:event
           script:event-name="on-performaction"
           script:language="UNO"
-          script:macro-name="vnd.sun.star.UNO:onSurahListBoxItemSelected"
+          script:macro-name="vnd.sun.star.UNO:eventSurahListBoxItemSelected"
       />
     </dlg:menulist>
 
@@ -93,7 +105,7 @@
       <script:event
           script:event-name="on-performaction"
           script:language="UNO"
-          script:macro-name="vnd.sun.star.UNO:onAllAyatCheckButtonPressed"/>
+          script:macro-name="vnd.sun.star.UNO:eventAllAyatCheckButtonPressed"/>
     </dlg:checkbox>
     <dlg:text
         dlg:id="AyatRangeLabel"
@@ -118,7 +130,7 @@
       <script:event
           script:event-name="on-blur"
           script:language="UNO"
-          script:macro-name="vnd.sun.star.UNO:onAyatFromNumericFieldValueChanged"/>
+          script:macro-name="vnd.sun.star.UNO:eventAyatFromNumericFieldValueChanged"/>
     </dlg:numericfield>
     <dlg:text
         dlg:id="AyatRangeSeparatorLabel"
@@ -143,7 +155,7 @@
       <script:event
           script:event-name="on-blur"
           script:language="UNO"
-          script:macro-name="vnd.sun.star.UNO:onAyatToNumericFieldValueChanged"/>
+          script:macro-name="vnd.sun.star.UNO:eventAyatToNumericFieldValueChanged"/>
     </dlg:numericfield>
 
     <dlg:titledbox
@@ -178,7 +190,7 @@
       <script:event
           script:event-name="on-performaction"
           script:language="UNO"
-          script:macro-name="vnd.sun.star.UNO:onArabicVersionCheckButtonPressed"/>
+          script:macro-name="vnd.sun.star.UNO:eventArabicVersionCheckButtonPressed"/>
     </dlg:checkbox>
     <dlg:menulist
         dlg:id="ArabicVersionListBox"
@@ -193,7 +205,7 @@
       <script:event
           script:event-name="on-performaction"
           script:language="UNO"
-          script:macro-name="vnd.sun.star.UNO:onArabicVersionListBoxItemSelected"
+          script:macro-name="vnd.sun.star.UNO:eventArabicVersionListBoxItemSelected"
       />
     </dlg:menulist>
     <dlg:text
@@ -219,7 +231,7 @@
       <script:event
           script:event-name="on-performaction"
           script:language="UNO"
-          script:macro-name="vnd.sun.star.UNO:onTranslationVersionCheckButtonPressed"/>
+          script:macro-name="vnd.sun.star.UNO:eventTranslationVersionCheckButtonPressed"/>
     </dlg:checkbox>
     <dlg:menulist
         dlg:id="TranslationVersionListBox"
@@ -235,7 +247,7 @@
       <script:event
           script:event-name="on-performaction"
           script:language="UNO"
-          script:macro-name="vnd.sun.star.UNO:onTranslationVersionListBoxItemSelected"
+          script:macro-name="vnd.sun.star.UNO:eventTranslationVersionListBoxItemSelected"
       />
     </dlg:menulist>
     <dlg:text
@@ -261,7 +273,7 @@
       <script:event
           script:event-name="on-performaction"
           script:language="UNO"
-          script:macro-name="vnd.sun.star.UNO:onTransliterationVersionCheckButtonPressed"/>
+          script:macro-name="vnd.sun.star.UNO:eventTransliterationVersionCheckButtonPressed"/>
     </dlg:checkbox>
     <dlg:menulist
         dlg:id="TransliterationVersionListBox"
@@ -277,7 +289,7 @@
       <script:event
           script:event-name="on-performaction"
           script:language="UNO"
-          script:macro-name="vnd.sun.star.UNO:onTransliterationVersionListBoxItemSelected"
+          script:macro-name="vnd.sun.star.UNO:eventTransliterationVersionListBoxItemSelected"
       />
     </dlg:menulist>
 
@@ -303,7 +315,7 @@
       <script:event
           script:event-name="on-performaction"
           script:language="UNO"
-          script:macro-name="vnd.sun.star.UNO:onArabicFontListBoxItemSelected"
+          script:macro-name="vnd.sun.star.UNO:eventArabicFontListBoxItemSelected"
       />
     </dlg:menulist>
     <dlg:combobox
@@ -317,7 +329,7 @@
       <script:event
           script:event-name="on-textchange"
           script:language="UNO"
-          script:macro-name="vnd.sun.star.UNO:onArabicFontSizeComboBoxValueChanged"
+          script:macro-name="vnd.sun.star.UNO:eventArabicFontSizeComboBoxValueChanged"
       />
     </dlg:combobox>
 
@@ -344,7 +356,7 @@
       <script:event
           script:event-name="on-performaction"
           script:language="UNO"
-          script:macro-name="vnd.sun.star.UNO:onLatinFontListBoxItemSelected"
+          script:macro-name="vnd.sun.star.UNO:eventLatinFontListBoxItemSelected"
       />
     </dlg:menulist>
     <dlg:combobox
@@ -359,7 +371,7 @@
       <script:event
           script:event-name="on-textchange"
           script:language="UNO"
-          script:macro-name="vnd.sun.star.UNO:onLatinFontSizeComboBoxValueChanged"
+          script:macro-name="vnd.sun.star.UNO:eventLatinFontSizeComboBoxValueChanged"
       />
       </dlg:combobox>
 
@@ -397,7 +409,7 @@
       <script:event
           script:event-name="on-performaction"
           script:language="UNO"
-          script:macro-name="vnd.sun.star.UNO:onAyatPerLineCheckButtonPressed"/>
+          script:macro-name="vnd.sun.star.UNO:eventAyatPerLineCheckButtonPressed"/>
     </dlg:checkbox>
 
 
@@ -410,6 +422,19 @@
         dlg:width="303">
       </dlg:titledbox>
 
+    <dlg:text
+        dlg:id="StatusTextLabel"
+        dlg:align="left"
+        dlg:height="10"
+        dlg:left="4"
+        dlg:style-id="StatusFontStyle"
+        dlg:top="141"
+        dlg:valign="center"
+        dlg:value="&amp;StatusTextLabel.value"
+        dlg:visible="false"
+        dlg:width="200">
+    </dlg:text>
+
     <dlg:button
         dlg:id="InsertButton"
         dlg:height="14"
@@ -420,7 +445,7 @@
       <script:event
           script:event-name="on-performaction"
           script:language="UNO"
-          script:macro-name="vnd.sun.star.UNO:onInsertButtonClicked"/>
+          script:macro-name="vnd.sun.star.UNO:eventInsertButtonClicked"/>
     </dlg:button>
 
 

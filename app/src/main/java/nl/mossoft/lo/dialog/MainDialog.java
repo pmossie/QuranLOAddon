@@ -89,6 +89,9 @@ public class MainDialog extends BaseDialog {
   /** Control ID for the "To Ayat" numeric field */
   public static final String AYAT_TO_NUMERIC_FIELD = "AyatToNumericField";
 
+  /** Control ID for the Error Text field */
+  public static final String STATUS_TEXT_LABEL = "StatusTextLabel";
+
   /** Control ID for the Insert button */
   public static final String INSERT_BUTTON = "InsertButton";
 
@@ -365,79 +368,99 @@ public class MainDialog extends BaseDialog {
   /** Registers all event handlers for dialog controls. */
   @Override
   protected void initHandlers() {
-    registerHandler(ON_ALL_AYAT_CHECK_BUTTON_PRESSED, this::handleAllAyatCheckButtonPressed);
+    registerHandler(EVENT_ALL_AYAT_CHECK_BUTTON_PRESSED, this::handleAllAyatCheckButtonPressed);
     registerHandler(
-        ON_ARABIC_FONT_LIST_BOX_ITEM_SELECTED, this::handleArabicFontListBoxItemSelected);
+        EVENT_ARABIC_FONT_LIST_BOX_ITEM_SELECTED, this::handleArabicFontListBoxItemSelected);
     registerHandler(
-        ON_ARABIC_FONT_LIST_BOX_PROPERTY_ENABLED_TO_BE_CHANGED,
+        EVENT_ARABIC_FONT_LIST_BOX_PROPERTY_ENABLED_TO_BE_CHANGED,
         this::handleControlPropertyEnabledToBeChanged);
     registerHandler(
-        ON_ARABIC_FONT_SIZE_COMBO_BOX_PROPERTY_ENABLED_TO_BE_CHANGED,
+        EVENT_ARABIC_FONT_SIZE_COMBO_BOX_PROPERTY_ENABLED_TO_BE_CHANGED,
         this::handleControlPropertyEnabledToBeChanged);
     registerHandler(
-        ON_ARABIC_FONT_SIZE_COMBO_BOX_VALUE_CHANGED,
+        EVENT_ARABIC_FONT_SIZE_COMBO_BOX_VALUE_CHANGED,
         this::handleArabicFontSizeComboBoxValueChanged);
     registerHandler(
-        ON_ARABIC_VERSION_CHECK_BUTTON_PRESSED, this::handleArabicVersionCheckButtonPressed);
+        EVENT_ARABIC_VERSION_CHECK_BUTTON_PRESSED, this::handleArabicVersionCheckButtonPressed);
     registerHandler(
-        ON_ARABIC_VERSION_LIST_BOX_ITEM_SELECTED, this::handleArabicVersionListBoxItemSelected);
+        EVENT_ARABIC_VERSION_LIST_BOX_ITEM_SELECTED, this::handleArabicVersionListBoxItemSelected);
     registerHandler(
-        ON_ARABIC_VERSION_LIST_BOX_PROPERTY_ENABLED_TO_BE_CHANGED,
+        EVENT_ARABIC_VERSION_LIST_BOX_PROPERTY_ENABLED_TO_BE_CHANGED,
         this::handleControlPropertyEnabledToBeChanged);
     registerHandler(
-        ON_AYAT_FROM_NUMERIC_FIELD_PROPERTY_ENABLED_TO_BE_CHANGED,
+        EVENT_AYAT_FROM_NUMERIC_FIELD_PROPERTY_ENABLED_TO_BE_CHANGED,
         this::handleControlPropertyEnabledToBeChanged);
     registerHandler(
-        ON_AYAT_FROM_NUMERIC_FIELD_VALUE_CHANGED, this::handleAyatFromNumericFieldValueChanged);
+        EVENT_AYAT_FROM_NUMERIC_FIELD_VALUE_CHANGED, this::handleAyatFromNumericFieldValueChanged);
     registerHandler(
-        ON_AYAT_FROM_NUMERIC_FIELD_VALUE_UPDATED, this::handleAyatFromNumericFieldValueUpdated);
+        EVENT_AYAT_FROM_NUMERIC_FIELD_VALUE_UPDATED, this::handleAyatFromNumericFieldValueUpdated);
     registerHandler(
-        ON_AYAT_RANGE_LABEL_PROPERTY_ENABLED_TO_BE_CHANGED,
+        EVENT_AYAT_RANGE_LABEL_PROPERTY_ENABLED_TO_BE_CHANGED,
         this::handleControlPropertyEnabledToBeChanged);
     registerHandler(
-        ON_AYAT_PER_LINE_CHECK_BUTTON_PRESSED, this::handleAyatPerLineCheckButtonPressed);
+        EVENT_AYAT_PER_LINE_CHECK_BUTTON_PRESSED, this::handleAyatPerLineCheckButtonPressed);
     registerHandler(
-        ON_AYAT_RANGE_SEPARATOR_LABEL_PROPERTY_ENABLED_TO_BE_CHANGED,
+        EVENT_AYAT_RANGE_SEPARATOR_LABEL_PROPERTY_ENABLED_TO_BE_CHANGED,
+        this::handleControlPropertyEnabledToBeChanged);
+    registerHandler(EVENT_AYAT_RANGE_VALIDATION_ERROR, this::handleAyatRangeValidationError);
+    registerHandler(
+        EVENT_AYAT_TO_NUMERIC_FIELD_PROPERTY_ENABLED_TO_BE_CHANGED,
         this::handleControlPropertyEnabledToBeChanged);
     registerHandler(
-        ON_AYAT_TO_NUMERIC_FIELD_PROPERTY_ENABLED_TO_BE_CHANGED,
-        this::handleControlPropertyEnabledToBeChanged);
+        EVENT_AYAT_TO_NUMERIC_FIELD_VALUE_CHANGED, this::handleAyatToNumericFieldValueChanged);
     registerHandler(
-        ON_AYAT_TO_NUMERIC_FIELD_VALUE_CHANGED, this::handleAyatToNumericFieldValueChanged);
+        EVENT_AYAT_TO_NUMERIC_FIELD_VALUE_UPDATED, this::handleAyatToNumericFieldValueUpdated);
+    registerHandler(EVENT_INSERT_BUTTON_CLICKED, this::handleInsertButtonClicked);
     registerHandler(
-        ON_AYAT_TO_NUMERIC_FIELD_VALUE_UPDATED, this::handleAyatToNumericFieldValueUpdated);
-    registerHandler(ON_INSERT_BUTTON_CLICKED, this::handleInsertButtonClicked);
-    registerHandler(
-        ON_INSERT_BUTTON_PROPERTY_ENABLED_TO_BE_CHANGED,
+        EVENT_INSERT_BUTTON_PROPERTY_ENABLED_TO_BE_CHANGED,
         this::handleInsertButtonPropertyEnabledToBeChanged);
-    registerHandler(ON_LATIN_FONT_LIST_BOX_ITEM_SELECTED, this::handleLatinFontListBoxItemSelected);
     registerHandler(
-        ON_LATIN_FONT_LIST_BOX_PROPERTY_ENABLED_TO_BE_CHANGED,
+        EVENT_LATIN_FONT_LIST_BOX_ITEM_SELECTED, this::handleLatinFontListBoxItemSelected);
+    registerHandler(
+        EVENT_LATIN_FONT_LIST_BOX_PROPERTY_ENABLED_TO_BE_CHANGED,
         this::handleLatinFontControlPropertyEnabledToBeChanged);
     registerHandler(
-        ON_LATIN_FONT_SIZE_COMBO_BOX_PROPERTY_ENABLED_TO_BE_CHANGED,
+        EVENT_LATIN_FONT_SIZE_COMBO_BOX_PROPERTY_ENABLED_TO_BE_CHANGED,
         this::handleLatinFontControlPropertyEnabledToBeChanged);
     registerHandler(
-        ON_LATIN_FONT_SIZE_COMBO_BOX_VALUE_CHANGED, this::handleLatinFontSizeComboBoxValueChanged);
-    registerHandler(ON_SURAH_LIST_BOX_ITEM_SELECTED, this::handleSurahListBoxItemSelected);
+        EVENT_LATIN_FONT_SIZE_COMBO_BOX_VALUE_CHANGED,
+        this::handleLatinFontSizeComboBoxValueChanged);
+    registerHandler(EVENT_STATUS_TEXT_LABEL_RESET, this::handleStatusTextLabelReset);
+    registerHandler(EVENT_SURAH_LIST_BOX_ITEM_SELECTED, this::handleSurahListBoxItemSelected);
     registerHandler(
-        ON_TRANSLATION_VERSION_CHECK_BUTTON_PRESSED,
+        EVENT_TRANSLATION_VERSION_CHECK_BUTTON_PRESSED,
         this::handleTranslationVersionCheckButtonPressed);
     registerHandler(
-        ON_TRANSLATION_VERSION_LIST_BOX_ITEM_SELECTED,
+        EVENT_TRANSLATION_VERSION_LIST_BOX_ITEM_SELECTED,
         this::handleTranslationVersionListBoxItemSelected);
     registerHandler(
-        ON_TRANSLATION_VERSION_LIST_BOX_PROPERTY_ENABLED_TO_BE_CHANGED,
+        EVENT_TRANSLATION_VERSION_LIST_BOX_PROPERTY_ENABLED_TO_BE_CHANGED,
         this::handleControlPropertyEnabledToBeChanged);
     registerHandler(
-        ON_TRANSLITERATION_VERSION_CHECK_BUTTON_PRESSED,
+        EVENT_TRANSLITERATION_VERSION_CHECK_BUTTON_PRESSED,
         this::handleTransliterationVersionCheckButtonPressed);
     registerHandler(
-        ON_TRANSLITERATION_VERSION_LIST_BOX_ITEM_SELECTED,
+        EVENT_TRANSLITERATION_VERSION_LIST_BOX_ITEM_SELECTED,
         this::handleTransliterationVersionListBoxItemSelected);
     registerHandler(
-        ON_TRANSLITERATION_VERSION_LIST_BOX_PROPERTY_ENABLED_TO_BE_CHANGED,
+        EVENT_TRANSLITERATION_VERSION_LIST_BOX_PROPERTY_ENABLED_TO_BE_CHANGED,
         this::handleControlPropertyEnabledToBeChanged);
+  }
+
+  private void handleStatusTextLabelReset(XDialog xDialog, Object o, String s) {
+    LOGGER.debug("handleStatusTextLabelReset()");
+
+    setPropertyValue(dialog, STATUS_TEXT_LABEL, ENABLE_VISIBLE, false);
+    triggerEvent(
+        EVENT_INSERT_BUTTON_PROPERTY_ENABLED_TO_BE_CHANGED, dialog, null, STATUS_TEXT_LABEL);
+  }
+
+  private void handleAyatRangeValidationError(XDialog xDialog, Object o, String s) {
+    LOGGER.debug("handleAyatFromNumericFieldValidationError()");
+
+    setPropertyValue(dialog, STATUS_TEXT_LABEL, ENABLE_VISIBLE, true);
+    triggerEvent(
+        EVENT_INSERT_BUTTON_PROPERTY_ENABLED_TO_BE_CHANGED, dialog, null, STATUS_TEXT_LABEL);
   }
 
   /**
@@ -455,9 +478,10 @@ public class MainDialog extends BaseDialog {
         dialog,
         INSERT_BUTTON,
         ENABLED,
-        parseBoolean(configManager.getConfig((ARABIC_VERSION_CHECK_BOX_STATE)))
-            || parseBoolean((configManager.getConfig((TRANSLATION_VERSION_CHECK_BOX_STATE))))
-            || parseBoolean(configManager.getConfig(TRANSLITERATION_VERSION_CHECK_BOX_STATE)));
+        (parseBoolean(configManager.getConfig((ARABIC_VERSION_CHECK_BOX_STATE)))
+                || parseBoolean((configManager.getConfig((TRANSLATION_VERSION_CHECK_BOX_STATE))))
+                || parseBoolean(configManager.getConfig(TRANSLITERATION_VERSION_CHECK_BOX_STATE)))
+            && !getPropertyValue(xDialog, STATUS_TEXT_LABEL, ENABLE_VISIBLE, Boolean.class));
   }
 
   /**
@@ -609,22 +633,22 @@ public class MainDialog extends BaseDialog {
         String.valueOf(short2Boolean(checkBox.getState())));
 
     triggerEvent(
-        ON_TRANSLITERATION_VERSION_LIST_BOX_PROPERTY_ENABLED_TO_BE_CHANGED,
+        EVENT_TRANSLITERATION_VERSION_LIST_BOX_PROPERTY_ENABLED_TO_BE_CHANGED,
         dialog,
         null,
         TRANSLITERATION_VERSION_CHECK_BOX);
     triggerEvent(
-        ON_LATIN_FONT_LIST_BOX_PROPERTY_ENABLED_TO_BE_CHANGED,
+        EVENT_LATIN_FONT_LIST_BOX_PROPERTY_ENABLED_TO_BE_CHANGED,
         dialog,
         null,
         TRANSLITERATION_VERSION_CHECK_BOX);
     triggerEvent(
-        ON_LATIN_FONT_SIZE_COMBO_BOX_PROPERTY_ENABLED_TO_BE_CHANGED,
+        EVENT_LATIN_FONT_SIZE_COMBO_BOX_PROPERTY_ENABLED_TO_BE_CHANGED,
         dialog,
         null,
         TRANSLITERATION_VERSION_CHECK_BOX);
     triggerEvent(
-        ON_INSERT_BUTTON_PROPERTY_ENABLED_TO_BE_CHANGED,
+        EVENT_INSERT_BUTTON_PROPERTY_ENABLED_TO_BE_CHANGED,
         dialog,
         null,
         TRANSLITERATION_VERSION_CHECK_BOX);
@@ -671,22 +695,22 @@ public class MainDialog extends BaseDialog {
         TRANSLATION_VERSION_CHECK_BOX_STATE, String.valueOf(short2Boolean(checkBox.getState())));
 
     triggerEvent(
-        ON_TRANSLATION_VERSION_LIST_BOX_PROPERTY_ENABLED_TO_BE_CHANGED,
+        EVENT_TRANSLATION_VERSION_LIST_BOX_PROPERTY_ENABLED_TO_BE_CHANGED,
         dialog,
         null,
         TRANSLATION_VERSION_CHECK_BOX);
     triggerEvent(
-        ON_LATIN_FONT_LIST_BOX_PROPERTY_ENABLED_TO_BE_CHANGED,
+        EVENT_LATIN_FONT_LIST_BOX_PROPERTY_ENABLED_TO_BE_CHANGED,
         dialog,
         null,
         TRANSLATION_VERSION_CHECK_BOX);
     triggerEvent(
-        ON_LATIN_FONT_SIZE_COMBO_BOX_PROPERTY_ENABLED_TO_BE_CHANGED,
+        EVENT_LATIN_FONT_SIZE_COMBO_BOX_PROPERTY_ENABLED_TO_BE_CHANGED,
         dialog,
         null,
         TRANSLATION_VERSION_CHECK_BOX);
     triggerEvent(
-        ON_INSERT_BUTTON_PROPERTY_ENABLED_TO_BE_CHANGED,
+        EVENT_INSERT_BUTTON_PROPERTY_ENABLED_TO_BE_CHANGED,
         dialog,
         null,
         TRANSLATION_VERSION_CHECK_BOX);
@@ -726,22 +750,22 @@ public class MainDialog extends BaseDialog {
         ARABIC_VERSION_CHECK_BOX_STATE, String.valueOf(short2Boolean(checkBox.getState())));
 
     triggerEvent(
-        ON_ARABIC_VERSION_LIST_BOX_PROPERTY_ENABLED_TO_BE_CHANGED,
+        EVENT_ARABIC_VERSION_LIST_BOX_PROPERTY_ENABLED_TO_BE_CHANGED,
         dialog,
         null,
         ARABIC_VERSION_CHECK_BOX);
     triggerEvent(
-        ON_ARABIC_FONT_LIST_BOX_PROPERTY_ENABLED_TO_BE_CHANGED,
+        EVENT_ARABIC_FONT_LIST_BOX_PROPERTY_ENABLED_TO_BE_CHANGED,
         dialog,
         null,
         ARABIC_VERSION_CHECK_BOX);
     triggerEvent(
-        ON_ARABIC_FONT_SIZE_COMBO_BOX_PROPERTY_ENABLED_TO_BE_CHANGED,
+        EVENT_ARABIC_FONT_SIZE_COMBO_BOX_PROPERTY_ENABLED_TO_BE_CHANGED,
         dialog,
         null,
         ARABIC_VERSION_CHECK_BOX);
     triggerEvent(
-        ON_INSERT_BUTTON_PROPERTY_ENABLED_TO_BE_CHANGED, dialog, null, ARABIC_VERSION_CHECK_BOX);
+        EVENT_INSERT_BUTTON_PROPERTY_ENABLED_TO_BE_CHANGED, dialog, null, ARABIC_VERSION_CHECK_BOX);
   }
 
   /**
@@ -754,7 +778,7 @@ public class MainDialog extends BaseDialog {
   private void handleControlPropertyEnabledToBeChanged(XDialog dialog, Object args, String event) {
 
     final String controlId =
-        event.substring("on".length(), event.length() - "PropertyEnabledToBeChanged".length());
+        event.substring("event".length(), event.length() - "PropertyEnabledToBeChanged".length());
 
     LOGGER.debug("handle{}PropertyEnabledToBeChanged()", controlId);
 
@@ -811,6 +835,8 @@ public class MainDialog extends BaseDialog {
 
     configManager.setConfig(AYAT_TO_NUMERIC_FIELD_VALUE, String.valueOf(surahSize));
     to.setValue(surahSize);
+
+    triggerEvent(EVENT_STATUS_TEXT_LABEL_RESET, dialog, null, AYAT_TO_NUMERIC_FIELD);
   }
 
   /**
@@ -837,6 +863,8 @@ public class MainDialog extends BaseDialog {
 
     configManager.setConfig(AYAT_FROM_NUMERIC_FIELD_VALUE, String.valueOf(1));
     from.setValue(1);
+
+    triggerEvent(EVENT_STATUS_TEXT_LABEL_RESET, dialog, null, AYAT_FROM_NUMERIC_FIELD);
   }
 
   /**
@@ -853,16 +881,18 @@ public class MainDialog extends BaseDialog {
     XNumericField from = getUnoControl(this.dialog, XNumericField.class, AYAT_FROM_NUMERIC_FIELD);
     XNumericField to = getUnoControl(this.dialog, XNumericField.class, AYAT_TO_NUMERIC_FIELD);
 
+    triggerEvent(EVENT_STATUS_TEXT_LABEL_RESET, dialog, null, AYAT_FROM_NUMERIC_FIELD);
     if (from.getValue() > to.getValue()) {
       /* from must be smaller or equal to from */
       LOGGER.debug(
           "VALIDATION ERROR: From {} is larger than to {}", from.getValue(), to.getValue());
 
-      from.setValue(parseDouble(configManager.getConfig(AYAT_FROM_NUMERIC_FIELD_VALUE)));
-
+      triggerEvent(EVENT_AYAT_RANGE_VALIDATION_ERROR, dialog, null, AYAT_FROM_NUMERIC_FIELD);
     } else {
       configManager.setConfig(
           AYAT_FROM_NUMERIC_FIELD_VALUE, String.valueOf((int) Math.round(from.getValue())));
+      triggerEvent(
+          EVENT_INSERT_BUTTON_PROPERTY_ENABLED_TO_BE_CHANGED, dialog, null, STATUS_TEXT_LABEL);
     }
   }
 
@@ -880,16 +910,18 @@ public class MainDialog extends BaseDialog {
     XNumericField from = getUnoControl(this.dialog, XNumericField.class, AYAT_FROM_NUMERIC_FIELD);
     XNumericField to = getUnoControl(this.dialog, XNumericField.class, AYAT_TO_NUMERIC_FIELD);
 
+    triggerEvent(EVENT_STATUS_TEXT_LABEL_RESET, dialog, null, AYAT_TO_NUMERIC_FIELD);
     if (to.getValue() < from.getValue()) {
       /* to must be larger than from */
       LOGGER.debug(
           "VALIDATION ERROR: TO {} is smaller than FROM {}", to.getValue(), from.getValue());
 
-      to.setValue(parseDouble(configManager.getConfig(AYAT_TO_NUMERIC_FIELD_VALUE)));
-
+      triggerEvent(EVENT_AYAT_RANGE_VALIDATION_ERROR, dialog, null, AYAT_TO_NUMERIC_FIELD);
     } else {
       configManager.setConfig(
           AYAT_TO_NUMERIC_FIELD_VALUE, String.valueOf((int) Math.round(to.getValue())));
+      triggerEvent(
+          EVENT_INSERT_BUTTON_PROPERTY_ENABLED_TO_BE_CHANGED, dialog, null, STATUS_TEXT_LABEL);
     }
   }
 
@@ -909,19 +941,22 @@ public class MainDialog extends BaseDialog {
         ALL_AYAT_CHECK_BOX_STATE, String.valueOf(short2Boolean(checkBox.getState())));
 
     triggerEvent(
-        ON_AYAT_RANGE_LABEL_PROPERTY_ENABLED_TO_BE_CHANGED, dialog, null, ALL_AYAT_CHECK_BOX);
+        EVENT_AYAT_RANGE_LABEL_PROPERTY_ENABLED_TO_BE_CHANGED, dialog, null, ALL_AYAT_CHECK_BOX);
     triggerEvent(
-        ON_AYAT_FROM_NUMERIC_FIELD_PROPERTY_ENABLED_TO_BE_CHANGED,
+        EVENT_AYAT_FROM_NUMERIC_FIELD_PROPERTY_ENABLED_TO_BE_CHANGED,
         dialog,
         null,
         ALL_AYAT_CHECK_BOX);
     triggerEvent(
-        ON_AYAT_RANGE_SEPARATOR_LABEL_PROPERTY_ENABLED_TO_BE_CHANGED,
+        EVENT_AYAT_RANGE_SEPARATOR_LABEL_PROPERTY_ENABLED_TO_BE_CHANGED,
         dialog,
         null,
         ALL_AYAT_CHECK_BOX);
     triggerEvent(
-        ON_AYAT_TO_NUMERIC_FIELD_PROPERTY_ENABLED_TO_BE_CHANGED, dialog, null, ALL_AYAT_CHECK_BOX);
+        EVENT_AYAT_TO_NUMERIC_FIELD_PROPERTY_ENABLED_TO_BE_CHANGED,
+        dialog,
+        null,
+        ALL_AYAT_CHECK_BOX);
   }
 
   /**
@@ -946,8 +981,9 @@ public class MainDialog extends BaseDialog {
     configManager.setConfig(SURAH_LIST_BOX_ITEM_SELECTED, String.valueOf(selectedItemPos));
     configManager.setConfig(SURAH_SELECTED, getSurahName(selectedItemPos + 1));
 
-    triggerEvent(ON_AYAT_FROM_NUMERIC_FIELD_VALUE_UPDATED, dialog, null, SURAH_LIST_BOX);
-    triggerEvent(ON_AYAT_TO_NUMERIC_FIELD_VALUE_UPDATED, dialog, null, SURAH_LIST_BOX);
+    triggerEvent(EVENT_STATUS_TEXT_LABEL_RESET, dialog, null, SURAH_LIST_BOX);
+    triggerEvent(EVENT_AYAT_FROM_NUMERIC_FIELD_VALUE_UPDATED, dialog, null, SURAH_LIST_BOX);
+    triggerEvent(EVENT_AYAT_TO_NUMERIC_FIELD_VALUE_UPDATED, dialog, null, SURAH_LIST_BOX);
   }
 
   /**

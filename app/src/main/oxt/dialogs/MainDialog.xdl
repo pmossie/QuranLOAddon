@@ -32,7 +32,6 @@
         dlg:font-name="Liberation Sans"
         dlg:font-stylename="bold"
         dlg:font-weight="150"
-        dlg:text-color="0xff0000"
     />
   </dlg:styles>
 
@@ -428,11 +427,11 @@
         dlg:height="10"
         dlg:left="4"
         dlg:style-id="StatusFontStyle"
-        dlg:top="141"
+        dlg:top="142"
         dlg:valign="center"
         dlg:value="&amp;StatusTextLabel.value"
         dlg:visible="false"
-        dlg:width="200">
+        dlg:width="300">
     </dlg:text>
 
     <dlg:button

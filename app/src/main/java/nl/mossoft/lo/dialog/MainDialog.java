@@ -800,9 +800,8 @@ public class MainDialog extends BaseDialog {
   private void handleLatinFontControlPropertyEnabledToBeChanged(
       XDialog xDialog, Object o, String event) {
     final String controlId =
-        event.substring("on".length(), event.length() - "PropertyEnabledToBeChanged".length());
-
-    LOGGER.debug("handleLatinFontControlPropertyEnabledToBeChanged()");
+        event.substring("event".length(), event.length() - "PropertyEnabledToBeChanged".length());
+    LOGGER.debug("handle{}PropertyEnabledToBeChanged()", controlId);
 
     setPropertyValue(
         dialog,

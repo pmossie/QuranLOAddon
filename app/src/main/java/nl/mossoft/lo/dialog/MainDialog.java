@@ -1160,6 +1160,7 @@ public class MainDialog extends BaseDialog {
       } else {
 
         paragraph.append(transFonter(ayat, fontName));
+        paragraph.append(' ');
         paragraph.append(fa.rightParenthesisStr());
         paragraph.append(numToNumberString(ayatNo, language, fontName));
         paragraph.append(fa.leftParenthesisStr());
@@ -1487,6 +1488,7 @@ public class MainDialog extends BaseDialog {
           paragraph.append(' ');
         } else {
           paragraph.append(transFonter(it.next(), fontName));
+          paragraph.append(' ');
           paragraph.append(fa.rightParenthesisStr());
           paragraph.append(numToNumberString(ayatNo, language, fontName));
           paragraph.append(fa.leftParenthesisStr());

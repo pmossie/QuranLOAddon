@@ -30,7 +30,7 @@ plugins {
     java
     jacoco
     id("com.gradleup.shadow") version "9.0.0-beta2"
-    id("com.diffplug.spotless") version "7.2.1"
+    id("com.diffplug.spotless") version "8.1.0"
     id("com.github.spotbugs") version "6.2.6"
 }
 
@@ -97,7 +97,7 @@ tasks.register<Exec>("compileIDLfile") {
     outputs.dir(outputDir)
 
     commandLine(
-        "/usr/lib/libreoffice/sdk/bin/unoidl-write",
+        "/usr/lib64/libreoffice/sdk/bin/unoidl-write",
         "/usr/lib64/libreoffice/program/types.rdb",
         "/usr/lib64/libreoffice/program/types/offapi.rdb",
         idlDir, // Input directory for IDL files

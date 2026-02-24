@@ -20,6 +20,7 @@ import static nl.mossoft.lo.dialog.UnoControlProperties.*;
 import static nl.mossoft.lo.quran.SourceManager.getSourceFilename;
 import static nl.mossoft.lo.quran.SourceType.*;
 import static nl.mossoft.lo.util.ConfigurationKeys.*;
+import static nl.mossoft.lo.util.FontManager.getArabicSupportedFontsAsArray;
 
 import com.sun.star.beans.PropertyValue;
 import com.sun.star.beans.XPropertySet;
@@ -66,6 +67,7 @@ public enum ConfigurationManager {
   private static final String FALSE = "false";
   private static final String TRUE = "true";
   private static final String THREE = "3";
+  private static final String TWENTY = "21";
   private static final String ZERO = "0";
   private static final String HIGHEST_AYAT_NUMBER_AL_FATIHAH = "7";
   private static final String LOWEST_AYAT_NUMBER = "1";
@@ -108,12 +110,18 @@ public enum ConfigurationManager {
     Map<ConfigurationKeys, String> defaults = new ConcurrentHashMap<>();
 
     defaults.put(ALL_AYAT_CHECK_BOX_STATE, TRUE);
+
     defaults.put(ARABIC_FONT_LIST_BOX_ITEM_LIST, FontManager.getArabicSupportedFontsAsString());
-    defaults.put(
-        ARABIC_FONT_LIST_BOX_ITEM_SELECTED,
-        Integer.toString(FontManager.getFontIndexInArabicList(DEFAULT_ARABIC_FONT)));
-    defaults.put(ARABIC_FONT_SELECTED, DEFAULT_ARABIC_FONT);
-    defaults.put(ARABIC_FONT_SIZE_COMBO_BOX_VALUE, DEFAULT_ARABIC_FONT_SIZE);
+    int afidx = FontManager.getFontIndexInArabicList(DEFAULT_ARABIC_FONT);
+    if (afidx == -1) {
+      defaults.put(ARABIC_FONT_LIST_BOX_ITEM_SELECTED, ZERO);
+      defaults.put(ARABIC_FONT_SELECTED, getArabicSupportedFontsAsArray()[0]);
+      defaults.put(ARABIC_FONT_SIZE_COMBO_BOX_VALUE, TWENTY);
+    } else {
+      defaults.put(ARABIC_FONT_LIST_BOX_ITEM_SELECTED, Integer.toString(afidx));
+      defaults.put(ARABIC_FONT_SELECTED, DEFAULT_ARABIC_FONT);
+      defaults.put(ARABIC_FONT_SIZE_COMBO_BOX_VALUE, DEFAULT_ARABIC_FONT_SIZE);
+    }
     defaults.put(ARABIC_LANGUAGE_SELECTED, SourceLanguage.ARABIC.id());
     defaults.put(ARABIC_VERSION_CHECK_BOX_STATE, TRUE);
     defaults.put(

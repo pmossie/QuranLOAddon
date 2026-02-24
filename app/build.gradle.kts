@@ -42,11 +42,11 @@ val buildVersion = "$version-$buildTimestamp"
 
 val mainClassName = "nl.mossoft.lo.comp.RegistrationHandler"
 
-val assertjCoreVersion = "3.27.4"
+val assertjCoreVersion = "3.27.7"
 val junitPlatformLauncherVersion = "1.13.4"
 val junitVersion = "5.13.4"
 val libreofficeVersion = "24.2.5"
-val log4jVersion = "2.23.1"
+val log4jVersion = "2.25.3"
 val mockitoCoreVersion = "5.2.0"
 val slf4jVersion = "2.0.11"
 
